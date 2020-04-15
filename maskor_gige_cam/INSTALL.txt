@@ -1,0 +1,29 @@
+
+
+*** INSTALLATION under Ubuntu 12.04 / 14.04 with ROS Hydro and Indigo ***
+
+1) Install eBus SDK 
+
+sudo eBUS_SDK_4.0.6.3228_Ubuntu-12.04-x86_64.run (in folder ./thirdparty/ebus_sdk/)
+
+2) set the following ENV variables in .bashrc:
+
+export PUREGEV_ROOT=/opt/pleora/ebus_sdk/Ubuntu-12.04-x86_64
+export GENICAM_ROOT=$PUREGEV_ROOT/lib/genicam
+export GENICAM_ROOT_V2_4=$GENICAM_ROOT
+
+3) Check your libudev.so.X version in /lib/x86_64-linux-gnu/
+
+Ubuntu 14.04 comes with libudev.so.1
+Ubuntu 12.04 comes with libudev.so.0
+
+ebus SDK is expecting libudev.so.0, so you maybe need to create 
+a symlink to libudev.so.1 in /lib/x86_64-linux-gnu/ and name it "livudev.so.0"
+
+sudo ln -sf /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0
+
+
+4) build the package (catkin_make)
+
+5) start the (FLIR-)camera node by running "rosrun maskor_gige_cam maskor_flir_cam_node" 
+

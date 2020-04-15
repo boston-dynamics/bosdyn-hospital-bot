@@ -1,0 +1,43 @@
+uri: "http://ftp.evocortex.com/libirimager_empty.tar"
+md5sum: 53dd389ba484a8d67dd625a5ad0e3703
+install-script: |
+  #!/bin/bash
+  arch="$(uname -m)"
+  if [ "$arch" == "atom" ]; then
+    pkgarch="atom"
+  elif [ "$arch" == "armhf" ]; then
+    pkgarch="armhf"
+  elif [ "$arch" == "armel" ]; then
+    pkgarch="armel"
+  elif [ "$arch" == "arm64" ]; then
+    pkgarch="arm64"
+  elif [ "$arch" == "x86_64" ]; then
+    pkgarch="amd64"
+  else
+    pkgarch="i386"
+  fi
+
+  url="http://ftp.evocortex.com/libirimager-latest?arch=$pkgarch&type=deb"
+  pkg="libirimager-latest_$pkgarch.deb"
+  wget --no-check-certificate -O $pkg $url
+
+  sudo dpkg -i $pkg
+
+check-presence-script: |
+  #!/bin/bash
+  dpkg-query -s libirimager > /dev/null 2>&1
+  case $? in
+  0)
+    echo "libirimager is installed"
+    exit 0
+    ;;
+  1)
+    echo "libirimager is not installed"
+    exit 1
+    ;;
+  2)
+    echo "An error occurred while querying for libirimager"
+    exit 1
+    ;;
+  esac
+depends: [wget, libudev-dev, libusb-1.0-dev]

@@ -1,0 +1,10 @@
+#!/usr/bin/expect -f
+
+spawn ./thirdparty/ebus_sdk/eBUS_SDK_4.0.6.3228_Ubuntu-12.04-x86_64.run
+set done 0
+while {$done == 0} {
+    expect {
+	-exact "\[yes\]?" { send "yes\r" }
+	eof { set done 1 }
+}
+}

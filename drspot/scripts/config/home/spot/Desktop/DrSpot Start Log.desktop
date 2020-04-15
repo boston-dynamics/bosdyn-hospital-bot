@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=DrSpot Start Log
+Comment=
+Exec=/home/spot/.local/bin/restart_drspot_logging.bash
+Icon=
+Path=
+Terminal=true
+StartupNotify=false

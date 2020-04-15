@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>drspot</name>
+  <version>0.0.1</version>
+  <description>ROS tools for remote vital signs measurement from multispectral imagery</description>
+  <maintainer email="gmerewether@bostondynamics.com">Gene Merewether</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend version_gte="0.5.78">catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <build_depend>roslaunch</build_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+</package>
