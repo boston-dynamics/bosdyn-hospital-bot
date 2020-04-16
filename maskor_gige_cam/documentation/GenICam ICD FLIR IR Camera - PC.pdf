@@ -1,0 +1,5927 @@
+%PDF-1.2
+6 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC]
+/XObject 5 0 R
+/Font
+<<
+/F0Western 7 0 R
+/F1Western 8 0 R
+/F2Western 9 0 R
+/F3Western 10 0 R
+/F4Western 11 0 R
+/F5Western 12 0 R
+/F6Western 13 0 R
+/F7Western 14 0 R
+/F8Western 15 0 R
+/F9Western 16 0 R
+/F10Western 17 0 R
+/F11Western 18 0 R
+/F52Western 19 0 R
+/F53Western 20 0 R
+/F54Western 21 0 R
+/F55Western 22 0 R
+/F12Symbol 23 0 R
+/F13Symbol 24 0 R
+/F14Symbol 25 0 R
+/F15Symbol 26 0 R
+>>
+>>
+endobj
+7 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F0Western
+/BaseFont /Times-Roman
+/Encoding /WinAnsiEncoding
+>>
+endobj
+8 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F1Western
+/BaseFont /Times-Italic
+/Encoding /WinAnsiEncoding
+>>
+endobj
+9 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F2Western
+/BaseFont /Times-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+10 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F3Western
+/BaseFont /Times-BoldItalic
+/Encoding /WinAnsiEncoding
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F4Western
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F5Western
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F6Western
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F7Western
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F8Western
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F9Western
+/BaseFont /Courier-Oblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F10Western
+/BaseFont /Courier-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F11Western
+/BaseFont /Courier-BoldOblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F52Western
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F53Western
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+21 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F54Western
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+22 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F55Western
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+23 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F12Symbol
+/BaseFont /Symbol
+/Encoding /StandardEncoding
+>>
+endobj
+24 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F13Symbol
+/BaseFont /Symbol
+/Encoding /StandardEncoding
+>>
+endobj
+25 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F14Symbol
+/BaseFont /Symbol
+/Encoding /StandardEncoding
+>>
+endobj
+26 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/Name /F15Symbol
+/BaseFont /Symbol
+/Encoding /StandardEncoding
+>>
+endobj
+27 0 obj
+<< /Length 28 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(1)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 18.650 Tf
+1 0 0 -1 140.000 205.550 Tm(GenICam)Tj
+1 0 0 -1 227.100 205.550 Tm(ICD)Tj
+1 0 0 -1 264.450 205.550 Tm(FLIR)Tj
+1 0 0 -1 311.100 205.550 Tm(IR)Tj
+1 0 0 -1 335.000 205.550 Tm(Camera)Tj
+1 0 0 -1 408.650 205.550 Tm(-)Tj
+1 0 0 -1 420.100 205.550 Tm(PC)Tj
+/F6Western 13.700 Tf
+1 0 0 -1 140.000 258.650 Tm(Contents)Tj
+/F6Western 11.000 Tf
+1 0 0 -1 140.000 282.700 Tm(1)Tj
+1 0 0 -1 160.000 282.700 Tm(Connectivity)Tj
+1 0 0 -1 229.150 282.700 Tm(Overview)Tj
+ET
+q [1 5] 0 d
+500.000 282.700 m 281.200 282.700 l S
+Q
+BT
+1 0 0 -1 513.850 282.700 Tm(2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 297.700 Tm(1.1)Tj
+1 0 0 -1 180.000 297.700 Tm(Physical)Tj
+1 0 0 -1 224.100 297.700 Tm(interfaces)Tj
+ET
+q [1 5] 0 d
+500.000 297.700 m 274.900 297.700 l S
+Q
+BT
+1 0 0 -1 513.850 297.700 Tm(2)Tj
+1 0 0 -1 140.000 312.700 Tm(1.2)Tj
+1 0 0 -1 180.000 312.700 Tm(Low)Tj
+1 0 0 -1 203.300 312.700 Tm(level)Tj
+1 0 0 -1 229.050 312.700 Tm(protocols)Tj
+ET
+q [1 5] 0 d
+500.000 312.700 m 276.800 312.700 l S
+Q
+BT
+1 0 0 -1 513.850 312.700 Tm(2)Tj
+1 0 0 -1 140.000 327.700 Tm(1.2.1)Tj
+1 0 0 -1 200.000 327.700 Tm(Ethernet)Tj
+ET
+q [1 5] 0 d
+500.000 327.700 m 244.700 327.700 l S
+Q
+BT
+1 0 0 -1 513.850 327.700 Tm(2)Tj
+1 0 0 -1 140.000 342.700 Tm(1.3)Tj
+1 0 0 -1 180.000 342.700 Tm(Functionality)Tj
+ET
+q [1 5] 0 d
+500.000 342.700 m 244.850 342.700 l S
+Q
+BT
+1 0 0 -1 513.850 342.700 Tm(2)Tj
+1 0 0 -1 140.000 357.700 Tm(1.3.1)Tj
+1 0 0 -1 200.000 357.700 Tm(GenICam)Tj
+ET
+q [1 5] 0 d
+500.000 357.700 m 250.200 357.700 l S
+Q
+BT
+1 0 0 -1 513.850 357.700 Tm(2)Tj
+1 0 0 -1 140.000 372.700 Tm(1.3.2)Tj
+1 0 0 -1 200.000 372.700 Tm(IP)Tj
+1 0 0 -1 213.500 372.700 Tm(services)Tj
+ET
+q [1 5] 0 d
+500.000 372.700 m 256.950 372.700 l S
+Q
+BT
+1 0 0 -1 513.850 372.700 Tm(3)Tj
+/F6Western 11.000 Tf
+1 0 0 -1 140.000 398.700 Tm(2)Tj
+1 0 0 -1 160.000 398.700 Tm(GeniCam)Tj
+1 0 0 -1 211.400 398.700 Tm(Commands)Tj
+ET
+q [1 5] 0 d
+500.000 398.700 m 274.400 398.700 l S
+Q
+BT
+1 0 0 -1 513.850 398.700 Tm(5)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 413.700 Tm(2.1)Tj
+1 0 0 -1 180.000 413.700 Tm(Introduction)Tj
+ET
+q [1 5] 0 d
+500.000 413.700 m 240.600 413.700 l S
+Q
+BT
+1 0 0 -1 513.850 413.700 Tm(5)Tj
+1 0 0 -1 140.000 428.700 Tm(2.2)Tj
+1 0 0 -1 180.000 428.700 Tm(GenICam)Tj
+1 0 0 -1 230.200 428.700 Tm(registers)Tj
+ET
+q [1 5] 0 d
+500.000 428.700 m 278.600 428.700 l S
+Q
+BT
+1 0 0 -1 513.850 428.700 Tm(6)Tj
+1 0 0 -1 140.000 443.700 Tm(2.2.1)Tj
+1 0 0 -1 200.000 443.700 Tm(Register)Tj
+1 0 0 -1 244.100 443.700 Tm(types)Tj
+ET
+q [1 5] 0 d
+500.000 443.700 m 273.500 443.700 l S
+Q
+BT
+1 0 0 -1 513.850 443.700 Tm(6)Tj
+1 0 0 -1 140.000 458.700 Tm(2.2.2)Tj
+1 0 0 -1 200.000 458.700 Tm(IP)Tj
+1 0 0 -1 213.500 458.700 Tm(Engine)Tj
+1 0 0 -1 250.850 458.700 Tm(status)Tj
+1 0 0 -1 283.300 458.700 Tm(and)Tj
+1 0 0 -1 304.750 458.700 Tm(control)Tj
+ET
+q [1 5] 0 d
+500.000 458.700 m 340.900 458.700 l S
+Q
+BT
+1 0 0 -1 513.850 458.700 Tm(7)Tj
+1 0 0 -1 140.000 473.700 Tm(2.2.3)Tj
+1 0 0 -1 200.000 473.700 Tm(GigE)Tj
+1 0 0 -1 227.600 473.700 Tm(Vision)Tj
+1 0 0 -1 260.700 473.700 Tm(\(GEV\))Tj
+1 0 0 -1 294.400 473.700 Tm(standard)Tj
+1 0 0 -1 340.350 473.700 Tm(interface)Tj
+ET
+q [1 5] 0 d
+500.000 473.700 m 385.650 473.700 l S
+Q
+BT
+1 0 0 -1 513.850 473.700 Tm(9)Tj
+1 0 0 -1 140.000 488.700 Tm(2.2.4)Tj
+1 0 0 -1 200.000 488.700 Tm(FLIR)Tj
+1 0 0 -1 226.950 488.700 Tm(Camera)Tj
+1 0 0 -1 269.200 488.700 Tm(interface)Tj
+ET
+q [1 5] 0 d
+500.000 488.700 m 314.500 488.700 l S
+Q
+BT
+1 0 0 -1 507.750 488.700 Tm(13)Tj
+ET
+endstream
+endobj
+28 0 obj
+4090
+endobj
+29 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [160.000 559.350 278.100 569.800]
+/Dest [46 0 R /XYZ null null null]
+>>
+endobj
+30 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [180.000 544.350 271.800 554.800]
+/Dest [46 0 R /XYZ null null null]
+>>
+endobj
+31 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [180.000 529.350 273.700 539.800]
+/Dest [46 0 R /XYZ null null null]
+>>
+endobj
+32 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 514.350 241.600 524.800]
+/Dest [46 0 R /XYZ null null null]
+>>
+endobj
+33 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [180.000 499.350 241.750 509.800]
+/Dest [46 0 R /XYZ null null null]
+>>
+endobj
+34 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 484.350 247.100 494.800]
+/Dest [46 0 R /XYZ null null null]
+>>
+endobj
+35 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 469.350 253.850 479.800]
+/Dest [49 0 R /XYZ null null null]
+>>
+endobj
+36 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [160.000 443.350 271.300 453.800]
+/Dest [55 0 R /XYZ null null null]
+>>
+endobj
+37 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [180.000 428.350 237.500 438.800]
+/Dest [55 0 R /XYZ null null null]
+>>
+endobj
+38 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [183.100 413.350 275.500 423.800]
+/Dest [58 0 R /XYZ null null null]
+>>
+endobj
+39 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 398.350 270.400 408.800]
+/Dest [58 0 R /XYZ null null null]
+>>
+endobj
+40 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 383.350 337.800 393.800]
+/Dest [61 0 R /XYZ null null null]
+>>
+endobj
+41 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 368.350 382.550 378.800]
+/Dest [67 0 R /XYZ null null null]
+>>
+endobj
+42 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Border [0 0 0]
+/Rect [200.000 353.350 311.400 363.800]
+/Dest [79 0 R /XYZ null null null]
+>>
+endobj
+43 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/Annots [ 29 0 R 30 0 R 31 0 R 32 0 R 33 0 R 34 0 R 35 0 R 36 0 R 37 0 R 38 0 R 39 0 R 40 0 R 41 0 R 42 0 R ]
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 27 0 R
+>>
+endobj
+44 0 obj
+<< /Length 45 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(2)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 137.200 Tm(1)Tj
+/F4Western 14.000 Tf
+1 0 0 -1 140.000 137.200 Tm(Connectivity)Tj
+1 0 0 -1 220.150 137.200 Tm(Overview)Tj
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 176.500 Tm(1.1)Tj
+/F4Western 12.000 Tf
+1 0 0 -1 140.000 176.500 Tm(Physical)Tj
+1 0 0 -1 188.050 176.500 Tm(interfaces)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 200.100 Tm(The)Tj
+1 0 0 -1 159.900 200.100 Tm(FLIR)Tj
+1 0 0 -1 186.500 200.100 Tm(IR)Tj
+1 0 0 -1 200.300 200.100 Tm(camera,)Tj
+1 0 0 -1 237.600 200.100 Tm(when)Tj
+1 0 0 -1 264.200 200.100 Tm(used)Tj
+1 0 0 -1 287.150 200.100 Tm(for)Tj
+1 0 0 -1 302.750 200.100 Tm(GenICam)Tj
+1 0 0 -1 348.300 200.100 Tm(data)Tj
+1 0 0 -1 369.400 200.100 Tm(transfer,)Tj
+1 0 0 -1 408.500 200.100 Tm(can)Tj
+1 0 0 -1 426.550 200.100 Tm(be)Tj
+1 0 0 -1 439.700 200.100 Tm(used)Tj
+1 0 0 -1 462.650 200.100 Tm(in)Tj
+1 0 0 -1 474.000 200.100 Tm(two)Tj
+1 0 0 -1 493.300 200.100 Tm(ways.)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 219.200 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 219.200 Tm(Dedicated)Tj
+1 0 0 -1 207.350 219.200 Tm(Gigabit)Tj
+1 0 0 -1 243.150 219.200 Tm(Ethernet)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 238.200 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 238.200 Tm(Shared)Tj
+1 0 0 -1 193.300 238.200 Tm(Ethernet)Tj
+1 0 0 -1 140.000 264.100 Tm(A)Tj
+1 0 0 -1 150.700 264.100 Tm(Dedicated)Tj
+1 0 0 -1 198.050 264.100 Tm(Gigabit)Tj
+1 0 0 -1 233.850 264.100 Tm(Ethernet)Tj
+1 0 0 -1 273.900 264.100 Tm(is)Tj
+1 0 0 -1 284.000 264.100 Tm(recommended)Tj
+1 0 0 -1 349.100 264.100 Tm(for)Tj
+1 0 0 -1 364.700 264.100 Tm(high)Tj
+1 0 0 -1 387.050 264.100 Tm(speed)Tj
+1 0 0 -1 414.850 264.100 Tm(applications)Tj
+1 0 0 -1 470.800 264.100 Tm(and)Tj
+1 0 0 -1 489.450 264.100 Tm(when)Tj
+1 0 0 -1 140.000 277.100 Tm(image)Tj
+1 0 0 -1 169.650 277.100 Tm(streaming)Tj
+1 0 0 -1 215.800 277.100 Tm(would)Tj
+1 0 0 -1 246.050 277.100 Tm(disturb)Tj
+1 0 0 -1 279.400 277.100 Tm(other)Tj
+1 0 0 -1 304.800 277.100 Tm(equipment)Tj
+1 0 0 -1 354.000 277.100 Tm(on)Tj
+1 0 0 -1 367.800 277.100 Tm(a)Tj
+1 0 0 -1 375.450 277.100 Tm(Shared)Tj
+1 0 0 -1 408.750 277.100 Tm(Ethernet.)Tj
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 318.800 Tm(1.2)Tj
+/F4Western 12.000 Tf
+1 0 0 -1 140.000 318.800 Tm(Low)Tj
+1 0 0 -1 165.400 318.800 Tm(level)Tj
+1 0 0 -1 193.450 318.800 Tm(protocols)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 342.400 Tm(On)Tj
+1 0 0 -1 156.200 342.400 Tm(the)Tj
+1 0 0 -1 172.400 342.400 Tm(mentioned)Tj
+1 0 0 -1 221.600 342.400 Tm(physical)Tj
+1 0 0 -1 261.050 342.400 Tm(interface,)Tj
+1 0 0 -1 305.050 342.400 Tm(it)Tj
+1 0 0 -1 313.950 342.400 Tm(is)Tj
+1 0 0 -1 324.050 342.400 Tm(possible)Tj
+1 0 0 -1 362.900 342.400 Tm(to)Tj
+1 0 0 -1 374.250 342.400 Tm(run)Tj
+1 0 0 -1 391.700 342.400 Tm(different)Tj
+1 0 0 -1 432.350 342.400 Tm(low)Tj
+1 0 0 -1 451.650 342.400 Tm(level)Tj
+1 0 0 -1 475.800 342.400 Tm(protocols.)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 382.600 Tm(1.2.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 382.600 Tm(Ethernet)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 407.400 Tm(The)Tj
+1 0 0 -1 159.900 407.400 Tm(IP)Tj
+1 0 0 -1 172.450 407.400 Tm(GigEVision)Tj
+1 0 0 -1 227.800 407.400 Tm(streaming)Tj
+1 0 0 -1 273.950 407.400 Tm(protocol)Tj
+1 0 0 -1 313.400 407.400 Tm(is)Tj
+1 0 0 -1 323.500 407.400 Tm(used)Tj
+1 0 0 -1 346.450 407.400 Tm(for)Tj
+1 0 0 -1 362.050 407.400 Tm(image)Tj
+1 0 0 -1 391.700 407.400 Tm(transfer)Tj
+1 0 0 -1 428.050 407.400 Tm(and)Tj
+1 0 0 -1 446.700 407.400 Tm(the)Tj
+1 0 0 -1 462.900 407.400 Tm(GigEVision)Tj
+1 0 0 -1 140.000 420.400 Tm(control)Tj
+1 0 0 -1 173.950 420.400 Tm(protocol)Tj
+1 0 0 -1 213.400 420.400 Tm(is)Tj
+1 0 0 -1 223.500 420.400 Tm(used)Tj
+1 0 0 -1 246.450 420.400 Tm(for)Tj
+1 0 0 -1 262.050 420.400 Tm(camera)Tj
+1 0 0 -1 296.600 420.400 Tm(control.)Tj
+1 0 0 -1 140.000 439.400 Tm(Some)Tj
+1 0 0 -1 167.850 439.400 Tm(other)Tj
+1 0 0 -1 193.250 439.400 Tm(IP)Tj
+1 0 0 -1 205.800 439.400 Tm(protocols)Tj
+1 0 0 -1 249.500 439.400 Tm(are)Tj
+1 0 0 -1 265.700 439.400 Tm(supported)Tj
+1 0 0 -1 311.850 439.400 Tm(for)Tj
+1 0 0 -1 327.450 439.400 Tm(network)Tj
+1 0 0 -1 366.250 439.400 Tm(management)Tj
+1 0 0 -1 425.250 439.400 Tm(functions.)Tj
+1 0 0 -1 471.700 439.400 Tm(They)Tj
+1 0 0 -1 497.100 439.400 Tm(should)Tj
+1 0 0 -1 140.000 452.400 Tm(work)Tj
+1 0 0 -1 165.400 452.400 Tm(seamlessly)Tj
+1 0 0 -1 215.850 452.400 Tm(on)Tj
+1 0 0 -1 229.650 452.400 Tm(any)Tj
+1 0 0 -1 248.300 452.400 Tm(LAN,)Tj
+1 0 0 -1 276.450 452.400 Tm(provided)Tj
+1 0 0 -1 318.350 452.400 Tm(that)Tj
+1 0 0 -1 337.650 452.400 Tm(a)Tj
+1 0 0 -1 345.300 452.400 Tm(proper)Tj
+1 0 0 -1 376.800 452.400 Tm(IP)Tj
+1 0 0 -1 389.350 452.400 Tm(adress,)Tj
+1 0 0 -1 422.350 452.400 Tm(netmask)Tj
+1 0 0 -1 461.800 452.400 Tm(and)Tj
+1 0 0 -1 480.450 452.400 Tm(possibly)Tj
+1 0 0 -1 140.000 465.400 Tm(gateway)Tj
+1 0 0 -1 179.450 465.400 Tm(is)Tj
+1 0 0 -1 189.550 465.400 Tm(set)Tj
+1 0 0 -1 204.550 465.400 Tm(in)Tj
+1 0 0 -1 215.900 465.400 Tm(the)Tj
+1 0 0 -1 232.100 465.400 Tm(camera.)Tj
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 507.100 Tm(1.3)Tj
+/F4Western 12.000 Tf
+1 0 0 -1 140.000 507.100 Tm(Functionality)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 530.700 Tm(The)Tj
+1 0 0 -1 159.900 530.700 Tm(ethernet)Tj
+1 0 0 -1 198.100 530.700 Tm(communication)Tj
+1 0 0 -1 269.300 530.700 Tm(functionality)Tj
+1 0 0 -1 328.300 530.700 Tm(is)Tj
+1 0 0 -1 338.400 530.700 Tm(provided)Tj
+1 0 0 -1 380.300 530.700 Tm(by)Tj
+1 0 0 -1 394.100 530.700 Tm(an)Tj
+1 0 0 -1 407.250 530.700 Tm(iPORT)Tj
+1 0 0 -1 441.200 530.700 Tm(IP)Tj
+1 0 0 -1 453.750 530.700 Tm(Engine)Tj
+1 0 0 -1 487.700 530.700 Tm(inside)Tj
+1 0 0 -1 516.750 530.700 Tm(the)Tj
+1 0 0 -1 140.000 543.700 Tm(camera.)Tj
+1 0 0 -1 177.300 543.700 Tm(You)Tj
+1 0 0 -1 199.000 543.700 Tm(can)Tj
+1 0 0 -1 217.050 543.700 Tm(use)Tj
+1 0 0 -1 234.500 543.700 Tm(it)Tj
+1 0 0 -1 243.400 543.700 Tm(to)Tj
+1 0 0 -1 254.750 543.700 Tm(manage)Tj
+1 0 0 -1 291.750 543.700 Tm(image)Tj
+1 0 0 -1 321.400 543.700 Tm(streaming)Tj
+1 0 0 -1 367.550 543.700 Tm(and)Tj
+1 0 0 -1 386.200 543.700 Tm(control)Tj
+1 0 0 -1 420.150 543.700 Tm(the)Tj
+1 0 0 -1 436.350 543.700 Tm(camera)Tj
+1 0 0 -1 470.900 543.700 Tm(through)Tj
+1 0 0 -1 507.900 543.700 Tm(the)Tj
+1 0 0 -1 140.000 556.700 Tm(GenICam)Tj
+1 0 0 -1 185.550 556.700 Tm(command)Tj
+1 0 0 -1 231.700 556.700 Tm(control)Tj
+1 0 0 -1 265.650 556.700 Tm(interface.)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 596.900 Tm(1.3.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 596.900 Tm(GenICam)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 621.700 Tm(To)Tj
+1 0 0 -1 155.000 621.700 Tm(be)Tj
+1 0 0 -1 168.150 621.700 Tm(able)Tj
+1 0 0 -1 189.250 621.700 Tm(to)Tj
+1 0 0 -1 200.600 621.700 Tm(acquire)Tj
+1 0 0 -1 235.750 621.700 Tm(images)Tj
+1 0 0 -1 269.700 621.700 Tm(and)Tj
+1 0 0 -1 288.350 621.700 Tm(control)Tj
+1 0 0 -1 322.300 621.700 Tm(the)Tj
+1 0 0 -1 338.500 621.700 Tm(camera,)Tj
+1 0 0 -1 375.800 621.700 Tm(you)Tj
+1 0 0 -1 395.100 621.700 Tm(have)Tj
+1 0 0 -1 418.650 621.700 Tm(to)Tj
+1 0 0 -1 430.000 621.700 Tm(have)Tj
+1 0 0 -1 453.550 621.700 Tm(a)Tj
+1 0 0 -1 461.200 621.700 Tm(software)Tj
+1 0 0 -1 140.000 634.700 Tm(environment)Tj
+1 0 0 -1 198.400 634.700 Tm(that)Tj
+1 0 0 -1 217.700 634.700 Tm(meets)Tj
+1 0 0 -1 246.150 634.700 Tm(the)Tj
+1 0 0 -1 262.350 634.700 Tm(specifications)Tj
+1 0 0 -1 325.600 634.700 Tm(of)Tj
+1 0 0 -1 337.550 634.700 Tm(the)Tj
+1 0 0 -1 353.750 634.700 Tm(machine)Tj
+1 0 0 -1 393.800 634.700 Tm(vision)Tj
+1 0 0 -1 423.450 634.700 Tm(standards)Tj
+1 0 0 -1 467.750 634.700 Tm(GigE)Tj
+1 0 0 -1 493.750 634.700 Tm(Vision)Tj
+1 0 0 -1 140.000 647.700 Tm(and)Tj
+1 0 0 -1 158.650 647.700 Tm(GenICam.)Tj
+1 0 0 -1 206.950 647.700 Tm(For)Tj
+1 0 0 -1 225.000 647.700 Tm(more)Tj
+1 0 0 -1 250.400 647.700 Tm(information)Tj
+1 0 0 -1 305.100 647.700 Tm(about)Tj
+1 0 0 -1 332.300 647.700 Tm(this,)Tj
+1 0 0 -1 353.700 647.700 Tm(see)Tj
+1 0 0 -1 370.500 647.700 Tm(http://www.genicam.org/.)Tj
+1 0 0 -1 140.000 666.700 Tm(Such)Tj
+1 0 0 -1 164.800 666.700 Tm(environments)Tj
+1 0 0 -1 227.450 666.700 Tm(are,)Tj
+1 0 0 -1 246.400 666.700 Tm(for)Tj
+1 0 0 -1 262.000 666.700 Tm(example,)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 685.800 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 685.800 Tm("Measurement)Tj
+1 0 0 -1 227.150 685.800 Tm(and)Tj
+1 0 0 -1 245.800 685.800 Tm(Automation)Tj
+1 0 0 -1 301.150 685.800 Tm(Explorer)Tj
+1 0 0 -1 342.400 685.800 Tm(\(MAX\)")Tj
+1 0 0 -1 382.650 685.800 Tm(from)Tj
+1 0 0 -1 406.800 685.800 Tm(National)Tj
+1 0 0 -1 447.450 685.800 Tm(Instruments.)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 704.800 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 704.800 Tm("EBus)Tj
+1 0 0 -1 191.100 704.800 Tm(Pure)Tj
+1 0 0 -1 214.050 704.800 Tm(GEV)Tj
+1 0 0 -1 239.450 704.800 Tm(SDK")Tj
+1 0 0 -1 268.700 704.800 Tm(from)Tj
+1 0 0 -1 292.850 704.800 Tm(Pleora)Tj
+1 0 0 -1 323.750 704.800 Tm(Technologies.)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 723.800 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 723.800 Tm("EBus)Tj
+1 0 0 -1 191.100 723.800 Tm(Vision)Tj
+1 0 0 -1 223.200 723.800 Tm(SDK")Tj
+1 0 0 -1 252.450 723.800 Tm(from)Tj
+1 0 0 -1 276.600 723.800 Tm(Pleora)Tj
+1 0 0 -1 307.500 723.800 Tm(Technologies.)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 742.800 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 742.800 Tm("Common)Tj
+1 0 0 -1 208.200 742.800 Tm(Vision)Tj
+1 0 0 -1 240.300 742.800 Tm(Blox")Tj
+1 0 0 -1 268.950 742.800 Tm(from)Tj
+1 0 0 -1 293.100 742.800 Tm(Stemmer)Tj
+1 0 0 -1 335.600 742.800 Tm(Imaging.)Tj
+ET
+endstream
+endobj
+45 0 obj
+9954
+endobj
+46 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 44 0 R
+>>
+endobj
+47 0 obj
+<< /Length 48 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(3)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 134.500 Tm(The)Tj
+1 0 0 -1 159.900 134.500 Tm(camera)Tj
+1 0 0 -1 194.450 134.500 Tm(supports)Tj
+1 0 0 -1 234.500 134.500 Tm(the)Tj
+1 0 0 -1 250.700 134.500 Tm(GenICam)Tj
+1 0 0 -1 296.250 134.500 Tm(standard)Tj
+1 0 0 -1 336.300 134.500 Tm(command)Tj
+1 0 0 -1 382.450 134.500 Tm(set,)Tj
+1 0 0 -1 400.200 134.500 Tm(and)Tj
+1 0 0 -1 418.850 134.500 Tm(some)Tj
+1 0 0 -1 444.850 134.500 Tm(FLIR)Tj
+1 0 0 -1 471.450 134.500 Tm(specific)Tj
+1 0 0 -1 140.000 147.500 Tm(commands.)Tj
+1 0 0 -1 140.000 166.500 Tm(The)Tj
+1 0 0 -1 159.900 166.500 Tm(GenICam)Tj
+1 0 0 -1 205.450 166.500 Tm(Standard)Tj
+1 0 0 -1 247.350 166.500 Tm(Features)Tj
+1 0 0 -1 287.400 166.500 Tm(Naming)Tj
+1 0 0 -1 325.600 166.500 Tm(Convention)Tj
+1 0 0 -1 379.700 166.500 Tm(\(available)Tj
+1 0 0 -1 425.850 166.500 Tm(at)Tj
+1 0 0 -1 140.000 179.500 Tm(http://www.genicam.org/\))Tj
+1 0 0 -1 257.050 179.500 Tm(is)Tj
+1 0 0 -1 267.150 179.500 Tm(used.)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 219.700 Tm(1.3.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 219.700 Tm(IP)Tj
+1 0 0 -1 153.500 219.700 Tm(services)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 258.700 Tm(1.3.2.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 258.700 Tm(DHCP)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 283.500 Tm(The)Tj
+1 0 0 -1 159.900 283.500 Tm(camera)Tj
+1 0 0 -1 194.450 283.500 Tm(supports)Tj
+1 0 0 -1 234.500 283.500 Tm(the)Tj
+1 0 0 -1 250.700 283.500 Tm(client)Tj
+1 0 0 -1 277.900 283.500 Tm(part)Tj
+1 0 0 -1 297.800 283.500 Tm(of)Tj
+1 0 0 -1 309.750 283.500 Tm(the)Tj
+1 0 0 -1 325.950 283.500 Tm(Dynamic)Tj
+1 0 0 -1 369.050 283.500 Tm(Host)Tj
+1 0 0 -1 392.600 283.500 Tm(Configuration)Tj
+1 0 0 -1 457.100 283.500 Tm(Protocol)Tj
+1 0 0 -1 497.150 283.500 Tm(\(DHCP\).)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 323.700 Tm(1.3.2.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 323.700 Tm(Remote)Tj
+1 0 0 -1 181.650 323.700 Tm(detection)Tj
+/F6Western 11.000 Tf
+1 0 0 -1 80.000 362.000 Tm(1.3.2.2.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 362.000 Tm(Multicast)Tj
+1 0 0 -1 186.500 362.000 Tm(DNS)Tj
+1 0 0 -1 212.850 362.000 Tm(\(Bonjour\))Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 387.500 Tm(To)Tj
+1 0 0 -1 155.000 387.500 Tm(query)Tj
+1 0 0 -1 182.800 387.500 Tm(Bonjour)Tj
+1 0 0 -1 221.650 387.500 Tm(for)Tj
+1 0 0 -1 237.250 387.500 Tm(local)Tj
+1 0 0 -1 261.400 387.500 Tm(FLIR)Tj
+1 0 0 -1 288.000 387.500 Tm(IR)Tj
+1 0 0 -1 301.800 387.500 Tm(cameras,)Tj
+1 0 0 -1 343.350 387.500 Tm(use)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 406.600 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 406.600 Tm(Service)Tj
+1 0 0 -1 195.750 406.600 Tm(name:)Tj
+1 0 0 -1 225.400 406.600 Tm(flir-)Tj
+1 0 0 -1 242.550 406.600 Tm(ircam)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 425.600 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 425.600 Tm(Protocol)Tj
+1 0 0 -1 200.050 425.600 Tm(type:)Tj
+1 0 0 -1 224.850 425.600 Tm(_tcp)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 444.600 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 444.600 Tm(Domain:)Tj
+1 0 0 -1 201.300 444.600 Tm(local)Tj
+ET
+q 0.000 g 140.000 464.500 381.500 0.750 re f Q
+q 0.000 g 140.000 625.250 381.500 0.750 re f Q
+q 0.000 g 140.000 464.500 0.750 161.500 re f Q
+q 0.000 g 520.750 464.500 0.750 161.500 re f Q
+q 0.000 g 140.750 485.150 54.000 0.100 re f Q
+q 0.000 g 194.650 465.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 475.250 Tm(Name)Tj
+ET
+q 0.000 g 194.750 485.150 163.000 0.100 re f Q
+q 0.000 g 357.650 465.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 475.250 Tm(Value)Tj
+1 0 0 -1 226.300 475.250 Tm(\(example\))Tj
+ET
+q 0.000 g 357.750 485.150 163.000 0.100 re f Q
+BT
+1 0 0 -1 360.250 475.250 Tm(Explanation)Tj
+ET
+q 0.000 g 140.750 505.150 54.000 0.100 re f Q
+q 0.000 g 194.650 485.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 495.250 Tm(model)Tj
+ET
+q 0.000 g 194.750 505.150 163.000 0.100 re f Q
+q 0.000 g 357.650 485.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 495.250 Tm(R)Tj
+ET
+q 0.000 g 357.750 505.150 163.000 0.100 re f Q
+q 0.000 g 140.750 525.150 54.000 0.100 re f Q
+q 0.000 g 194.650 505.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 515.250 Tm(ID)Tj
+ET
+q 0.000 g 194.750 525.150 163.000 0.100 re f Q
+q 0.000 g 357.650 505.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 515.250 Tm(A320G)Tj
+ET
+q 0.000 g 357.750 525.150 163.000 0.100 re f Q
+BT
+1 0 0 -1 360.250 515.250 Tm(Camera)Tj
+1 0 0 -1 397.250 515.250 Tm(ID)Tj
+ET
+q 0.000 g 140.750 545.150 54.000 0.100 re f Q
+q 0.000 g 194.650 525.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 535.250 Tm(GID)Tj
+ET
+q 0.000 g 194.750 545.150 163.000 0.100 re f Q
+q 0.000 g 357.650 525.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 535.250 Tm(Gen_A/G)Tj
+ET
+q 0.000 g 357.750 545.150 163.000 0.100 re f Q
+BT
+1 0 0 -1 360.250 535.250 Tm(Generic)Tj
+1 0 0 -1 397.850 535.250 Tm(ID)Tj
+ET
+q 0.000 g 140.750 565.150 54.000 0.100 re f Q
+q 0.000 g 194.650 545.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 555.250 Tm(SI)Tj
+ET
+q 0.000 g 194.750 565.150 163.000 0.100 re f Q
+q 0.000 g 357.650 545.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 555.250 Tm(GEV)Tj
+ET
+q 0.000 g 357.750 565.150 163.000 0.100 re f Q
+BT
+1 0 0 -1 360.250 555.250 Tm(Streaming)Tj
+1 0 0 -1 408.250 555.250 Tm(Interface)Tj
+ET
+q 0.000 g 140.750 585.150 54.000 0.100 re f Q
+q 0.000 g 194.650 565.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 575.250 Tm(SIV)Tj
+ET
+q 0.000 g 194.750 585.150 163.000 0.100 re f Q
+q 0.000 g 357.650 565.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 575.250 Tm(1.0.0)Tj
+ET
+q 0.000 g 357.750 585.150 163.000 0.100 re f Q
+BT
+1 0 0 -1 360.250 575.250 Tm(Streaming)Tj
+1 0 0 -1 408.250 575.250 Tm(interface)Tj
+1 0 0 -1 449.500 575.250 Tm(version)Tj
+1 0 0 -1 484.650 575.250 Tm(*\))Tj
+ET
+q 0.000 g 140.750 605.150 54.000 0.100 re f Q
+q 0.000 g 194.650 585.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 595.250 Tm(CI)Tj
+ET
+q 0.000 g 194.750 605.150 163.000 0.100 re f Q
+q 0.000 g 357.650 585.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 595.250 Tm(GEV)Tj
+ET
+q 0.000 g 357.750 605.150 163.000 0.100 re f Q
+BT
+1 0 0 -1 360.250 595.250 Tm(Command)Tj
+1 0 0 -1 408.850 595.250 Tm(interface)Tj
+ET
+q 0.000 g 194.650 605.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 615.250 Tm(CIV)Tj
+ET
+q 0.000 g 357.650 605.250 0.100 20.000 re f Q
+BT
+1 0 0 -1 197.250 615.250 Tm(1.0.0)Tj
+1 0 0 -1 360.250 615.250 Tm(Command)Tj
+1 0 0 -1 408.850 615.250 Tm(interface)Tj
+1 0 0 -1 450.100 615.250 Tm(version)Tj
+1 0 0 -1 485.250 615.250 Tm(*\))Tj
+/F4Western 10.000 Tf
+1 0 0 -1 140.000 640.000 Tm(Table)Tj
+1 0 0 -1 167.850 640.000 Tm(1)Tj
+1 0 0 -1 173.450 640.000 Tm(:)Tj
+1 0 0 -1 179.050 640.000 Tm(TXT)Tj
+1 0 0 -1 200.750 640.000 Tm(records)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 667.750 Tm(*\))Tj
+1 0 0 -1 151.950 667.750 Tm(The)Tj
+1 0 0 -1 171.850 667.750 Tm(version)Tj
+1 0 0 -1 207.000 667.750 Tm(information)Tj
+1 0 0 -1 261.700 667.750 Tm(provided)Tj
+1 0 0 -1 303.600 667.750 Tm(here)Tj
+1 0 0 -1 325.300 667.750 Tm(is)Tj
+1 0 0 -1 335.400 667.750 Tm(\(unfortunately\))Tj
+1 0 0 -1 404.750 667.750 Tm(not)Tj
+1 0 0 -1 421.600 667.750 Tm(accurate.)Tj
+1 0 0 -1 463.750 667.750 Tm(You)Tj
+1 0 0 -1 485.450 667.750 Tm(need)Tj
+1 0 0 -1 509.000 667.750 Tm(to)Tj
+1 0 0 -1 140.000 680.750 Tm(check)Tj
+1 0 0 -1 168.450 680.750 Tm(The)Tj
+1 0 0 -1 188.350 680.750 Tm(DeviceManufacturerInfo)Tj
+1 0 0 -1 300.450 680.750 Tm(register.)Tj
+1 0 0 -1 140.000 699.750 Tm(For)Tj
+1 0 0 -1 158.050 699.750 Tm(more)Tj
+1 0 0 -1 183.450 699.750 Tm(information,)Tj
+1 0 0 -1 240.900 699.750 Tm(see)Tj
+1 0 0 -1 257.700 699.750 Tm(http://www.dns-)Tj
+1 0 0 -1 329.550 699.750 Tm(sd.org)Tj
+ET
+endstream
+endobj
+48 0 obj
+8075
+endobj
+49 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 47 0 R
+>>
+endobj
+50 0 obj
+<< /Length 51 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(4)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 11.000 Tf
+1 0 0 -1 80.000 135.000 Tm(1.3.2.2.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.000 Tm(GigEVision)Tj
+1 0 0 -1 197.550 135.000 Tm(Control)Tj
+1 0 0 -1 236.150 135.000 Tm(Protocol)Tj
+1 0 0 -1 279.600 135.000 Tm(\(GVCP\))Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(GigEVision)Tj
+1 0 0 -1 195.350 160.500 Tm(camera)Tj
+1 0 0 -1 229.900 160.500 Tm(queries)Tj
+1 0 0 -1 264.450 160.500 Tm(return)Tj
+1 0 0 -1 293.500 160.500 Tm(the)Tj
+1 0 0 -1 309.700 160.500 Tm(model)Tj
+1 0 0 -1 339.950 160.500 Tm(name)Tj
+1 0 0 -1 366.550 160.500 Tm(and)Tj
+1 0 0 -1 385.200 160.500 Tm(MAC)Tj
+1 0 0 -1 413.050 160.500 Tm(address)Tj
+1 0 0 -1 448.800 160.500 Tm(of)Tj
+1 0 0 -1 460.750 160.500 Tm(the)Tj
+1 0 0 -1 476.950 160.500 Tm(cameras)Tj
+1 0 0 -1 140.000 173.500 Tm(found.)Tj
+1 0 0 -1 140.000 192.500 Tm(For)Tj
+1 0 0 -1 158.050 192.500 Tm(more)Tj
+1 0 0 -1 183.450 192.500 Tm(information,)Tj
+1 0 0 -1 240.900 192.500 Tm(see)Tj
+1 0 0 -1 257.700 192.500 Tm(http://www.machinevisiononline.org)Tj
+ET
+endstream
+endobj
+51 0 obj
+1650
+endobj
+52 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 50 0 R
+>>
+endobj
+53 0 obj
+<< /Length 54 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(5)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 137.200 Tm(2)Tj
+/F4Western 14.000 Tf
+1 0 0 -1 140.000 137.200 Tm(GeniCam)Tj
+1 0 0 -1 203.050 137.200 Tm(Commands)Tj
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 176.500 Tm(2.1)Tj
+/F4Western 12.000 Tf
+1 0 0 -1 140.000 176.500 Tm(Introduction)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 200.100 Tm(The)Tj
+1 0 0 -1 159.900 200.100 Tm(goal)Tj
+1 0 0 -1 181.600 200.100 Tm(of)Tj
+1 0 0 -1 193.550 200.100 Tm(GenICam)Tj
+1 0 0 -1 239.100 200.100 Tm(is)Tj
+1 0 0 -1 249.200 200.100 Tm(to)Tj
+1 0 0 -1 260.550 200.100 Tm(provide)Tj
+1 0 0 -1 296.950 200.100 Tm(a)Tj
+1 0 0 -1 304.600 200.100 Tm(generic)Tj
+1 0 0 -1 339.750 200.100 Tm(programming)Tj
+1 0 0 -1 402.400 200.100 Tm(interface)Tj
+1 0 0 -1 443.650 200.100 Tm(for)Tj
+1 0 0 -1 459.250 200.100 Tm(all)Tj
+1 0 0 -1 473.050 200.100 Tm(kinds)Tj
+1 0 0 -1 499.650 200.100 Tm(of)Tj
+1 0 0 -1 140.000 213.100 Tm(cameras.)Tj
+1 0 0 -1 140.000 232.100 Tm(The)Tj
+1 0 0 -1 159.900 232.100 Tm(GenICam)Tj
+1 0 0 -1 205.450 232.100 Tm(standard)Tj
+1 0 0 -1 245.500 232.100 Tm(consists)Tj
+1 0 0 -1 283.100 232.100 Tm(of)Tj
+1 0 0 -1 295.050 232.100 Tm(multiple)Tj
+1 0 0 -1 334.500 232.100 Tm(modules)Tj
+1 0 0 -1 374.550 232.100 Tm(according)Tj
+1 0 0 -1 420.700 232.100 Tm(to)Tj
+1 0 0 -1 432.050 232.100 Tm(the)Tj
+1 0 0 -1 448.250 232.100 Tm(main)Tj
+1 0 0 -1 473.050 232.100 Tm(tasks)Tj
+1 0 0 -1 497.850 232.100 Tm(to)Tj
+1 0 0 -1 509.200 232.100 Tm(be)Tj
+1 0 0 -1 140.000 245.100 Tm(solved:)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 264.200 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 264.200 Tm(GenApi)Tj
+1 0 0 -1 197.600 264.200 Tm(:)Tj
+1 0 0 -1 203.450 264.200 Tm(GenICam)Tj
+1 0 0 -1 249.000 264.200 Tm(application)Tj
+1 0 0 -1 300.650 264.200 Tm(programming)Tj
+1 0 0 -1 363.300 264.200 Tm(interface)Tj
+1 0 0 -1 404.550 264.200 Tm(\(API\))Tj
+1 0 0 -1 432.350 264.200 Tm(for)Tj
+1 0 0 -1 447.950 264.200 Tm(camera)Tj
+1 0 0 -1 160.000 277.100 Tm(configuration)Tj
+1 0 0 -1 222.050 277.100 Tm(and)Tj
+1 0 0 -1 240.700 277.100 Tm(control)Tj
+/F12Symbol 11.000 Tf
+1 0 0 -1 140.000 296.200 Tm(∑)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 160.000 296.200 Tm(GenTL)Tj
+1 0 0 -1 194.550 296.200 Tm(:)Tj
+1 0 0 -1 200.400 296.200 Tm(GenICam)Tj
+1 0 0 -1 245.950 296.200 Tm(transport)Tj
+1 0 0 -1 287.850 296.200 Tm(layer)Tj
+1 0 0 -1 312.600 296.200 Tm(\(TL\))Tj
+1 0 0 -1 336.150 296.200 Tm(for)Tj
+1 0 0 -1 351.750 296.200 Tm(grabbing)Tj
+1 0 0 -1 393.650 296.200 Tm(images)Tj
+1 0 0 -1 140.000 322.100 Tm(The)Tj
+1 0 0 -1 159.900 322.100 Tm(GenApi)Tj
+1 0 0 -1 197.500 322.100 Tm(module)Tj
+1 0 0 -1 233.300 322.100 Tm(deals)Tj
+1 0 0 -1 258.700 322.100 Tm(with)Tj
+1 0 0 -1 281.050 322.100 Tm(the)Tj
+1 0 0 -1 297.250 322.100 Tm(problem)Tj
+1 0 0 -1 336.700 322.100 Tm(of)Tj
+1 0 0 -1 348.650 322.100 Tm(how)Tj
+1 0 0 -1 370.350 322.100 Tm(to)Tj
+1 0 0 -1 381.700 322.100 Tm(configure)Tj
+1 0 0 -1 426.650 322.100 Tm(and)Tj
+1 0 0 -1 445.300 322.100 Tm(control)Tj
+1 0 0 -1 479.250 322.100 Tm(a)Tj
+1 0 0 -1 486.900 322.100 Tm(camera.)Tj
+1 0 0 -1 140.000 335.100 Tm(The)Tj
+1 0 0 -1 159.900 335.100 Tm(key)Tj
+1 0 0 -1 178.550 335.100 Tm(idea)Tj
+1 0 0 -1 199.650 335.100 Tm(is)Tj
+1 0 0 -1 209.750 335.100 Tm(to)Tj
+1 0 0 -1 221.100 335.100 Tm(make)Tj
+1 0 0 -1 247.700 335.100 Tm(camera)Tj
+1 0 0 -1 282.250 335.100 Tm(manufacturers)Tj
+1 0 0 -1 347.950 335.100 Tm(provide)Tj
+1 0 0 -1 384.350 335.100 Tm(machine)Tj
+1 0 0 -1 424.400 335.100 Tm(readable)Tj
+1 0 0 -1 464.450 335.100 Tm(versions)Tj
+1 0 0 -1 503.900 335.100 Tm(of)Tj
+1 0 0 -1 515.850 335.100 Tm(the)Tj
+1 0 0 -1 140.000 348.100 Tm(manuals)Tj
+1 0 0 -1 179.450 348.100 Tm(for)Tj
+1 0 0 -1 195.050 348.100 Tm(their)Tj
+1 0 0 -1 218.000 348.100 Tm(cameras.)Tj
+1 0 0 -1 259.550 348.100 Tm(These)Tj
+1 0 0 -1 288.600 348.100 Tm(camera)Tj
+1 0 0 -1 323.150 348.100 Tm(description)Tj
+1 0 0 -1 374.800 348.100 Tm(files)Tj
+1 0 0 -1 396.500 348.100 Tm(contain)Tj
+1 0 0 -1 431.650 348.100 Tm(all)Tj
+1 0 0 -1 445.450 348.100 Tm(of)Tj
+1 0 0 -1 457.400 348.100 Tm(the)Tj
+1 0 0 -1 473.600 348.100 Tm(required)Tj
+1 0 0 -1 140.000 361.100 Tm(information)Tj
+1 0 0 -1 194.700 361.100 Tm(to)Tj
+1 0 0 -1 206.050 361.100 Tm(automatically)Tj
+1 0 0 -1 268.700 361.100 Tm(map)Tj
+1 0 0 -1 290.400 361.100 Tm(a)Tj
+1 0 0 -1 298.050 361.100 Tm(cameraís)Tj
+1 0 0 -1 339.600 361.100 Tm(features)Tj
+1 0 0 -1 377.200 361.100 Tm(to)Tj
+1 0 0 -1 388.550 361.100 Tm(named)Tj
+/F1Western 11.000 Tf
+1 0 0 -1 420.650 361.100 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 459.200 361.100 Tm(.)Tj
+1 0 0 -1 140.000 380.100 Tm(The)Tj
+1 0 0 -1 159.900 380.100 Tm(GenTL)Tj
+1 0 0 -1 194.450 380.100 Tm(module)Tj
+1 0 0 -1 230.250 380.100 Tm(is)Tj
+1 0 0 -1 240.350 380.100 Tm(still)Tj
+1 0 0 -1 259.650 380.100 Tm(under)Tj
+1 0 0 -1 287.450 380.100 Tm(construction.)Tj
+1 0 0 -1 347.350 380.100 Tm(Until)Tj
+1 0 0 -1 372.750 380.100 Tm(it)Tj
+1 0 0 -1 381.650 380.100 Tm(is)Tj
+1 0 0 -1 391.750 380.100 Tm(finished,)Tj
+1 0 0 -1 432.700 380.100 Tm(image)Tj
+1 0 0 -1 462.350 380.100 Tm(transfers)Tj
+1 0 0 -1 503.000 380.100 Tm(are)Tj
+1 0 0 -1 140.000 393.100 Tm(made)Tj
+1 0 0 -1 166.600 393.100 Tm(through)Tj
+1 0 0 -1 203.600 393.100 Tm(software)Tj
+1 0 0 -1 244.250 393.100 Tm(environment)Tj
+1 0 0 -1 302.650 393.100 Tm(specific)Tj
+1 0 0 -1 339.650 393.100 Tm(interfaces.)Tj
+1 0 0 -1 140.000 412.100 Tm(This)Tj
+1 0 0 -1 162.350 412.100 Tm(section)Tj
+1 0 0 -1 196.300 412.100 Tm(defines)Tj
+1 0 0 -1 230.850 412.100 Tm(the)Tj
+1 0 0 -1 247.050 412.100 Tm(GenICam)Tj
+1 0 0 -1 292.600 412.100 Tm(registers)Tj
+1 0 0 -1 332.650 412.100 Tm(of)Tj
+1 0 0 -1 344.600 412.100 Tm(the)Tj
+1 0 0 -1 360.800 412.100 Tm(GigEVision)Tj
+1 0 0 -1 416.150 412.100 Tm(compatible)Tj
+1 0 0 -1 467.800 412.100 Tm(camera.)Tj
+1 0 0 -1 140.000 431.100 Tm(Inside)Tj
+1 0 0 -1 169.650 431.100 Tm(the)Tj
+1 0 0 -1 185.850 431.100 Tm(FLIR)Tj
+1 0 0 -1 212.450 431.100 Tm(IR)Tj
+1 0 0 -1 226.250 431.100 Tm(camera,)Tj
+1 0 0 -1 263.550 431.100 Tm(there)Tj
+1 0 0 -1 288.300 431.100 Tm(is)Tj
+1 0 0 -1 298.400 431.100 Tm(an)Tj
+1 0 0 -1 311.550 431.100 Tm(iPORT)Tj
+1 0 0 -1 345.500 431.100 Tm(IP)Tj
+1 0 0 -1 358.050 431.100 Tm(Engine.)Tj
+1 0 0 -1 394.750 431.100 Tm(It)Tj
+1 0 0 -1 404.250 431.100 Tm(has)Tj
+1 0 0 -1 421.700 431.100 Tm(a)Tj
+1 0 0 -1 429.350 431.100 Tm(number)Tj
+1 0 0 -1 465.750 431.100 Tm(of)Tj
+1 0 0 -1 477.700 431.100 Tm(status)Tj
+1 0 0 -1 140.000 444.100 Tm(registers)Tj
+1 0 0 -1 180.050 444.100 Tm(and)Tj
+1 0 0 -1 198.700 444.100 Tm(registers)Tj
+1 0 0 -1 238.750 444.100 Tm(that)Tj
+1 0 0 -1 258.050 444.100 Tm(control)Tj
+1 0 0 -1 292.000 444.100 Tm(the)Tj
+1 0 0 -1 308.200 444.100 Tm(way)Tj
+1 0 0 -1 329.300 444.100 Tm(in)Tj
+1 0 0 -1 340.650 444.100 Tm(which)Tj
+1 0 0 -1 370.300 444.100 Tm(it)Tj
+1 0 0 -1 379.200 444.100 Tm(acquires)Tj
+1 0 0 -1 418.650 444.100 Tm(images)Tj
+1 0 0 -1 452.600 444.100 Tm(from)Tj
+1 0 0 -1 476.750 444.100 Tm(the)Tj
+1 0 0 -1 492.950 444.100 Tm(camera.)Tj
+1 0 0 -1 140.000 463.100 Tm(From)Tj
+1 0 0 -1 166.600 463.100 Tm(the)Tj
+1 0 0 -1 182.800 463.100 Tm(iPORT)Tj
+1 0 0 -1 216.750 463.100 Tm(IP)Tj
+1 0 0 -1 229.300 463.100 Tm(Engine)Tj
+1 0 0 -1 263.250 463.100 Tm(point)Tj
+1 0 0 -1 288.650 463.100 Tm(of)Tj
+1 0 0 -1 300.600 463.100 Tm(view,)Tj
+1 0 0 -1 327.500 463.100 Tm(the)Tj
+1 0 0 -1 343.700 463.100 Tm(FLIR)Tj
+1 0 0 -1 370.300 463.100 Tm(IR)Tj
+1 0 0 -1 384.100 463.100 Tm(camera)Tj
+1 0 0 -1 418.650 463.100 Tm(is)Tj
+1 0 0 -1 428.750 463.100 Tm(regarded)Tj
+1 0 0 -1 470.000 463.100 Tm(as)Tj
+1 0 0 -1 481.950 463.100 Tm(a)Tj
+1 0 0 -1 489.600 463.100 Tm(GigE)Tj
+1 0 0 -1 140.000 476.100 Tm(Vision)Tj
+1 0 0 -1 172.100 476.100 Tm(device)Tj
+1 0 0 -1 203.600 476.100 Tm(with)Tj
+1 0 0 -1 225.950 476.100 Tm(some)Tj
+1 0 0 -1 251.950 476.100 Tm(special)Tj
+1 0 0 -1 285.250 476.100 Tm(FLIR)Tj
+1 0 0 -1 311.850 476.100 Tm(Camera)Tj
+1 0 0 -1 348.850 476.100 Tm(features.)Tj
+1 0 0 -1 140.000 495.100 Tm(To)Tj
+1 0 0 -1 155.000 495.100 Tm(be)Tj
+1 0 0 -1 168.150 495.100 Tm(able)Tj
+1 0 0 -1 189.250 495.100 Tm(to)Tj
+1 0 0 -1 200.600 495.100 Tm(use)Tj
+1 0 0 -1 218.050 495.100 Tm(these)Tj
+1 0 0 -1 243.450 495.100 Tm(registers)Tj
+1 0 0 -1 283.500 495.100 Tm(to)Tj
+1 0 0 -1 294.850 495.100 Tm(acquire)Tj
+1 0 0 -1 330.000 495.100 Tm(images)Tj
+1 0 0 -1 363.950 495.100 Tm(and)Tj
+1 0 0 -1 382.600 495.100 Tm(control)Tj
+1 0 0 -1 416.550 495.100 Tm(the)Tj
+1 0 0 -1 432.750 495.100 Tm(camera,)Tj
+1 0 0 -1 470.050 495.100 Tm(you)Tj
+1 0 0 -1 489.350 495.100 Tm(have)Tj
+1 0 0 -1 512.900 495.100 Tm(to)Tj
+1 0 0 -1 140.000 508.100 Tm(establish)Tj
+1 0 0 -1 181.300 508.100 Tm(a)Tj
+1 0 0 -1 188.950 508.100 Tm(connection)Tj
+1 0 0 -1 240.000 508.100 Tm(to)Tj
+1 0 0 -1 251.350 508.100 Tm(it)Tj
+1 0 0 -1 260.250 508.100 Tm(through)Tj
+1 0 0 -1 297.250 508.100 Tm(a)Tj
+1 0 0 -1 304.900 508.100 Tm(software)Tj
+1 0 0 -1 345.550 508.100 Tm(environment)Tj
+1 0 0 -1 403.950 508.100 Tm(that)Tj
+1 0 0 -1 423.250 508.100 Tm(meets)Tj
+1 0 0 -1 451.700 508.100 Tm(the)Tj
+1 0 0 -1 467.900 508.100 Tm(specifications)Tj
+1 0 0 -1 140.000 521.100 Tm(of)Tj
+1 0 0 -1 151.950 521.100 Tm(the)Tj
+1 0 0 -1 168.150 521.100 Tm(machine)Tj
+1 0 0 -1 208.200 521.100 Tm(vision)Tj
+1 0 0 -1 237.850 521.100 Tm(standards)Tj
+1 0 0 -1 282.150 521.100 Tm(GigE)Tj
+1 0 0 -1 308.150 521.100 Tm(Vision)Tj
+1 0 0 -1 340.250 521.100 Tm(and)Tj
+1 0 0 -1 358.900 521.100 Tm(GenICam,)Tj
+1 0 0 -1 407.200 521.100 Tm(such)Tj
+1 0 0 -1 430.150 521.100 Tm(as)Tj
+1 0 0 -1 442.100 521.100 Tm(the)Tj
+1 0 0 -1 458.300 521.100 Tm(eBus)Tj
+1 0 0 -1 483.100 521.100 Tm(SDK)Tj
+1 0 0 -1 507.900 521.100 Tm(from)Tj
+1 0 0 -1 140.000 534.100 Tm(Pleora)Tj
+1 0 0 -1 170.900 534.100 Tm(Technologies.)Tj
+ET
+endstream
+endobj
+54 0 obj
+10056
+endobj
+55 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 53 0 R
+>>
+endobj
+56 0 obj
+<< /Length 57 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(6)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 14.000 Tf
+1 0 0 -1 80.000 137.200 Tm(2.2)Tj
+/F4Western 12.000 Tf
+1 0 0 -1 140.000 137.200 Tm(GenICam)Tj
+1 0 0 -1 194.700 137.200 Tm(registers)Tj
+ET
+q
+100 0 0 -26 140 178 cm
+BI
+/W 2882
+/H 765
+/BPC 1
+/CS /G
+/F /CCITTFaxDecode
+/DP << /K -1 /Columns 2882 >>
+ID
+ˇˇˇˇˇˇˇˇˇÀm!Àl@hÇ!ñ€8A¬tË8Nù:tÈ”›:u›:”›:ÓªÆÎO”›i˙{ÆÎ∫”›w]÷ûÎ∫”Ù˜Z~ûÎ∫Ó¥˜]◊uß∫Ó¥˝=◊t@ÉÈ7ß•}∫OÓì÷ÙıΩ=+Ì“zWﬁï˜•}È7J˚“æÙõ’’È_zW€§˛È=+ÔJ˚t∫∑ß•}∫_nì÷ÙÙØ∑KÌ“∫æõØ¶È}∫][”tæ›.≠È∫˙nó€•’Ω]_M“˚tæ›.§∑¢.§E7‡Å∑H ˙Ñz7§æm“O™mË'“MæüT€“m“æ©∑•Íõzﬁíw”z]’6ıı€“oKæõ“ÓªÈ6Èw˜•›mÙ∑]Ω}-øoKæØK∫ÌÎÈm˚z]˝Èw]ΩoKøΩ.Îæª•∑˛ñ›w”›w◊u€÷ÙªÆ˙Óªz˙”t∑˝“w◊u€◊◊o[“ÓªÎ∫”z˙ÌÈﬁóuﬂ]◊oU◊o[“Ôªtæªz˙[~∫[uﬂOu€◊“€ˇJõ˚“Óñﬂ~ñﬂß•ﬂﬁóu€÷Ù™˛Ùª´æª•∑˜•›iı›w”›-øÙ©∫ÔÆÎæª•∑˜§’◊}w]ı›-øÙ©øΩ.Îæª´æ™Èm˝Èw]ı›w’]-æÔK∫ÔÆÈoÍÈm˝Èw]Ù˜™nøKoÔKøΩ.ÎOÆÈmˇ§Ì◊}U“ﬂ˜Knø≠∫¥˙Óñﬂ˙[zUu€◊“€ÓÙªÙÙªØÎnñﬂ˙T›N›-ˇt©∫˛∂Îæª•øÓìMˇ•∑]ı›*›-˚›-∫◊≠∫[˜∫T›N›*~˜JõÔ“iæÔJÆ≠>ö∫M?]&õ·Ö“	∫Ü–∑I˝“næõ§˛È7˙æÆì˚§›}7I˝“oÙõÔJÈ7˙EÂxÆê €§7·tÇo¬È €ÈÙÇm“OÈ∑I6˙}+oß“M∫Iø[•mıÈ&ﬁØÆ›$€ˇI[˜“V˝Ù∂Î˙VÈ[Èm’}m“€˜“€ˇKnø≠∫Tﬂæï7˛ì∑_÷›T›'o˝-∫µzﬁµzw•∑VΩSuT›]ΩWVõ§˛öoµ“i∫’Èß§”|5“a7VΩu^ò'®iΩ“	æWYÈuΩ=[◊J˚“o›}7^ôe¢.Ééü›w_O◊~üıﬂˇ˙˝ˇØ˛Ø˝ØkÍˆµ{Zµ}Z∞Ø+P¬µ
+R÷Po-a@6ÅƒµäÄ⁄ëˇˇˇˇˇˇˇˇˇ 
+EI
+Q
+BT
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 199.800 Tm(Depending)Tj
+1 0 0 -1 191.050 199.800 Tm(on)Tj
+1 0 0 -1 204.850 199.800 Tm(the)Tj
+1 0 0 -1 221.050 199.800 Tm(camera)Tj
+1 0 0 -1 255.600 199.800 Tm(model,)Tj
+1 0 0 -1 288.600 199.800 Tm(all)Tj
+1 0 0 -1 302.400 199.800 Tm(registers)Tj
+1 0 0 -1 342.450 199.800 Tm(may)Tj
+1 0 0 -1 364.150 199.800 Tm(not)Tj
+1 0 0 -1 381.000 199.800 Tm(be)Tj
+1 0 0 -1 394.150 199.800 Tm(available)Tj
+1 0 0 -1 436.650 199.800 Tm(or)Tj
+1 0 0 -1 448.600 199.800 Tm(functional)Tj
+1 0 0 -1 496.000 199.800 Tm(on)Tj
+1 0 0 -1 509.800 199.800 Tm(a)Tj
+1 0 0 -1 140.000 212.800 Tm(particular)Tj
+1 0 0 -1 184.950 212.800 Tm(camera.)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 253.000 Tm(2.2.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 253.000 Tm(Register)Tj
+1 0 0 -1 184.100 253.000 Tm(types)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 277.800 Tm(The)Tj
+1 0 0 -1 159.900 277.800 Tm(registers)Tj
+1 0 0 -1 199.950 277.800 Tm(have)Tj
+1 0 0 -1 223.500 277.800 Tm(one)Tj
+1 0 0 -1 242.150 277.800 Tm(of)Tj
+1 0 0 -1 254.100 277.800 Tm(the)Tj
+1 0 0 -1 270.300 277.800 Tm(following)Tj
+1 0 0 -1 315.850 277.800 Tm(types:)Tj
+ET
+q 0.000 g 140.000 297.800 381.500 0.750 re f Q
+q 0.000 g 140.000 457.550 381.500 0.750 re f Q
+q 0.000 g 140.000 297.800 0.750 160.500 re f Q
+q 0.000 g 520.750 297.800 0.750 160.500 re f Q
+q 0.000 g 140.750 318.450 76.000 0.100 re f Q
+q 0.000 g 216.650 298.550 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 308.550 Tm(Integer)Tj
+ET
+q 0.000 g 216.750 318.450 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 308.550 Tm(An)Tj
+1 0 0 -1 235.450 308.550 Tm(integer)Tj
+1 0 0 -1 268.750 308.550 Tm(value,)Tj
+1 0 0 -1 298.100 308.550 Tm(between)Tj
+1 0 0 -1 337.550 308.550 Tm(-)Tj
+1 0 0 -1 341.250 308.550 Tm(2)Tj
+1 0 0 -1 349.500 308.550 Tm(147)Tj
+1 0 0 -1 368.800 308.550 Tm(483)Tj
+1 0 0 -1 388.100 308.550 Tm(648)Tj
+1 0 0 -1 407.400 308.550 Tm(and)Tj
+1 0 0 -1 426.050 308.550 Tm(2)Tj
+1 0 0 -1 434.300 308.550 Tm(147)Tj
+1 0 0 -1 453.600 308.550 Tm(483)Tj
+1 0 0 -1 472.900 308.550 Tm(647.)Tj
+ET
+q 0.000 g 140.750 364.450 76.000 0.100 re f Q
+q 0.000 g 216.650 318.550 0.100 46.000 re f Q
+BT
+1 0 0 -1 143.250 328.550 Tm(String)Tj
+1 0 0 -1 143.250 341.550 Tm(\(max)Tj
+1 0 0 -1 168.650 341.550 Tm(length)Tj
+1 0 0 -1 143.250 354.550 Tm(including)Tj
+1 0 0 -1 187.600 354.550 Tm(null\))Tj
+ET
+q 0.000 g 216.750 364.450 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 328.550 Tm(An)Tj
+1 0 0 -1 235.450 328.550 Tm(ASCII)Tj
+1 0 0 -1 266.950 328.550 Tm(string,)Tj
+1 0 0 -1 297.550 328.550 Tm(for)Tj
+1 0 0 -1 313.150 328.550 Tm(example)Tj
+1 0 0 -1 353.200 328.550 Tm("ThermaCAM".)Tj
+1 0 0 -1 219.250 341.550 Tm(The)Tj
+1 0 0 -1 239.150 341.550 Tm(string)Tj
+1 0 0 -1 267.000 341.550 Tm(must)Tj
+1 0 0 -1 291.150 341.550 Tm(be)Tj
+1 0 0 -1 304.300 341.550 Tm(terminated)Tj
+1 0 0 -1 354.100 341.550 Tm(with)Tj
+1 0 0 -1 376.450 341.550 Tm(a)Tj
+1 0 0 -1 384.100 341.550 Tm(Null)Tj
+1 0 0 -1 406.450 341.550 Tm(\(binary)Tj
+1 0 0 -1 441.000 341.550 Tm(0\))Tj
+1 0 0 -1 452.950 341.550 Tm(character)Tj
+ET
+q 0.000 g 140.750 384.450 76.000 0.100 re f Q
+q 0.000 g 216.650 364.550 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 374.550 Tm(Bool)Tj
+ET
+q 0.000 g 216.750 384.450 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 374.550 Tm(The)Tj
+1 0 0 -1 239.150 374.550 Tm(integer)Tj
+1 0 0 -1 272.450 374.550 Tm(value)Tj
+1 0 0 -1 299.050 374.550 Tm(1)Tj
+1 0 0 -1 307.300 374.550 Tm(for)Tj
+1 0 0 -1 322.900 374.550 Tm(true,)Tj
+1 0 0 -1 345.550 374.550 Tm(or)Tj
+1 0 0 -1 357.500 374.550 Tm(the)Tj
+1 0 0 -1 373.700 374.550 Tm(integer)Tj
+1 0 0 -1 407.000 374.550 Tm(value)Tj
+1 0 0 -1 433.600 374.550 Tm(0)Tj
+1 0 0 -1 441.850 374.550 Tm(for)Tj
+1 0 0 -1 457.450 374.550 Tm(false.)Tj
+ET
+q 0.000 g 140.750 417.450 76.000 0.100 re f Q
+q 0.000 g 216.650 384.550 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 394.550 Tm(Float)Tj
+ET
+q 0.000 g 216.750 417.450 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 394.550 Tm(An)Tj
+1 0 0 -1 235.450 394.550 Tm(IEEE)Tj
+1 0 0 -1 262.050 394.550 Tm(754)Tj
+1 0 0 -1 281.350 394.550 Tm(-)Tj
+1 0 0 -1 285.050 394.550 Tm(1985)Tj
+1 0 0 -1 309.850 394.550 Tm(encoded)Tj
+1 0 0 -1 349.300 394.550 Tm(floating)Tj
+1 0 0 -1 386.300 394.550 Tm(point)Tj
+1 0 0 -1 411.700 394.550 Tm(value,)Tj
+1 0 0 -1 441.050 394.550 Tm(between)Tj
+1 0 0 -1 219.250 407.550 Tm(±3.4028235◊10^38)Tj
+1 0 0 -1 308.350 407.550 Tm(.)Tj
+ET
+q 0.000 g 140.750 437.450 76.000 0.100 re f Q
+q 0.000 g 216.650 417.550 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 427.550 Tm(Enum)Tj
+ET
+q 0.000 g 216.750 437.450 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 427.550 Tm(An)Tj
+1 0 0 -1 235.450 427.550 Tm(integer)Tj
+1 0 0 -1 268.750 427.550 Tm(value)Tj
+1 0 0 -1 295.350 427.550 Tm(with)Tj
+1 0 0 -1 317.700 427.550 Tm(a)Tj
+1 0 0 -1 325.350 427.550 Tm(specific)Tj
+1 0 0 -1 362.350 427.550 Tm(encoding.)Tj
+ET
+q 0.000 g 216.650 437.550 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 447.550 Tm(Cmd)Tj
+1 0 0 -1 219.250 447.550 Tm(An)Tj
+1 0 0 -1 235.450 447.550 Tm(integer)Tj
+1 0 0 -1 268.750 447.550 Tm(value)Tj
+1 0 0 -1 295.350 447.550 Tm(with)Tj
+1 0 0 -1 317.700 447.550 Tm(a)Tj
+1 0 0 -1 325.350 447.550 Tm(specific)Tj
+1 0 0 -1 362.350 447.550 Tm(encoding)Tj
+1 0 0 -1 405.450 447.550 Tm(used)Tj
+1 0 0 -1 428.400 447.550 Tm(as)Tj
+1 0 0 -1 440.350 447.550 Tm(a)Tj
+1 0 0 -1 448.000 447.550 Tm(command.)Tj
+1 0 0 -1 140.000 492.550 Tm(They)Tj
+1 0 0 -1 165.400 492.550 Tm(can)Tj
+1 0 0 -1 183.450 492.550 Tm(be)Tj
+1 0 0 -1 196.600 492.550 Tm(accessed)Tj
+1 0 0 -1 237.850 492.550 Tm(in)Tj
+1 0 0 -1 249.200 492.550 Tm(one)Tj
+1 0 0 -1 267.850 492.550 Tm(of)Tj
+1 0 0 -1 279.800 492.550 Tm(these)Tj
+1 0 0 -1 305.200 492.550 Tm(three)Tj
+1 0 0 -1 329.950 492.550 Tm(ways:)Tj
+ET
+q 0.000 g 140.000 512.550 381.500 0.750 re f Q
+q 0.000 g 140.000 573.300 381.500 0.750 re f Q
+q 0.000 g 140.000 512.550 0.750 61.500 re f Q
+q 0.000 g 520.750 512.550 0.750 61.500 re f Q
+q 0.000 g 140.750 533.200 76.000 0.100 re f Q
+q 0.000 g 216.650 513.300 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 523.300 Tm(RO)Tj
+ET
+q 0.000 g 216.750 533.200 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 523.300 Tm(Read)Tj
+1 0 0 -1 244.650 523.300 Tm(only)Tj
+ET
+q 0.000 g 140.750 553.200 76.000 0.100 re f Q
+q 0.000 g 216.650 533.300 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 543.300 Tm(RW)Tj
+ET
+q 0.000 g 216.750 553.200 304.000 0.100 re f Q
+BT
+1 0 0 -1 219.250 543.300 Tm(Read)Tj
+1 0 0 -1 244.650 543.300 Tm(write)Tj
+ET
+q 0.000 g 216.650 553.300 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 563.300 Tm(WO)Tj
+1 0 0 -1 219.250 563.300 Tm(Write)Tj
+1 0 0 -1 247.050 563.300 Tm(only)Tj
+ET
+endstream
+endobj
+57 0 obj
+8237
+endobj
+58 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 56 0 R
+>>
+endobj
+59 0 obj
+<< /Length 60 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(7)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(IP)Tj
+1 0 0 -1 153.500 135.700 Tm(Engine)Tj
+1 0 0 -1 190.850 135.700 Tm(status)Tj
+1 0 0 -1 223.300 135.700 Tm(and)Tj
+1 0 0 -1 244.750 135.700 Tm(control)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(To)Tj
+1 0 0 -1 155.000 160.500 Tm(establish)Tj
+1 0 0 -1 196.300 160.500 Tm(a)Tj
+1 0 0 -1 203.950 160.500 Tm(connection)Tj
+1 0 0 -1 255.000 160.500 Tm(through)Tj
+1 0 0 -1 292.000 160.500 Tm(the)Tj
+1 0 0 -1 308.200 160.500 Tm(Pleora)Tj
+1 0 0 -1 339.100 160.500 Tm(Indigo)Tj
+1 0 0 -1 370.600 160.500 Tm(SDK,)Tj
+1 0 0 -1 398.150 160.500 Tm(you)Tj
+1 0 0 -1 417.450 160.500 Tm(have)Tj
+1 0 0 -1 441.000 160.500 Tm(to)Tj
+1 0 0 -1 452.350 160.500 Tm(connect)Tj
+1 0 0 -1 489.350 160.500 Tm(using)Tj
+1 0 0 -1 515.950 160.500 Tm(the)Tj
+1 0 0 -1 140.000 173.500 Tm(IP-)Tj
+1 0 0 -1 153.450 173.500 Tm(number)Tj
+1 0 0 -1 189.850 173.500 Tm(of)Tj
+1 0 0 -1 201.800 173.500 Tm(the)Tj
+1 0 0 -1 218.000 173.500 Tm(camera)Tj
+1 0 0 -1 252.550 173.500 Tm(and)Tj
+1 0 0 -1 271.200 173.500 Tm(retrieve)Tj
+1 0 0 -1 307.550 173.500 Tm(a)Tj
+1 0 0 -1 315.200 173.500 Tm(handle)Tj
+1 0 0 -1 347.300 173.500 Tm(to)Tj
+1 0 0 -1 358.650 173.500 Tm(the)Tj
+1 0 0 -1 374.850 173.500 Tm(map)Tj
+1 0 0 -1 396.550 173.500 Tm(of)Tj
+1 0 0 -1 408.500 173.500 Tm(register)Tj
+1 0 0 -1 444.250 173.500 Tm(nodes.)Tj
+1 0 0 -1 475.450 173.500 Tm(Information)Tj
+1 0 0 -1 140.000 186.500 Tm(about)Tj
+1 0 0 -1 167.200 186.500 Tm(them)Tj
+1 0 0 -1 192.000 186.500 Tm(will)Tj
+1 0 0 -1 211.900 186.500 Tm(automatically)Tj
+1 0 0 -1 274.550 186.500 Tm(be)Tj
+1 0 0 -1 287.700 186.500 Tm(downloaded)Tj
+1 0 0 -1 344.250 186.500 Tm(from)Tj
+1 0 0 -1 368.400 186.500 Tm(the)Tj
+1 0 0 -1 384.600 186.500 Tm(camera.)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 226.700 Tm(2.2.2.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 226.700 Tm(Device)Tj
+1 0 0 -1 176.750 226.700 Tm(Information)Tj
+1 0 0 -1 234.900 226.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 251.500 Tm(Registers)Tj
+1 0 0 -1 183.700 251.500 Tm(associated)Tj
+1 0 0 -1 231.700 251.500 Tm(with)Tj
+1 0 0 -1 254.050 251.500 Tm(device)Tj
+1 0 0 -1 285.550 251.500 Tm(information)Tj
+ET
+q 0.000 g 140.000 270.000 392.500 0.750 re f Q
+q 0.000 g 140.000 290.750 392.500 0.750 re f Q
+q 0.000 g 140.000 270.000 0.750 21.500 re f Q
+q 0.000 g 531.750 270.000 0.750 21.500 re f Q
+q 0.000 g 254.650 270.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 280.750 Tm(Name)Tj
+ET
+q 0.000 g 288.650 270.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 257.250 280.750 Tm(Type)Tj
+ET
+q 0.000 g 324.650 270.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 291.250 280.750 Tm(Access)Tj
+1 0 0 -1 327.250 280.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 489.500 392.500 0.750 re f Q
+q 0.000 g 140.000 291.500 0.750 198.750 re f Q
+q 0.000 g 531.750 291.500 0.750 198.750 re f Q
+q 0.000 g 140.750 324.400 114.000 0.100 re f Q
+q 0.000 g 254.650 291.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 301.500 Tm(DeviceVendorName)Tj
+ET
+q 0.000 g 254.750 324.400 34.000 0.100 re f Q
+q 0.000 g 288.650 291.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 257.250 301.500 Tm(String)Tj
+1 0 0 -1 257.250 314.500 Tm(\(32\))Tj
+ET
+q 0.000 g 288.750 324.400 36.000 0.100 re f Q
+q 0.000 g 324.650 291.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 291.250 301.500 Tm(RO)Tj
+ET
+q 0.000 g 324.750 324.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 327.250 301.500 Tm(Provides)Tj
+1 0 0 -1 368.550 301.500 Tm(the)Tj
+1 0 0 -1 384.750 301.500 Tm(name)Tj
+1 0 0 -1 411.350 301.500 Tm(of)Tj
+1 0 0 -1 423.300 301.500 Tm(the)Tj
+1 0 0 -1 439.500 301.500 Tm(manufacturer)Tj
+1 0 0 -1 500.900 301.500 Tm(of)Tj
+1 0 0 -1 512.850 301.500 Tm(the)Tj
+1 0 0 -1 327.250 314.500 Tm(device.)Tj
+ET
+q 0.000 g 140.750 357.400 114.000 0.100 re f Q
+q 0.000 g 254.650 324.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 334.500 Tm(DeviceModelName)Tj
+ET
+q 0.000 g 254.750 357.400 34.000 0.100 re f Q
+q 0.000 g 288.650 324.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 257.250 334.500 Tm(String)Tj
+1 0 0 -1 257.250 347.500 Tm(\(32\))Tj
+ET
+q 0.000 g 288.750 357.400 36.000 0.100 re f Q
+q 0.000 g 324.650 324.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 291.250 334.500 Tm(RO)Tj
+ET
+q 0.000 g 324.750 357.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 327.250 334.500 Tm(Provides)Tj
+1 0 0 -1 368.550 334.500 Tm(the)Tj
+1 0 0 -1 384.750 334.500 Tm(model)Tj
+1 0 0 -1 415.000 334.500 Tm(of)Tj
+1 0 0 -1 426.950 334.500 Tm(the)Tj
+1 0 0 -1 443.150 334.500 Tm(device.)Tj
+ET
+q 0.000 g 140.750 390.400 114.000 0.100 re f Q
+q 0.000 g 254.650 357.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 367.500 Tm(DeviceVersion)Tj
+ET
+q 0.000 g 254.750 390.400 34.000 0.100 re f Q
+q 0.000 g 288.650 357.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 257.250 367.500 Tm(String)Tj
+1 0 0 -1 257.250 380.500 Tm(\(32\))Tj
+ET
+q 0.000 g 288.750 390.400 36.000 0.100 re f Q
+q 0.000 g 324.650 357.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 291.250 367.500 Tm(RO)Tj
+ET
+q 0.000 g 324.750 390.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 327.250 367.500 Tm(Provides)Tj
+1 0 0 -1 368.550 367.500 Tm(the)Tj
+1 0 0 -1 384.750 367.500 Tm(version)Tj
+1 0 0 -1 419.900 367.500 Tm(of)Tj
+1 0 0 -1 431.850 367.500 Tm(the)Tj
+1 0 0 -1 448.050 367.500 Tm(device.)Tj
+ET
+q 0.000 g 140.750 423.400 114.000 0.100 re f Q
+q 0.000 g 254.650 390.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 400.500 Tm(DeviceManufacturerInfo)Tj
+ET
+q 0.000 g 254.750 423.400 34.000 0.100 re f Q
+q 0.000 g 288.650 390.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 257.250 400.500 Tm(String)Tj
+1 0 0 -1 257.250 413.500 Tm(\(48\))Tj
+ET
+q 0.000 g 288.750 423.400 36.000 0.100 re f Q
+q 0.000 g 324.650 390.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 291.250 400.500 Tm(RO)Tj
+ET
+q 0.000 g 324.750 423.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 327.250 400.500 Tm(Provides)Tj
+1 0 0 -1 368.550 400.500 Tm(extended)Tj
+1 0 0 -1 411.050 400.500 Tm(manufacturer)Tj
+1 0 0 -1 472.450 400.500 Tm(information)Tj
+1 0 0 -1 327.250 413.500 Tm(about)Tj
+1 0 0 -1 354.450 413.500 Tm(the)Tj
+1 0 0 -1 370.650 413.500 Tm(device.)Tj
+1 0 0 -1 404.900 413.500 Tm(*\))Tj
+ET
+q 0.000 g 140.750 456.400 114.000 0.100 re f Q
+q 0.000 g 254.650 423.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 433.500 Tm(DeviceID)Tj
+ET
+q 0.000 g 254.750 456.400 34.000 0.100 re f Q
+q 0.000 g 288.650 423.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 257.250 433.500 Tm(String)Tj
+1 0 0 -1 257.250 446.500 Tm(\(16\))Tj
+ET
+q 0.000 g 288.750 456.400 36.000 0.100 re f Q
+q 0.000 g 324.650 423.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 291.250 433.500 Tm(RO)Tj
+ET
+q 0.000 g 324.750 456.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 327.250 433.500 Tm(This)Tj
+1 0 0 -1 349.600 433.500 Tm(register)Tj
+1 0 0 -1 385.350 433.500 Tm(holds)Tj
+1 0 0 -1 411.950 433.500 Tm(a)Tj
+1 0 0 -1 419.600 433.500 Tm(camera)Tj
+1 0 0 -1 454.150 433.500 Tm(identifier.)Tj
+ET
+q 0.000 g 254.650 456.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 466.500 Tm(DeviceUserID)Tj
+ET
+q 0.000 g 288.650 456.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 257.250 466.500 Tm(String)Tj
+1 0 0 -1 257.250 479.500 Tm(\(16\))Tj
+ET
+q 0.000 g 324.650 456.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 291.250 466.500 Tm(RW)Tj
+1 0 0 -1 327.250 466.500 Tm(This)Tj
+1 0 0 -1 349.600 466.500 Tm(register)Tj
+1 0 0 -1 385.350 466.500 Tm(holds)Tj
+1 0 0 -1 411.950 466.500 Tm(a)Tj
+1 0 0 -1 419.600 466.500 Tm(user-)Tj
+1 0 0 -1 441.600 466.500 Tm(programmable)Tj
+1 0 0 -1 327.250 479.500 Tm(identifier)Tj
+1 0 0 -1 140.000 524.500 Tm(*\))Tj
+1 0 0 -1 151.950 524.500 Tm(The)Tj
+1 0 0 -1 171.850 524.500 Tm(DeviceManufacturerInfo)Tj
+1 0 0 -1 283.950 524.500 Tm(register)Tj
+1 0 0 -1 319.700 524.500 Tm(contains)Tj
+1 0 0 -1 359.150 524.500 Tm(six)Tj
+1 0 0 -1 374.750 524.500 Tm(entries)Tj
+1 0 0 -1 406.850 524.500 Tm(separated)Tj
+1 0 0 -1 451.150 524.500 Tm(by)Tj
+1 0 0 -1 464.950 524.500 Tm(commas)Tj
+1 0 0 -1 140.000 537.500 Tm(\(Camera)Tj
+1 0 0 -1 180.650 537.500 Tm(ID,)Tj
+1 0 0 -1 197.800 537.500 Tm(Generic)Tj
+1 0 0 -1 235.400 537.500 Tm(ID,)Tj
+1 0 0 -1 252.550 537.500 Tm(Streaming)Tj
+1 0 0 -1 300.550 537.500 Tm(interface,)Tj
+1 0 0 -1 344.550 537.500 Tm(Streaming)Tj
+1 0 0 -1 392.550 537.500 Tm(interface)Tj
+1 0 0 -1 433.800 537.500 Tm(version,)Tj
+1 0 0 -1 471.700 537.500 Tm(Command)Tj
+1 0 0 -1 140.000 550.500 Tm(interface,)Tj
+1 0 0 -1 184.000 550.500 Tm(Command)Tj
+1 0 0 -1 232.600 550.500 Tm(interface)Tj
+1 0 0 -1 273.850 550.500 Tm(version\),)Tj
+1 0 0 -1 315.400 550.500 Tm(for)Tj
+1 0 0 -1 331.000 550.500 Tm(example:)Tj
+1 0 0 -1 374.100 550.500 Tm("A320G,)Tj
+1 0 0 -1 416.500 550.500 Tm(Gen_A/G,)Tj
+1 0 0 -1 464.800 550.500 Tm(GEV,)Tj
+1 0 0 -1 140.000 563.500 Tm(1.0.0,GEV,0.2.1".)Tj
+ET
+endstream
+endobj
+60 0 obj
+9069
+endobj
+61 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 59 0 R
+>>
+endobj
+62 0 obj
+<< /Length 63 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(8)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.2.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(IP)Tj
+1 0 0 -1 153.500 135.700 Tm(Engine)Tj
+1 0 0 -1 190.850 135.700 Tm(status)Tj
+1 0 0 -1 223.300 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(the)Tj
+1 0 0 -1 270.250 160.500 Tm(IP)Tj
+1 0 0 -1 282.800 160.500 Tm(Engine)Tj
+1 0 0 -1 316.750 160.500 Tm(status)Tj
+ET
+q 0.000 g 140.000 179.000 431.500 0.750 re f Q
+q 0.000 g 140.000 199.750 431.500 0.750 re f Q
+q 0.000 g 140.000 179.000 0.750 21.500 re f Q
+q 0.000 g 570.750 179.000 0.750 21.500 re f Q
+q 0.000 g 291.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 189.750 Tm(Name)Tj
+ET
+q 0.000 g 327.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 294.250 189.750 Tm(Type)Tj
+ET
+q 0.000 g 363.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 330.250 189.750 Tm(Access)Tj
+1 0 0 -1 366.250 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 351.500 431.500 0.750 re f Q
+q 0.000 g 140.000 200.500 0.750 151.750 re f Q
+q 0.000 g 570.750 200.500 0.750 151.750 re f Q
+q 0.000 g 140.750 233.400 151.000 0.100 re f Q
+q 0.000 g 291.650 200.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 210.500 Tm(IPEngineFirmwareVersionMajor)Tj
+ET
+q 0.000 g 291.750 233.400 36.000 0.100 re f Q
+q 0.000 g 327.650 200.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 294.250 210.500 Tm(Integer)Tj
+ET
+q 0.000 g 327.750 233.400 36.000 0.100 re f Q
+q 0.000 g 363.650 200.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 330.250 210.500 Tm(RO)Tj
+ET
+q 0.000 g 363.750 233.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 366.250 210.500 Tm(This)Tj
+1 0 0 -1 388.600 210.500 Tm(register)Tj
+1 0 0 -1 424.350 210.500 Tm(represents)Tj
+1 0 0 -1 471.700 210.500 Tm(the)Tj
+1 0 0 -1 487.900 210.500 Tm(major)Tj
+1 0 0 -1 516.350 210.500 Tm(version)Tj
+1 0 0 -1 551.500 210.500 Tm(of)Tj
+1 0 0 -1 366.250 223.500 Tm(the)Tj
+1 0 0 -1 382.450 223.500 Tm(iPORT)Tj
+1 0 0 -1 416.400 223.500 Tm(IP)Tj
+1 0 0 -1 428.950 223.500 Tm(Engine)Tj
+1 0 0 -1 462.900 223.500 Tm(firmware.)Tj
+ET
+q 0.000 g 140.750 266.400 151.000 0.100 re f Q
+q 0.000 g 291.650 233.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 243.500 Tm(IPEngineFirmwareVersionMinor)Tj
+ET
+q 0.000 g 291.750 266.400 36.000 0.100 re f Q
+q 0.000 g 327.650 233.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 294.250 243.500 Tm(Integer)Tj
+ET
+q 0.000 g 327.750 266.400 36.000 0.100 re f Q
+q 0.000 g 363.650 233.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 330.250 243.500 Tm(RO)Tj
+ET
+q 0.000 g 363.750 266.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 366.250 243.500 Tm(This)Tj
+1 0 0 -1 388.600 243.500 Tm(register)Tj
+1 0 0 -1 424.350 243.500 Tm(represents)Tj
+1 0 0 -1 471.700 243.500 Tm(the)Tj
+1 0 0 -1 487.900 243.500 Tm(minor)Tj
+1 0 0 -1 516.950 243.500 Tm(version)Tj
+1 0 0 -1 552.100 243.500 Tm(of)Tj
+1 0 0 -1 366.250 256.500 Tm(the)Tj
+1 0 0 -1 382.450 256.500 Tm(iPORT)Tj
+1 0 0 -1 416.400 256.500 Tm(IP)Tj
+1 0 0 -1 428.950 256.500 Tm(Engine)Tj
+1 0 0 -1 462.900 256.500 Tm(firmware.)Tj
+ET
+q 0.000 g 291.650 266.500 0.100 85.000 re f Q
+BT
+1 0 0 -1 143.250 276.500 Tm(IPEngineInitSequenceStatus)Tj
+ET
+q 0.000 g 327.650 266.500 0.100 85.000 re f Q
+BT
+1 0 0 -1 294.250 276.500 Tm(Integer)Tj
+ET
+q 0.000 g 363.650 266.500 0.100 85.000 re f Q
+BT
+1 0 0 -1 330.250 276.500 Tm(RO)Tj
+1 0 0 -1 366.250 276.500 Tm(This)Tj
+1 0 0 -1 388.600 276.500 Tm(register)Tj
+1 0 0 -1 424.350 276.500 Tm(reports)Tj
+1 0 0 -1 457.650 276.500 Tm(the)Tj
+1 0 0 -1 473.850 276.500 Tm(status)Tj
+1 0 0 -1 501.700 276.500 Tm(of)Tj
+1 0 0 -1 513.650 276.500 Tm(the)Tj
+1 0 0 -1 366.250 289.500 Tm(initialization)Tj
+1 0 0 -1 424.650 289.500 Tm(sequence.)Tj
+1 0 0 -1 470.500 289.500 Tm(A)Tj
+1 0 0 -1 481.200 289.500 Tm(null)Tj
+1 0 0 -1 501.100 289.500 Tm(value)Tj
+1 0 0 -1 527.700 289.500 Tm(indicates)Tj
+1 0 0 -1 366.250 302.500 Tm(that)Tj
+1 0 0 -1 385.550 302.500 Tm(the)Tj
+1 0 0 -1 401.750 302.500 Tm(initialization)Tj
+1 0 0 -1 460.150 302.500 Tm(sequence)Tj
+1 0 0 -1 503.250 302.500 Tm(ran)Tj
+1 0 0 -1 366.250 315.500 Tm(successfully.)Tj
+1 0 0 -1 425.550 315.500 Tm(Otherwise,)Tj
+1 0 0 -1 476.300 315.500 Tm(it)Tj
+1 0 0 -1 485.200 315.500 Tm(returns)Tj
+1 0 0 -1 518.500 315.500 Tm(the)Tj
+1 0 0 -1 534.700 315.500 Tm(index)Tj
+1 0 0 -1 366.250 328.500 Tm(of)Tj
+1 0 0 -1 378.200 328.500 Tm(the)Tj
+1 0 0 -1 394.400 328.500 Tm(register)Tj
+1 0 0 -1 430.150 328.500 Tm(write)Tj
+1 0 0 -1 455.550 328.500 Tm(that)Tj
+1 0 0 -1 474.850 328.500 Tm(failed)Tj
+1 0 0 -1 502.650 328.500 Tm(in)Tj
+1 0 0 -1 514.000 328.500 Tm(the)Tj
+1 0 0 -1 366.250 341.500 Tm(sequence.)Tj
+ET
+endstream
+endobj
+63 0 obj
+5188
+endobj
+64 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 62 0 R
+>>
+endobj
+65 0 obj
+<< /Length 66 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(9)Tj
+1 0 0 -1 518.600 54.250 Tm( \()Tj
+1 0 0 -1 524.750 54.250 Tm(19)Tj
+1 0 0 -1 535.900 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.3)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(GigE)Tj
+1 0 0 -1 167.600 135.700 Tm(Vision)Tj
+1 0 0 -1 200.700 135.700 Tm(\(GEV\))Tj
+1 0 0 -1 234.400 135.700 Tm(standard)Tj
+1 0 0 -1 280.350 135.700 Tm(interface)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 174.700 Tm(2.2.3.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 174.700 Tm(GigE)Tj
+1 0 0 -1 167.600 174.700 Tm(Vision)Tj
+1 0 0 -1 200.700 174.700 Tm(Image)Tj
+1 0 0 -1 234.400 174.700 Tm(size)Tj
+1 0 0 -1 257.100 174.700 Tm(control)Tj
+1 0 0 -1 293.250 174.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 199.500 Tm(Registers)Tj
+1 0 0 -1 183.700 199.500 Tm(associated)Tj
+1 0 0 -1 231.700 199.500 Tm(with)Tj
+1 0 0 -1 254.050 199.500 Tm(the)Tj
+1 0 0 -1 270.250 199.500 Tm(image)Tj
+1 0 0 -1 299.900 199.500 Tm(size.)Tj
+ET
+q 0.000 g 140.000 218.000 384.500 0.750 re f Q
+q 0.000 g 140.000 238.750 384.500 0.750 re f Q
+q 0.000 g 140.000 218.000 0.750 21.500 re f Q
+q 0.000 g 523.750 218.000 0.750 21.500 re f Q
+q 0.000 g 244.650 218.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 228.750 Tm(Name)Tj
+ET
+q 0.000 g 280.650 218.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 228.750 Tm(Type)Tj
+ET
+q 0.000 g 316.650 218.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 228.750 Tm(Access)Tj
+1 0 0 -1 319.250 228.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 643.500 384.500 0.750 re f Q
+q 0.000 g 140.000 239.500 0.750 404.750 re f Q
+q 0.000 g 523.750 239.500 0.750 404.750 re f Q
+q 0.000 g 140.750 285.400 104.000 0.100 re f Q
+q 0.000 g 244.650 239.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 143.250 249.500 Tm(Width)Tj
+ET
+q 0.000 g 244.750 285.400 36.000 0.100 re f Q
+q 0.000 g 280.650 239.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 247.250 249.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 285.400 36.000 0.100 re f Q
+q 0.000 g 316.650 239.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 283.250 249.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 285.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 249.500 Tm(This)Tj
+1 0 0 -1 341.600 249.500 Tm(register)Tj
+1 0 0 -1 377.350 249.500 Tm(represents)Tj
+1 0 0 -1 424.700 249.500 Tm(the)Tj
+1 0 0 -1 440.900 249.500 Tm(current)Tj
+1 0 0 -1 474.850 249.500 Tm(image)Tj
+1 0 0 -1 319.250 262.500 Tm(width)Tj
+1 0 0 -1 347.100 262.500 Tm(from)Tj
+1 0 0 -1 371.250 262.500 Tm(the)Tj
+1 0 0 -1 387.450 262.500 Tm(camera)Tj
+1 0 0 -1 422.000 262.500 Tm(\(in)Tj
+1 0 0 -1 437.000 262.500 Tm(pixels\).)Tj
+1 0 0 -1 472.450 262.500 Tm(Mandatory)Tj
+1 0 0 -1 319.250 275.500 Tm(GEV)Tj
+1 0 0 -1 344.650 275.500 Tm(feature.)Tj
+ET
+q 0.000 g 140.750 331.400 104.000 0.100 re f Q
+q 0.000 g 244.650 285.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 143.250 295.500 Tm(Height)Tj
+ET
+q 0.000 g 244.750 331.400 36.000 0.100 re f Q
+q 0.000 g 280.650 285.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 247.250 295.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 331.400 36.000 0.100 re f Q
+q 0.000 g 316.650 285.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 283.250 295.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 331.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 295.500 Tm(This)Tj
+1 0 0 -1 341.600 295.500 Tm(register)Tj
+1 0 0 -1 377.350 295.500 Tm(represents)Tj
+1 0 0 -1 424.700 295.500 Tm(the)Tj
+1 0 0 -1 440.900 295.500 Tm(current)Tj
+1 0 0 -1 474.850 295.500 Tm(image)Tj
+1 0 0 -1 319.250 308.500 Tm(height)Tj
+1 0 0 -1 349.500 308.500 Tm(from)Tj
+1 0 0 -1 373.650 308.500 Tm(the)Tj
+1 0 0 -1 389.850 308.500 Tm(camera)Tj
+1 0 0 -1 424.400 308.500 Tm(\(in)Tj
+1 0 0 -1 439.400 308.500 Tm(pixels\).)Tj
+1 0 0 -1 319.250 321.500 Tm(Mandatory)Tj
+1 0 0 -1 370.300 321.500 Tm(GEV)Tj
+1 0 0 -1 395.700 321.500 Tm(feature.)Tj
+ET
+q 0.000 g 140.750 403.400 104.000 0.100 re f Q
+q 0.000 g 244.650 331.500 0.100 72.000 re f Q
+BT
+1 0 0 -1 143.250 341.500 Tm(OffsetX)Tj
+ET
+q 0.000 g 244.750 403.400 36.000 0.100 re f Q
+q 0.000 g 280.650 331.500 0.100 72.000 re f Q
+BT
+1 0 0 -1 247.250 341.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 403.400 36.000 0.100 re f Q
+q 0.000 g 316.650 331.500 0.100 72.000 re f Q
+BT
+1 0 0 -1 283.250 341.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 403.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 341.500 Tm(This)Tj
+1 0 0 -1 341.600 341.500 Tm(register)Tj
+1 0 0 -1 377.350 341.500 Tm(represents)Tj
+1 0 0 -1 424.700 341.500 Tm(the)Tj
+1 0 0 -1 440.900 341.500 Tm(horizontal)Tj
+1 0 0 -1 319.250 354.500 Tm(distance)Tj
+1 0 0 -1 358.050 354.500 Tm(\(in)Tj
+1 0 0 -1 373.050 354.500 Tm(pixels\))Tj
+1 0 0 -1 405.750 354.500 Tm(from)Tj
+1 0 0 -1 429.900 354.500 Tm(the)Tj
+1 0 0 -1 446.100 354.500 Tm(center)Tj
+1 0 0 -1 475.750 354.500 Tm(of)Tj
+1 0 0 -1 487.700 354.500 Tm(the)Tj
+1 0 0 -1 319.250 367.500 Tm(detector)Tj
+1 0 0 -1 357.450 367.500 Tm(to)Tj
+1 0 0 -1 368.800 367.500 Tm(the)Tj
+1 0 0 -1 385.000 367.500 Tm(center)Tj
+1 0 0 -1 414.650 367.500 Tm(of)Tj
+1 0 0 -1 426.600 367.500 Tm(the)Tj
+1 0 0 -1 442.800 367.500 Tm(image.)Tj
+1 0 0 -1 475.200 367.500 Tm(This)Tj
+1 0 0 -1 319.250 380.500 Tm(offset)Tj
+1 0 0 -1 347.050 380.500 Tm(plus)Tj
+1 0 0 -1 368.150 380.500 Tm(the)Tj
+1 0 0 -1 384.350 380.500 Tm(current)Tj
+1 0 0 -1 418.300 380.500 Tm(image)Tj
+1 0 0 -1 447.950 380.500 Tm(width)Tj
+1 0 0 -1 475.800 380.500 Tm(cannot)Tj
+1 0 0 -1 319.250 393.500 Tm(exceed)Tj
+1 0 0 -1 352.550 393.500 Tm(the)Tj
+1 0 0 -1 368.750 393.500 Tm(detector)Tj
+1 0 0 -1 406.950 393.500 Tm(width.)Tj
+ET
+q 0.000 g 140.750 475.400 104.000 0.100 re f Q
+q 0.000 g 244.650 403.500 0.100 72.000 re f Q
+BT
+1 0 0 -1 143.250 413.500 Tm(OffsetY)Tj
+ET
+q 0.000 g 244.750 475.400 36.000 0.100 re f Q
+q 0.000 g 280.650 403.500 0.100 72.000 re f Q
+BT
+1 0 0 -1 247.250 413.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 475.400 36.000 0.100 re f Q
+q 0.000 g 316.650 403.500 0.100 72.000 re f Q
+BT
+1 0 0 -1 283.250 413.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 475.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 413.500 Tm(This)Tj
+1 0 0 -1 341.600 413.500 Tm(register)Tj
+1 0 0 -1 377.350 413.500 Tm(represents)Tj
+1 0 0 -1 424.700 413.500 Tm(the)Tj
+1 0 0 -1 440.900 413.500 Tm(vertical)Tj
+1 0 0 -1 476.650 413.500 Tm(distance)Tj
+1 0 0 -1 319.250 426.500 Tm(\(in)Tj
+1 0 0 -1 334.250 426.500 Tm(pixels\))Tj
+1 0 0 -1 366.950 426.500 Tm(from)Tj
+1 0 0 -1 391.100 426.500 Tm(the)Tj
+1 0 0 -1 407.300 426.500 Tm(center)Tj
+1 0 0 -1 436.950 426.500 Tm(of)Tj
+1 0 0 -1 448.900 426.500 Tm(the)Tj
+1 0 0 -1 465.100 426.500 Tm(detector)Tj
+1 0 0 -1 503.300 426.500 Tm(to)Tj
+1 0 0 -1 319.250 439.500 Tm(the)Tj
+1 0 0 -1 335.450 439.500 Tm(center)Tj
+1 0 0 -1 365.100 439.500 Tm(of)Tj
+1 0 0 -1 377.050 439.500 Tm(the)Tj
+1 0 0 -1 393.250 439.500 Tm(image.)Tj
+1 0 0 -1 425.650 439.500 Tm(This)Tj
+1 0 0 -1 448.000 439.500 Tm(offset)Tj
+1 0 0 -1 475.800 439.500 Tm(plus)Tj
+1 0 0 -1 496.900 439.500 Tm(the)Tj
+1 0 0 -1 319.250 452.500 Tm(current)Tj
+1 0 0 -1 353.200 452.500 Tm(image)Tj
+1 0 0 -1 382.850 452.500 Tm(width)Tj
+1 0 0 -1 410.700 452.500 Tm(cannot)Tj
+1 0 0 -1 442.800 452.500 Tm(exceed)Tj
+1 0 0 -1 476.100 452.500 Tm(the)Tj
+1 0 0 -1 319.250 465.500 Tm(detector)Tj
+1 0 0 -1 357.450 465.500 Tm(height.)Tj
+ET
+q 0.000 g 140.750 534.400 104.000 0.100 re f Q
+q 0.000 g 244.650 475.500 0.100 59.000 re f Q
+BT
+1 0 0 -1 143.250 485.500 Tm(PixelFormat)Tj
+ET
+q 0.000 g 244.750 534.400 36.000 0.100 re f Q
+q 0.000 g 280.650 475.500 0.100 59.000 re f Q
+BT
+1 0 0 -1 247.250 485.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 534.400 36.000 0.100 re f Q
+q 0.000 g 316.650 475.500 0.100 59.000 re f Q
+BT
+1 0 0 -1 283.250 485.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 534.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 485.500 Tm(This)Tj
+1 0 0 -1 341.600 485.500 Tm(register)Tj
+1 0 0 -1 377.350 485.500 Tm(indicates)Tj
+1 0 0 -1 419.250 485.500 Tm(the)Tj
+1 0 0 -1 435.450 485.500 Tm(format)Tj
+1 0 0 -1 467.550 485.500 Tm(of)Tj
+1 0 0 -1 479.500 485.500 Tm(the)Tj
+1 0 0 -1 495.700 485.500 Tm(pixel)Tj
+1 0 0 -1 319.250 498.500 Tm(to)Tj
+1 0 0 -1 330.600 498.500 Tm(use)Tj
+1 0 0 -1 348.050 498.500 Tm(during)Tj
+1 0 0 -1 379.550 498.500 Tm(the)Tj
+1 0 0 -1 395.750 498.500 Tm(acquisition.)Tj
+1 0 0 -1 449.550 498.500 Tm(Pixel)Tj
+1 0 0 -1 474.950 498.500 Tm(format)Tj
+1 0 0 -1 507.050 498.500 Tm(as)Tj
+1 0 0 -1 319.250 511.500 Tm(defined)Tj
+1 0 0 -1 355.000 511.500 Tm(in)Tj
+1 0 0 -1 366.350 511.500 Tm(GVSP)Tj
+1 0 0 -1 397.250 511.500 Tm(\(the)Tj
+1 0 0 -1 417.150 511.500 Tm(GigEVision)Tj
+1 0 0 -1 472.500 511.500 Tm(Streaming)Tj
+1 0 0 -1 319.250 524.500 Tm(Protocol\).)Tj
+1 0 0 -1 365.700 524.500 Tm(Mandatory)Tj
+1 0 0 -1 416.750 524.500 Tm(GEV)Tj
+1 0 0 -1 442.150 524.500 Tm(feature.)Tj
+ET
+q 0.000 g 140.750 580.400 104.000 0.100 re f Q
+q 0.000 g 244.650 534.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 143.250 544.500 Tm(PayloadSize)Tj
+ET
+q 0.000 g 244.750 580.400 36.000 0.100 re f Q
+q 0.000 g 280.650 534.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 247.250 544.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 580.400 36.000 0.100 re f Q
+q 0.000 g 316.650 534.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 283.250 544.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 580.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 544.500 Tm(Number)Tj
+1 0 0 -1 358.050 544.500 Tm(of)Tj
+1 0 0 -1 370.000 544.500 Tm(bytes)Tj
+1 0 0 -1 396.000 544.500 Tm(transferred)Tj
+1 0 0 -1 446.400 544.500 Tm(for)Tj
+1 0 0 -1 462.000 544.500 Tm(each)Tj
+1 0 0 -1 484.950 544.500 Tm(image)Tj
+1 0 0 -1 319.250 557.500 Tm(on)Tj
+1 0 0 -1 333.050 557.500 Tm(the)Tj
+1 0 0 -1 349.250 557.500 Tm(stream)Tj
+1 0 0 -1 381.350 557.500 Tm(channel.)Tj
+1 0 0 -1 421.100 557.500 Tm(Mandatory)Tj
+1 0 0 -1 472.150 557.500 Tm(GEV)Tj
+1 0 0 -1 319.250 570.500 Tm(feature.)Tj
+ET
+q 0.000 g 244.650 580.500 0.100 63.000 re f Q
+BT
+1 0 0 -1 143.250 590.500 Tm(TestImageSelector)Tj
+ET
+q 0.000 g 280.650 580.500 0.100 63.000 re f Q
+BT
+1 0 0 -1 247.250 590.500 Tm(Enum)Tj
+ET
+q 0.000 g 316.650 580.500 0.100 63.000 re f Q
+BT
+1 0 0 -1 283.250 590.500 Tm(RW)Tj
+1 0 0 -1 319.250 590.500 Tm(This)Tj
+1 0 0 -1 341.600 590.500 Tm(feature)Tj
+1 0 0 -1 374.900 590.500 Tm(selects)Tj
+1 0 0 -1 407.000 590.500 Tm(the)Tj
+1 0 0 -1 423.200 590.500 Tm(type)Tj
+1 0 0 -1 444.900 590.500 Tm(of)Tj
+1 0 0 -1 456.850 590.500 Tm(test)Tj
+1 0 0 -1 474.900 590.500 Tm(image)Tj
+1 0 0 -1 504.550 590.500 Tm(that)Tj
+1 0 0 -1 319.250 603.500 Tm(is)Tj
+1 0 0 -1 329.350 603.500 Tm(created)Tj
+1 0 0 -1 363.900 603.500 Tm(by)Tj
+1 0 0 -1 377.700 603.500 Tm(the)Tj
+1 0 0 -1 393.900 603.500 Tm(GEV)Tj
+1 0 0 -1 419.300 603.500 Tm(interface)Tj
+1 0 0 -1 460.550 603.500 Tm(board.)Tj
+1 0 0 -1 319.250 618.500 Tm(0=Off)Tj
+1 0 0 -1 319.250 633.500 Tm(1=)Tj
+1 0 0 -1 333.750 633.500 Tm(TestPattern)Tj
+ET
+endstream
+endobj
+66 0 obj
+10863
+endobj
+67 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 65 0 R
+>>
+endobj
+68 0 obj
+<< /Length 69 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(10)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.3.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(GigE)Tj
+1 0 0 -1 167.600 135.700 Tm(Vision)Tj
+1 0 0 -1 200.700 135.700 Tm(Acquisition)Tj
+1 0 0 -1 257.000 135.700 Tm(control)Tj
+1 0 0 -1 293.150 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(the)Tj
+1 0 0 -1 270.250 160.500 Tm(IP)Tj
+1 0 0 -1 282.800 160.500 Tm(Engine)Tj
+1 0 0 -1 316.750 160.500 Tm(acquisition)Tj
+1 0 0 -1 367.800 160.500 Tm(of)Tj
+1 0 0 -1 379.750 160.500 Tm(images)Tj
+1 0 0 -1 413.700 160.500 Tm(from)Tj
+1 0 0 -1 437.850 160.500 Tm(the)Tj
+1 0 0 -1 454.050 160.500 Tm(camera)Tj
+1 0 0 -1 488.600 160.500 Tm(and)Tj
+1 0 0 -1 507.250 160.500 Tm(their)Tj
+1 0 0 -1 140.000 173.500 Tm(transmission)Tj
+1 0 0 -1 198.400 173.500 Tm(on)Tj
+1 0 0 -1 212.200 173.500 Tm(the)Tj
+1 0 0 -1 228.400 173.500 Tm(ethernet.)Tj
+ET
+q 0.000 g 140.000 192.000 391.500 0.750 re f Q
+q 0.000 g 140.000 212.750 391.500 0.750 re f Q
+q 0.000 g 140.000 192.000 0.750 21.500 re f Q
+q 0.000 g 530.750 192.000 0.750 21.500 re f Q
+q 0.000 g 251.650 192.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 202.750 Tm(Name)Tj
+ET
+q 0.000 g 287.650 192.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 254.250 202.750 Tm(Type)Tj
+ET
+q 0.000 g 323.650 192.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 290.250 202.750 Tm(Access)Tj
+1 0 0 -1 326.250 202.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 416.500 391.500 0.750 re f Q
+q 0.000 g 140.000 213.500 0.750 203.750 re f Q
+q 0.000 g 530.750 213.500 0.750 203.750 re f Q
+q 0.000 g 140.750 259.400 111.000 0.100 re f Q
+q 0.000 g 251.650 213.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 143.250 223.500 Tm(AcquisitionFrameCount)Tj
+ET
+q 0.000 g 251.750 259.400 36.000 0.100 re f Q
+q 0.000 g 287.650 213.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 254.250 223.500 Tm(Integer)Tj
+ET
+q 0.000 g 287.750 259.400 36.000 0.100 re f Q
+q 0.000 g 323.650 213.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 290.250 223.500 Tm(RW)Tj
+ET
+q 0.000 g 323.750 259.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 326.250 223.500 Tm(This)Tj
+1 0 0 -1 348.600 223.500 Tm(register)Tj
+1 0 0 -1 384.350 223.500 Tm(provides)Tj
+1 0 0 -1 425.000 223.500 Tm(the)Tj
+1 0 0 -1 441.200 223.500 Tm(number)Tj
+1 0 0 -1 477.600 223.500 Tm(of)Tj
+1 0 0 -1 489.550 223.500 Tm(frames)Tj
+1 0 0 -1 326.250 236.500 Tm(to)Tj
+1 0 0 -1 337.600 236.500 Tm(be)Tj
+1 0 0 -1 350.750 236.500 Tm(acquired)Tj
+1 0 0 -1 391.400 236.500 Tm(in)Tj
+1 0 0 -1 402.750 236.500 Tm(MultiFrame)Tj
+1 0 0 -1 458.100 236.500 Tm(Acquisition)Tj
+1 0 0 -1 326.250 249.500 Tm(mode.)Tj
+ET
+q 0.000 g 140.750 337.400 111.000 0.100 re f Q
+q 0.000 g 251.650 259.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 143.250 269.500 Tm(AcquisitionMode)Tj
+ET
+q 0.000 g 251.750 337.400 36.000 0.100 re f Q
+q 0.000 g 287.650 259.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 254.250 269.500 Tm(Enum)Tj
+ET
+q 0.000 g 287.750 337.400 36.000 0.100 re f Q
+q 0.000 g 323.650 259.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 290.250 269.500 Tm(RW)Tj
+ET
+q 0.000 g 323.750 337.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 326.250 269.500 Tm(This)Tj
+1 0 0 -1 348.600 269.500 Tm(register)Tj
+1 0 0 -1 384.350 269.500 Tm(controls)Tj
+1 0 0 -1 422.550 269.500 Tm(the)Tj
+1 0 0 -1 438.750 269.500 Tm(acquisition)Tj
+1 0 0 -1 489.800 269.500 Tm(mode)Tj
+1 0 0 -1 517.000 269.500 Tm(of)Tj
+1 0 0 -1 326.250 282.500 Tm(the)Tj
+1 0 0 -1 342.450 282.500 Tm(device.)Tj
+1 0 0 -1 376.700 282.500 Tm(Mandatory)Tj
+1 0 0 -1 427.750 282.500 Tm(GEV)Tj
+1 0 0 -1 453.150 282.500 Tm(feature.)Tj
+1 0 0 -1 326.250 297.500 Tm(0=Continuous)Tj
+1 0 0 -1 326.250 312.500 Tm(1=SingleFrame)Tj
+1 0 0 -1 326.250 327.500 Tm(2=MultiFrame)Tj
+ET
+q 0.000 g 140.750 370.400 111.000 0.100 re f Q
+q 0.000 g 251.650 337.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 347.500 Tm(AcquisitionStart)Tj
+ET
+q 0.000 g 251.750 370.400 36.000 0.100 re f Q
+q 0.000 g 287.650 337.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 254.250 347.500 Tm(Cmd)Tj
+ET
+q 0.000 g 287.750 370.400 36.000 0.100 re f Q
+q 0.000 g 323.650 337.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 290.250 347.500 Tm(WO)Tj
+ET
+q 0.000 g 323.750 370.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 326.250 347.500 Tm(This)Tj
+1 0 0 -1 348.600 347.500 Tm(register)Tj
+1 0 0 -1 384.350 347.500 Tm(starts)Tj
+1 0 0 -1 410.350 347.500 Tm(the)Tj
+1 0 0 -1 426.550 347.500 Tm(Acquisition)Tj
+1 0 0 -1 480.650 347.500 Tm(of)Tj
+1 0 0 -1 492.600 347.500 Tm(the)Tj
+1 0 0 -1 326.250 360.500 Tm(device.)Tj
+1 0 0 -1 360.500 360.500 Tm(Mandatory)Tj
+1 0 0 -1 411.550 360.500 Tm(GEV)Tj
+1 0 0 -1 436.950 360.500 Tm(feature.)Tj
+ET
+q 0.000 g 251.650 370.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 143.250 380.500 Tm(AcquisitionStop)Tj
+ET
+q 0.000 g 287.650 370.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 254.250 380.500 Tm(Cmd)Tj
+ET
+q 0.000 g 323.650 370.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 290.250 380.500 Tm(WO)Tj
+1 0 0 -1 326.250 380.500 Tm(This)Tj
+1 0 0 -1 348.600 380.500 Tm(register)Tj
+1 0 0 -1 384.350 380.500 Tm(stops)Tj
+1 0 0 -1 409.750 380.500 Tm(the)Tj
+1 0 0 -1 425.950 380.500 Tm(Acquisition)Tj
+1 0 0 -1 480.050 380.500 Tm(of)Tj
+1 0 0 -1 492.000 380.500 Tm(the)Tj
+1 0 0 -1 326.250 393.500 Tm(device)Tj
+1 0 0 -1 357.750 393.500 Tm(at)Tj
+1 0 0 -1 368.450 393.500 Tm(the)Tj
+1 0 0 -1 384.650 393.500 Tm(end)Tj
+1 0 0 -1 403.300 393.500 Tm(of)Tj
+1 0 0 -1 415.250 393.500 Tm(the)Tj
+1 0 0 -1 431.450 393.500 Tm(current)Tj
+1 0 0 -1 465.400 393.500 Tm(Frame.)Tj
+1 0 0 -1 326.250 406.500 Tm(Mandatory)Tj
+1 0 0 -1 377.300 406.500 Tm(GEV)Tj
+1 0 0 -1 402.700 406.500 Tm(feature.)Tj
+ET
+endstream
+endobj
+69 0 obj
+6125
+endobj
+70 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 68 0 R
+>>
+endobj
+71 0 obj
+<< /Length 72 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(11)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.3.3)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(GigE)Tj
+1 0 0 -1 167.600 135.700 Tm(Vision)Tj
+1 0 0 -1 200.700 135.700 Tm(Network)Tj
+1 0 0 -1 244.150 135.700 Tm(Configuration)Tj
+1 0 0 -1 312.700 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(the)Tj
+1 0 0 -1 270.250 160.500 Tm(GEV)Tj
+1 0 0 -1 295.650 160.500 Tm(transport)Tj
+1 0 0 -1 337.550 160.500 Tm(protocol.)Tj
+ET
+q 0.000 g 107.550 179.000 472.500 0.750 re f Q
+q 0.000 g 107.550 199.750 472.500 0.750 re f Q
+q 0.000 g 107.550 179.000 0.750 21.500 re f Q
+q 0.000 g 579.300 179.000 0.750 21.500 re f Q
+q 0.000 g 300.200 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 110.800 189.750 Tm(Name)Tj
+ET
+q 0.000 g 336.200 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 302.800 189.750 Tm(Type)Tj
+ET
+q 0.000 g 372.200 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 338.800 189.750 Tm(Access)Tj
+1 0 0 -1 374.800 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 107.550 746.500 472.500 0.750 re f Q
+q 0.000 g 107.550 200.500 0.750 546.750 re f Q
+q 0.000 g 579.300 200.500 0.750 546.750 re f Q
+q 0.000 g 108.300 233.400 192.000 0.100 re f Q
+q 0.000 g 300.200 200.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 210.500 Tm(GevVersionMajor)Tj
+ET
+q 0.000 g 300.300 233.400 36.000 0.100 re f Q
+q 0.000 g 336.200 200.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 210.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 233.400 36.000 0.100 re f Q
+q 0.000 g 372.200 200.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 210.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 233.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 210.500 Tm(This)Tj
+1 0 0 -1 397.150 210.500 Tm(register)Tj
+1 0 0 -1 432.900 210.500 Tm(represents)Tj
+1 0 0 -1 480.250 210.500 Tm(the)Tj
+1 0 0 -1 496.450 210.500 Tm(major)Tj
+1 0 0 -1 524.900 210.500 Tm(version)Tj
+1 0 0 -1 560.050 210.500 Tm(of)Tj
+1 0 0 -1 374.800 223.500 Tm(the)Tj
+1 0 0 -1 391.000 223.500 Tm(GEV)Tj
+1 0 0 -1 416.400 223.500 Tm(specification)Tj
+ET
+q 0.000 g 108.300 266.400 192.000 0.100 re f Q
+q 0.000 g 300.200 233.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 243.500 Tm(GevVersionMinor)Tj
+ET
+q 0.000 g 300.300 266.400 36.000 0.100 re f Q
+q 0.000 g 336.200 233.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 243.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 266.400 36.000 0.100 re f Q
+q 0.000 g 372.200 233.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 243.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 266.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 243.500 Tm(This)Tj
+1 0 0 -1 397.150 243.500 Tm(register)Tj
+1 0 0 -1 432.900 243.500 Tm(represents)Tj
+1 0 0 -1 480.250 243.500 Tm(the)Tj
+1 0 0 -1 496.450 243.500 Tm(minor)Tj
+1 0 0 -1 525.500 243.500 Tm(version)Tj
+1 0 0 -1 560.650 243.500 Tm(of)Tj
+1 0 0 -1 374.800 256.500 Tm(the)Tj
+1 0 0 -1 391.000 256.500 Tm(specification.)Tj
+ET
+q 0.000 g 108.300 312.400 192.000 0.100 re f Q
+q 0.000 g 300.200 266.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 276.500 Tm(GevDeviceModeIsBigEndian)Tj
+ET
+q 0.000 g 300.300 312.400 36.000 0.100 re f Q
+q 0.000 g 336.200 266.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 276.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 312.400 36.000 0.100 re f Q
+q 0.000 g 372.200 266.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 276.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 312.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 276.500 Tm(Endianness)Tj
+1 0 0 -1 427.700 276.500 Tm(might)Tj
+1 0 0 -1 456.150 276.500 Tm(be)Tj
+1 0 0 -1 469.300 276.500 Tm(used)Tj
+1 0 0 -1 492.250 276.500 Tm(to)Tj
+1 0 0 -1 503.600 276.500 Tm(interpret)Tj
+1 0 0 -1 543.650 276.500 Tm(multi-)Tj
+1 0 0 -1 374.800 289.500 Tm(byte)Tj
+1 0 0 -1 396.500 289.500 Tm(data)Tj
+1 0 0 -1 417.600 289.500 Tm(for)Tj
+1 0 0 -1 433.200 289.500 Tm(READMEM)Tj
+1 0 0 -1 492.200 289.500 Tm(and)Tj
+1 0 0 -1 510.850 289.500 Tm(WRITEMEM)Tj
+1 0 0 -1 374.800 302.500 Tm(commands.)Tj
+ET
+q 0.000 g 108.300 345.400 192.000 0.100 re f Q
+q 0.000 g 300.200 312.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 322.500 Tm(GevDeviceModeCharacterSet)Tj
+ET
+q 0.000 g 300.300 345.400 36.000 0.100 re f Q
+q 0.000 g 336.200 312.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 322.500 Tm(Enum)Tj
+ET
+q 0.000 g 336.300 345.400 36.000 0.100 re f Q
+q 0.000 g 372.200 312.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 322.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 345.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 322.500 Tm(This)Tj
+1 0 0 -1 397.150 322.500 Tm(register)Tj
+1 0 0 -1 432.900 322.500 Tm(represents)Tj
+1 0 0 -1 480.250 322.500 Tm(the)Tj
+1 0 0 -1 496.450 322.500 Tm(character)Tj
+1 0 0 -1 539.550 322.500 Tm(set)Tj
+1 0 0 -1 554.550 322.500 Tm(used)Tj
+1 0 0 -1 374.800 335.500 Tm(by)Tj
+1 0 0 -1 388.600 335.500 Tm(all)Tj
+1 0 0 -1 402.400 335.500 Tm(the)Tj
+1 0 0 -1 418.600 335.500 Tm(strings)Tj
+1 0 0 -1 450.700 335.500 Tm(of)Tj
+1 0 0 -1 462.650 335.500 Tm(the)Tj
+1 0 0 -1 478.850 335.500 Tm(bootstrap)Tj
+1 0 0 -1 522.550 335.500 Tm(registers.)Tj
+ET
+q 0.000 g 108.300 378.400 192.000 0.100 re f Q
+q 0.000 g 300.200 345.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 355.500 Tm(GevMACAddressHigh)Tj
+ET
+q 0.000 g 300.300 378.400 36.000 0.100 re f Q
+q 0.000 g 336.200 345.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 355.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 378.400 36.000 0.100 re f Q
+q 0.000 g 372.200 345.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 355.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 378.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 355.500 Tm(This)Tj
+1 0 0 -1 397.150 355.500 Tm(register)Tj
+1 0 0 -1 432.900 355.500 Tm(stores)Tj
+1 0 0 -1 461.350 355.500 Tm(the)Tj
+1 0 0 -1 477.550 355.500 Tm(upper)Tj
+1 0 0 -1 505.350 355.500 Tm(two)Tj
+1 0 0 -1 524.650 355.500 Tm(bytes)Tj
+1 0 0 -1 550.650 355.500 Tm(of)Tj
+1 0 0 -1 562.600 355.500 Tm(the)Tj
+1 0 0 -1 374.800 368.500 Tm(MAC)Tj
+1 0 0 -1 402.650 368.500 Tm(address)Tj
+1 0 0 -1 438.400 368.500 Tm(of)Tj
+1 0 0 -1 450.350 368.500 Tm(the)Tj
+1 0 0 -1 466.550 368.500 Tm(given)Tj
+1 0 0 -1 493.750 368.500 Tm(network)Tj
+1 0 0 -1 532.550 368.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 424.400 192.000 0.100 re f Q
+q 0.000 g 300.200 378.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 388.500 Tm(GevMACAddressLow)Tj
+ET
+q 0.000 g 300.300 424.400 36.000 0.100 re f Q
+q 0.000 g 336.200 378.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 388.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 424.400 36.000 0.100 re f Q
+q 0.000 g 372.200 378.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 388.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 424.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 388.500 Tm(This)Tj
+1 0 0 -1 397.150 388.500 Tm(register)Tj
+1 0 0 -1 432.900 388.500 Tm(stores)Tj
+1 0 0 -1 461.350 388.500 Tm(the)Tj
+1 0 0 -1 477.550 388.500 Tm(lower)Tj
+1 0 0 -1 505.350 388.500 Tm(four)Tj
+1 0 0 -1 526.450 388.500 Tm(bytes)Tj
+1 0 0 -1 552.450 388.500 Tm(of)Tj
+1 0 0 -1 374.800 401.500 Tm(the)Tj
+1 0 0 -1 391.000 401.500 Tm(MAC)Tj
+1 0 0 -1 418.850 401.500 Tm(address)Tj
+1 0 0 -1 454.600 401.500 Tm(of)Tj
+1 0 0 -1 466.550 401.500 Tm(the)Tj
+1 0 0 -1 482.750 401.500 Tm(given)Tj
+1 0 0 -1 509.950 401.500 Tm(network)Tj
+1 0 0 -1 374.800 414.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 470.400 192.000 0.100 re f Q
+q 0.000 g 300.200 424.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 434.500 Tm(GevSupportedIPConfigurationLLA)Tj
+ET
+q 0.000 g 300.300 470.400 36.000 0.100 re f Q
+q 0.000 g 336.200 424.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 434.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 470.400 36.000 0.100 re f Q
+q 0.000 g 372.200 424.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 434.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 470.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 434.500 Tm(This)Tj
+1 0 0 -1 397.150 434.500 Tm(register)Tj
+1 0 0 -1 432.900 434.500 Tm(indicates)Tj
+1 0 0 -1 474.800 434.500 Tm(if)Tj
+1 0 0 -1 484.300 434.500 Tm(Link)Tj
+1 0 0 -1 507.850 434.500 Tm(Local)Tj
+1 0 0 -1 535.650 434.500 Tm(Address)Tj
+1 0 0 -1 374.800 447.500 Tm(IP)Tj
+1 0 0 -1 387.350 447.500 Tm(configuration)Tj
+1 0 0 -1 449.400 447.500 Tm(scheme)Tj
+1 0 0 -1 485.150 447.500 Tm(is)Tj
+1 0 0 -1 495.250 447.500 Tm(supported)Tj
+1 0 0 -1 541.400 447.500 Tm(by)Tj
+1 0 0 -1 555.200 447.500 Tm(the)Tj
+1 0 0 -1 374.800 460.500 Tm(given)Tj
+1 0 0 -1 402.000 460.500 Tm(network)Tj
+1 0 0 -1 440.800 460.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 516.400 192.000 0.100 re f Q
+q 0.000 g 300.200 470.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 480.500 Tm(GevSupportedIPConfigurationDHCP)Tj
+ET
+q 0.000 g 300.300 516.400 36.000 0.100 re f Q
+q 0.000 g 336.200 470.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 480.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 516.400 36.000 0.100 re f Q
+q 0.000 g 372.200 470.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 480.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 516.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 480.500 Tm(This)Tj
+1 0 0 -1 397.150 480.500 Tm(register)Tj
+1 0 0 -1 432.900 480.500 Tm(indicates)Tj
+1 0 0 -1 474.800 480.500 Tm(if)Tj
+1 0 0 -1 484.300 480.500 Tm(DHCP)Tj
+1 0 0 -1 516.400 480.500 Tm(IP)Tj
+1 0 0 -1 374.800 493.500 Tm(configuration)Tj
+1 0 0 -1 436.850 493.500 Tm(scheme)Tj
+1 0 0 -1 472.600 493.500 Tm(is)Tj
+1 0 0 -1 482.700 493.500 Tm(supported)Tj
+1 0 0 -1 528.850 493.500 Tm(by)Tj
+1 0 0 -1 542.650 493.500 Tm(the)Tj
+1 0 0 -1 374.800 506.500 Tm(given)Tj
+1 0 0 -1 402.000 506.500 Tm(network)Tj
+1 0 0 -1 440.800 506.500 Tm(interface)Tj
+ET
+q 0.000 g 108.300 562.400 192.000 0.100 re f Q
+q 0.000 g 300.200 516.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 526.500 Tm(GevSupportedIPConfigurationPersistentIP)Tj
+ET
+q 0.000 g 300.300 562.400 36.000 0.100 re f Q
+q 0.000 g 336.200 516.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 526.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 562.400 36.000 0.100 re f Q
+q 0.000 g 372.200 516.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 526.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 562.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 526.500 Tm(This)Tj
+1 0 0 -1 397.150 526.500 Tm(register)Tj
+1 0 0 -1 432.900 526.500 Tm(indicates)Tj
+1 0 0 -1 474.800 526.500 Tm(if)Tj
+1 0 0 -1 484.300 526.500 Tm(Persistent)Tj
+1 0 0 -1 529.850 526.500 Tm(IP)Tj
+1 0 0 -1 374.800 539.500 Tm(configuration)Tj
+1 0 0 -1 436.850 539.500 Tm(scheme)Tj
+1 0 0 -1 472.600 539.500 Tm(is)Tj
+1 0 0 -1 482.700 539.500 Tm(supported)Tj
+1 0 0 -1 528.850 539.500 Tm(by)Tj
+1 0 0 -1 542.650 539.500 Tm(the)Tj
+1 0 0 -1 374.800 552.500 Tm(given)Tj
+1 0 0 -1 402.000 552.500 Tm(network)Tj
+1 0 0 -1 440.800 552.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 608.400 192.000 0.100 re f Q
+q 0.000 g 300.200 562.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 572.500 Tm(GevCurrentIPConfigurationLLA)Tj
+ET
+q 0.000 g 300.300 608.400 36.000 0.100 re f Q
+q 0.000 g 336.200 562.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 572.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 608.400 36.000 0.100 re f Q
+q 0.000 g 372.200 562.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 572.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 608.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 572.500 Tm(This)Tj
+1 0 0 -1 397.150 572.500 Tm(register)Tj
+1 0 0 -1 432.900 572.500 Tm(indicates)Tj
+1 0 0 -1 474.800 572.500 Tm(if)Tj
+1 0 0 -1 484.300 572.500 Tm(Link)Tj
+1 0 0 -1 507.850 572.500 Tm(Local)Tj
+1 0 0 -1 535.650 572.500 Tm(Address)Tj
+1 0 0 -1 374.800 585.500 Tm(IP)Tj
+1 0 0 -1 387.350 585.500 Tm(configuration)Tj
+1 0 0 -1 449.400 585.500 Tm(scheme)Tj
+1 0 0 -1 485.150 585.500 Tm(is)Tj
+1 0 0 -1 495.250 585.500 Tm(activated)Tj
+1 0 0 -1 537.750 585.500 Tm(on)Tj
+1 0 0 -1 551.550 585.500 Tm(the)Tj
+1 0 0 -1 374.800 598.500 Tm(given)Tj
+1 0 0 -1 402.000 598.500 Tm(network)Tj
+1 0 0 -1 440.800 598.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 654.400 192.000 0.100 re f Q
+q 0.000 g 300.200 608.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 618.500 Tm(GevCurrentIPConfigurationDHCP)Tj
+ET
+q 0.000 g 300.300 654.400 36.000 0.100 re f Q
+q 0.000 g 336.200 608.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 618.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 654.400 36.000 0.100 re f Q
+q 0.000 g 372.200 608.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 618.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 654.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 618.500 Tm(This)Tj
+1 0 0 -1 397.150 618.500 Tm(register)Tj
+1 0 0 -1 432.900 618.500 Tm(indicates)Tj
+1 0 0 -1 474.800 618.500 Tm(if)Tj
+1 0 0 -1 484.300 618.500 Tm(DHCP)Tj
+1 0 0 -1 516.400 618.500 Tm(IP)Tj
+1 0 0 -1 374.800 631.500 Tm(configuration)Tj
+1 0 0 -1 436.850 631.500 Tm(scheme)Tj
+1 0 0 -1 472.600 631.500 Tm(is)Tj
+1 0 0 -1 482.700 631.500 Tm(activated)Tj
+1 0 0 -1 525.200 631.500 Tm(on)Tj
+1 0 0 -1 539.000 631.500 Tm(the)Tj
+1 0 0 -1 374.800 644.500 Tm(given)Tj
+1 0 0 -1 402.000 644.500 Tm(network)Tj
+1 0 0 -1 440.800 644.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 700.400 192.000 0.100 re f Q
+q 0.000 g 300.200 654.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 664.500 Tm(GevCurrentIPConfigurationPersistentIP)Tj
+ET
+q 0.000 g 300.300 700.400 36.000 0.100 re f Q
+q 0.000 g 336.200 654.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 664.500 Tm(Bool)Tj
+ET
+q 0.000 g 336.300 700.400 36.000 0.100 re f Q
+q 0.000 g 372.200 654.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 664.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 700.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 664.500 Tm(This)Tj
+1 0 0 -1 397.150 664.500 Tm(register)Tj
+1 0 0 -1 432.900 664.500 Tm(indicates)Tj
+1 0 0 -1 474.800 664.500 Tm(if)Tj
+1 0 0 -1 484.300 664.500 Tm(PersistentIP)Tj
+1 0 0 -1 374.800 677.500 Tm(configuration)Tj
+1 0 0 -1 436.850 677.500 Tm(scheme)Tj
+1 0 0 -1 472.600 677.500 Tm(is)Tj
+1 0 0 -1 482.700 677.500 Tm(activated)Tj
+1 0 0 -1 525.200 677.500 Tm(on)Tj
+1 0 0 -1 539.000 677.500 Tm(the)Tj
+1 0 0 -1 374.800 690.500 Tm(given)Tj
+1 0 0 -1 402.000 690.500 Tm(network)Tj
+1 0 0 -1 440.800 690.500 Tm(interface)Tj
+ET
+q 0.000 g 108.300 746.400 192.000 0.100 re f Q
+q 0.000 g 300.200 700.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 710.500 Tm(GevCurrentIPAddress)Tj
+ET
+q 0.000 g 300.300 746.400 36.000 0.100 re f Q
+q 0.000 g 336.200 700.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 710.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 746.400 36.000 0.100 re f Q
+q 0.000 g 372.200 700.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 710.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 746.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 710.500 Tm(This)Tj
+1 0 0 -1 397.150 710.500 Tm(register)Tj
+1 0 0 -1 432.900 710.500 Tm(reports)Tj
+1 0 0 -1 466.200 710.500 Tm(the)Tj
+1 0 0 -1 482.400 710.500 Tm(IP)Tj
+1 0 0 -1 494.950 710.500 Tm(address)Tj
+1 0 0 -1 530.700 710.500 Tm(for)Tj
+1 0 0 -1 546.300 710.500 Tm(the)Tj
+1 0 0 -1 374.800 723.500 Tm(given)Tj
+1 0 0 -1 402.000 723.500 Tm(network)Tj
+1 0 0 -1 440.800 723.500 Tm(interface)Tj
+1 0 0 -1 482.050 723.500 Tm(once)Tj
+1 0 0 -1 505.600 723.500 Tm(it)Tj
+1 0 0 -1 514.500 723.500 Tm(has)Tj
+1 0 0 -1 531.950 723.500 Tm(been)Tj
+1 0 0 -1 374.800 736.500 Tm(configured.)Tj
+ET
+endstream
+endobj
+72 0 obj
+15147
+endobj
+73 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 71 0 R
+>>
+endobj
+74 0 obj
+<< /Length 75 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(12)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+q 0.000 g 107.550 127.000 472.500 0.750 re f Q
+q 0.000 g 107.550 147.750 472.500 0.750 re f Q
+q 0.000 g 107.550 127.000 0.750 21.500 re f Q
+q 0.000 g 579.300 127.000 0.750 21.500 re f Q
+q 0.000 g 300.200 127.750 0.100 20.000 re f Q
+BT
+/F0Western 11.000 Tf
+1 0 0 -1 110.800 137.750 Tm(Name)Tj
+ET
+q 0.000 g 336.200 127.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 302.800 137.750 Tm(Type)Tj
+ET
+q 0.000 g 372.200 127.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 338.800 137.750 Tm(Access)Tj
+1 0 0 -1 374.800 137.750 Tm(Comment)Tj
+ET
+q 0.000 g 107.550 582.500 472.500 0.750 re f Q
+q 0.000 g 107.550 148.500 0.750 434.750 re f Q
+q 0.000 g 579.300 148.500 0.750 434.750 re f Q
+q 0.000 g 108.300 181.400 192.000 0.100 re f Q
+q 0.000 g 300.200 148.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 158.500 Tm(GevCurrentSubnetMask)Tj
+ET
+q 0.000 g 300.300 181.400 36.000 0.100 re f Q
+q 0.000 g 336.200 148.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 158.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 181.400 36.000 0.100 re f Q
+q 0.000 g 372.200 148.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 158.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 181.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 158.500 Tm(This)Tj
+1 0 0 -1 397.150 158.500 Tm(register)Tj
+1 0 0 -1 432.900 158.500 Tm(provides)Tj
+1 0 0 -1 473.550 158.500 Tm(the)Tj
+1 0 0 -1 489.750 158.500 Tm(subnet)Tj
+1 0 0 -1 521.250 158.500 Tm(mask)Tj
+1 0 0 -1 547.250 158.500 Tm(of)Tj
+1 0 0 -1 559.200 158.500 Tm(the)Tj
+1 0 0 -1 374.800 171.500 Tm(given)Tj
+1 0 0 -1 402.000 171.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 227.400 192.000 0.100 re f Q
+q 0.000 g 300.200 181.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 191.500 Tm(GevCurrentDefaultGateway)Tj
+ET
+q 0.000 g 300.300 227.400 36.000 0.100 re f Q
+q 0.000 g 336.200 181.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 191.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 227.400 36.000 0.100 re f Q
+q 0.000 g 372.200 181.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 191.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 227.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 191.500 Tm(This)Tj
+1 0 0 -1 397.150 191.500 Tm(register)Tj
+1 0 0 -1 432.900 191.500 Tm(indicates)Tj
+1 0 0 -1 474.800 191.500 Tm(the)Tj
+1 0 0 -1 491.000 191.500 Tm(default)Tj
+1 0 0 -1 524.300 191.500 Tm(gateway)Tj
+1 0 0 -1 563.750 191.500 Tm(IP)Tj
+1 0 0 -1 374.800 204.500 Tm(address)Tj
+1 0 0 -1 410.550 204.500 Tm(to)Tj
+1 0 0 -1 421.900 204.500 Tm(be)Tj
+1 0 0 -1 435.050 204.500 Tm(used)Tj
+1 0 0 -1 458.000 204.500 Tm(on)Tj
+1 0 0 -1 471.800 204.500 Tm(the)Tj
+1 0 0 -1 488.000 204.500 Tm(given)Tj
+1 0 0 -1 515.200 204.500 Tm(network)Tj
+1 0 0 -1 374.800 217.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 260.400 192.000 0.100 re f Q
+q 0.000 g 300.200 227.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 237.500 Tm(GevFirstURL)Tj
+ET
+q 0.000 g 300.300 260.400 36.000 0.100 re f Q
+q 0.000 g 336.200 227.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 237.500 Tm(String)Tj
+1 0 0 -1 302.800 250.500 Tm(\(512\))Tj
+ET
+q 0.000 g 336.300 260.400 36.000 0.100 re f Q
+q 0.000 g 372.200 227.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 237.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 260.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 237.500 Tm(This)Tj
+1 0 0 -1 397.150 237.500 Tm(register)Tj
+1 0 0 -1 432.900 237.500 Tm(holds)Tj
+1 0 0 -1 459.500 237.500 Tm(the)Tj
+1 0 0 -1 475.700 237.500 Tm(first)Tj
+1 0 0 -1 496.200 237.500 Tm(URL)Tj
+1 0 0 -1 521.000 237.500 Tm(to)Tj
+1 0 0 -1 532.350 237.500 Tm(the)Tj
+1 0 0 -1 548.550 237.500 Tm(XML)Tj
+1 0 0 -1 374.800 250.500 Tm(device)Tj
+1 0 0 -1 406.300 250.500 Tm(description)Tj
+1 0 0 -1 457.950 250.500 Tm(file.)Tj
+ET
+q 0.000 g 108.300 293.400 192.000 0.100 re f Q
+q 0.000 g 300.200 260.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 270.500 Tm(GevSecondURL)Tj
+ET
+q 0.000 g 300.300 293.400 36.000 0.100 re f Q
+q 0.000 g 336.200 260.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 270.500 Tm(String)Tj
+1 0 0 -1 302.800 283.500 Tm(\(512\))Tj
+ET
+q 0.000 g 336.300 293.400 36.000 0.100 re f Q
+q 0.000 g 372.200 260.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 270.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 293.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 270.500 Tm(This)Tj
+1 0 0 -1 397.150 270.500 Tm(register)Tj
+1 0 0 -1 432.900 270.500 Tm(holds)Tj
+1 0 0 -1 459.500 270.500 Tm(the)Tj
+1 0 0 -1 475.700 270.500 Tm(second)Tj
+1 0 0 -1 509.000 270.500 Tm(URL)Tj
+1 0 0 -1 533.800 270.500 Tm(to)Tj
+1 0 0 -1 545.150 270.500 Tm(the)Tj
+1 0 0 -1 374.800 283.500 Tm(XML)Tj
+1 0 0 -1 402.000 283.500 Tm(device)Tj
+1 0 0 -1 433.500 283.500 Tm(description)Tj
+1 0 0 -1 485.150 283.500 Tm(file.)Tj
+ET
+q 0.000 g 108.300 326.400 192.000 0.100 re f Q
+q 0.000 g 300.200 293.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 303.500 Tm(GevNumberOfInterfaces)Tj
+ET
+q 0.000 g 300.300 326.400 36.000 0.100 re f Q
+q 0.000 g 336.200 293.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 303.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 326.400 36.000 0.100 re f Q
+q 0.000 g 372.200 293.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 303.500 Tm(RO)Tj
+ET
+q 0.000 g 372.300 326.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 303.500 Tm(This)Tj
+1 0 0 -1 397.150 303.500 Tm(register)Tj
+1 0 0 -1 432.900 303.500 Tm(indicates)Tj
+1 0 0 -1 474.800 303.500 Tm(the)Tj
+1 0 0 -1 491.000 303.500 Tm(number)Tj
+1 0 0 -1 527.400 303.500 Tm(of)Tj
+1 0 0 -1 539.350 303.500 Tm(physical)Tj
+1 0 0 -1 374.800 316.500 Tm(network)Tj
+1 0 0 -1 413.600 316.500 Tm(interfaces)Tj
+1 0 0 -1 459.150 316.500 Tm(supported)Tj
+1 0 0 -1 505.300 316.500 Tm(by)Tj
+1 0 0 -1 519.100 316.500 Tm(this)Tj
+1 0 0 -1 537.750 316.500 Tm(device)Tj
+ET
+q 0.000 g 108.300 359.400 192.000 0.100 re f Q
+q 0.000 g 300.200 326.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 336.500 Tm(GevPersistentIPAddress)Tj
+ET
+q 0.000 g 300.300 359.400 36.000 0.100 re f Q
+q 0.000 g 336.200 326.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 336.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 359.400 36.000 0.100 re f Q
+q 0.000 g 372.200 326.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 336.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 359.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 336.500 Tm(This)Tj
+1 0 0 -1 397.150 336.500 Tm(register)Tj
+1 0 0 -1 432.900 336.500 Tm(indicates)Tj
+1 0 0 -1 474.800 336.500 Tm(the)Tj
+1 0 0 -1 491.000 336.500 Tm(Persistent)Tj
+1 0 0 -1 536.550 336.500 Tm(IP)Tj
+1 0 0 -1 374.800 349.500 Tm(address)Tj
+1 0 0 -1 410.550 349.500 Tm(for)Tj
+1 0 0 -1 426.150 349.500 Tm(this)Tj
+1 0 0 -1 444.800 349.500 Tm(network)Tj
+1 0 0 -1 483.600 349.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 405.400 192.000 0.100 re f Q
+q 0.000 g 300.200 359.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 110.800 369.500 Tm(GevPersistentSubnetMask)Tj
+ET
+q 0.000 g 300.300 405.400 36.000 0.100 re f Q
+q 0.000 g 336.200 359.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 302.800 369.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 405.400 36.000 0.100 re f Q
+q 0.000 g 372.200 359.500 0.100 46.000 re f Q
+BT
+1 0 0 -1 338.800 369.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 405.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 369.500 Tm(This)Tj
+1 0 0 -1 397.150 369.500 Tm(register)Tj
+1 0 0 -1 432.900 369.500 Tm(indicates)Tj
+1 0 0 -1 474.800 369.500 Tm(the)Tj
+1 0 0 -1 491.000 369.500 Tm(Persistent)Tj
+1 0 0 -1 536.550 369.500 Tm(subnet)Tj
+1 0 0 -1 374.800 382.500 Tm(mask)Tj
+1 0 0 -1 400.800 382.500 Tm(associated)Tj
+1 0 0 -1 448.800 382.500 Tm(with)Tj
+1 0 0 -1 471.150 382.500 Tm(the)Tj
+1 0 0 -1 487.350 382.500 Tm(Persistent)Tj
+1 0 0 -1 532.900 382.500 Tm(IP)Tj
+1 0 0 -1 374.800 395.500 Tm(address)Tj
+1 0 0 -1 410.550 395.500 Tm(on)Tj
+1 0 0 -1 424.350 395.500 Tm(this)Tj
+1 0 0 -1 443.000 395.500 Tm(network)Tj
+1 0 0 -1 481.800 395.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 438.400 192.000 0.100 re f Q
+q 0.000 g 300.200 405.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 415.500 Tm(GevPersistentDefaultGateway)Tj
+ET
+q 0.000 g 300.300 438.400 36.000 0.100 re f Q
+q 0.000 g 336.200 405.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 415.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 438.400 36.000 0.100 re f Q
+q 0.000 g 372.200 405.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 415.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 438.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 415.500 Tm(This)Tj
+1 0 0 -1 397.150 415.500 Tm(register)Tj
+1 0 0 -1 432.900 415.500 Tm(indicates)Tj
+1 0 0 -1 474.800 415.500 Tm(the)Tj
+1 0 0 -1 491.000 415.500 Tm(persistent)Tj
+1 0 0 -1 535.950 415.500 Tm(default)Tj
+1 0 0 -1 374.800 428.500 Tm(gateway)Tj
+1 0 0 -1 414.250 428.500 Tm(for)Tj
+1 0 0 -1 429.850 428.500 Tm(this)Tj
+1 0 0 -1 448.500 428.500 Tm(network)Tj
+1 0 0 -1 487.300 428.500 Tm(interface.)Tj
+ET
+q 0.000 g 108.300 471.400 192.000 0.100 re f Q
+q 0.000 g 300.200 438.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 448.500 Tm(GevHeartbeatTimeout)Tj
+ET
+q 0.000 g 300.300 471.400 36.000 0.100 re f Q
+q 0.000 g 336.200 438.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 448.500 Tm(Integer)Tj
+ET
+q 0.000 g 336.300 471.400 36.000 0.100 re f Q
+q 0.000 g 372.200 438.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 448.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 471.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 448.500 Tm(This)Tj
+1 0 0 -1 397.150 448.500 Tm(register)Tj
+1 0 0 -1 432.900 448.500 Tm(indicates)Tj
+1 0 0 -1 474.800 448.500 Tm(the)Tj
+1 0 0 -1 491.000 448.500 Tm(current)Tj
+1 0 0 -1 524.950 448.500 Tm(heartbeat)Tj
+1 0 0 -1 374.800 461.500 Tm(timeout)Tj
+1 0 0 -1 411.200 461.500 Tm(in)Tj
+1 0 0 -1 422.550 461.500 Tm(milliseconds.)Tj
+ET
+q 0.000 g 108.300 549.400 192.000 0.100 re f Q
+q 0.000 g 300.200 471.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 110.800 481.500 Tm(GevCCP)Tj
+ET
+q 0.000 g 300.300 549.400 36.000 0.100 re f Q
+q 0.000 g 336.200 471.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 302.800 481.500 Tm(Enum)Tj
+ET
+q 0.000 g 336.300 549.400 36.000 0.100 re f Q
+q 0.000 g 372.200 471.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 338.800 481.500 Tm(RW)Tj
+ET
+q 0.000 g 372.300 549.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 374.800 481.500 Tm(This)Tj
+1 0 0 -1 397.150 481.500 Tm(register)Tj
+1 0 0 -1 432.900 481.500 Tm(is)Tj
+1 0 0 -1 443.000 481.500 Tm(used)Tj
+1 0 0 -1 465.950 481.500 Tm(to)Tj
+1 0 0 -1 477.300 481.500 Tm(grant)Tj
+1 0 0 -1 502.700 481.500 Tm(privilege)Tj
+1 0 0 -1 544.600 481.500 Tm(to)Tj
+1 0 0 -1 555.950 481.500 Tm(an)Tj
+1 0 0 -1 374.800 494.500 Tm(application.)Tj
+1 0 0 -1 374.800 509.500 Tm(0=Open)Tj
+1 0 0 -1 413.100 509.500 Tm(access)Tj
+1 0 0 -1 374.800 524.500 Tm(1=Exclusive)Tj
+1 0 0 -1 432.650 524.500 Tm(access)Tj
+1 0 0 -1 374.800 539.500 Tm(2=Control)Tj
+1 0 0 -1 422.900 539.500 Tm(access)Tj
+ET
+q 0.000 g 300.200 549.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 110.800 559.500 Tm(GevSCPInterfaceIndex)Tj
+ET
+q 0.000 g 336.200 549.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 302.800 559.500 Tm(Integer)Tj
+ET
+q 0.000 g 372.200 549.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 338.800 559.500 Tm(RW)Tj
+1 0 0 -1 374.800 559.500 Tm(Index)Tj
+1 0 0 -1 402.600 559.500 Tm(of)Tj
+1 0 0 -1 414.550 559.500 Tm(network)Tj
+1 0 0 -1 453.350 559.500 Tm(interface)Tj
+1 0 0 -1 494.600 559.500 Tm(to)Tj
+1 0 0 -1 505.950 559.500 Tm(use)Tj
+1 0 0 -1 523.400 559.500 Tm(\(from)Tj
+1 0 0 -1 551.200 559.500 Tm(0)Tj
+1 0 0 -1 559.450 559.500 Tm(to)Tj
+1 0 0 -1 374.800 572.500 Tm(3\).)Tj
+1 0 0 -1 140.000 617.500 Tm(To)Tj
+1 0 0 -1 155.000 617.500 Tm(make)Tj
+1 0 0 -1 181.600 617.500 Tm(the)Tj
+1 0 0 -1 197.800 617.500 Tm(iPort)Tj
+1 0 0 -1 221.950 617.500 Tm(announce)Tj
+1 0 0 -1 266.900 617.500 Tm(network)Tj
+1 0 0 -1 305.700 617.500 Tm(configuration)Tj
+1 0 0 -1 367.750 617.500 Tm(changes)Tj
+1 0 0 -1 405.950 617.500 Tm(on)Tj
+1 0 0 -1 419.750 617.500 Tm(the)Tj
+1 0 0 -1 435.950 617.500 Tm(ethernet,)Tj
+1 0 0 -1 476.900 617.500 Tm(you)Tj
+1 0 0 -1 496.200 617.500 Tm(have)Tj
+1 0 0 -1 519.750 617.500 Tm(to)Tj
+1 0 0 -1 140.000 630.500 Tm(reset)Tj
+1 0 0 -1 163.550 630.500 Tm(the)Tj
+1 0 0 -1 179.750 630.500 Tm(iPort)Tj
+1 0 0 -1 203.900 630.500 Tm(using)Tj
+1 0 0 -1 230.500 630.500 Tm(the)Tj
+1 0 0 -1 246.700 630.500 Tm(FLIR)Tj
+1 0 0 -1 273.300 630.500 Tm(command)Tj
+1 0 0 -1 319.450 630.500 Tm(register)Tj
+1 0 0 -1 355.200 630.500 Tm(PT1000Reset.)Tj
+ET
+endstream
+endobj
+75 0 obj
+12380
+endobj
+76 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 74 0 R
+>>
+endobj
+77 0 obj
+<< /Length 78 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(13)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(FLIR)Tj
+1 0 0 -1 166.950 135.700 Tm(Camera)Tj
+1 0 0 -1 209.200 135.700 Tm(interface)Tj
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 174.700 Tm(2.2.4.1)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 174.700 Tm(Feature)Tj
+1 0 0 -1 181.050 174.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 199.500 Tm(Registers)Tj
+1 0 0 -1 183.700 199.500 Tm(associated)Tj
+1 0 0 -1 231.700 199.500 Tm(with)Tj
+1 0 0 -1 254.050 199.500 Tm(camera)Tj
+1 0 0 -1 288.600 199.500 Tm(features)Tj
+ET
+q 0.000 g 140.000 218.000 384.500 0.750 re f Q
+q 0.000 g 140.000 238.750 384.500 0.750 re f Q
+q 0.000 g 140.000 218.000 0.750 21.500 re f Q
+q 0.000 g 523.750 218.000 0.750 21.500 re f Q
+q 0.000 g 244.650 218.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 228.750 Tm(Name)Tj
+ET
+q 0.000 g 280.650 218.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 228.750 Tm(Type)Tj
+ET
+q 0.000 g 316.650 218.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 228.750 Tm(Access)Tj
+1 0 0 -1 319.250 228.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 374.500 384.500 0.750 re f Q
+q 0.000 g 140.000 239.500 0.750 135.750 re f Q
+q 0.000 g 523.750 239.500 0.750 135.750 re f Q
+q 0.000 g 140.750 319.400 104.000 0.100 re f Q
+q 0.000 g 244.650 239.500 0.100 80.000 re f Q
+BT
+1 0 0 -1 143.250 249.500 Tm(CameraCapabilities)Tj
+ET
+q 0.000 g 244.750 319.400 36.000 0.100 re f Q
+q 0.000 g 280.650 239.500 0.100 80.000 re f Q
+BT
+1 0 0 -1 247.250 249.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 319.400 36.000 0.100 re f Q
+q 0.000 g 316.650 239.500 0.100 80.000 re f Q
+BT
+1 0 0 -1 283.250 249.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 319.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 249.500 Tm(Camera)Tj
+1 0 0 -1 356.250 249.500 Tm(capabilities.)Tj
+1 0 0 -1 411.900 249.500 Tm(Bit)Tj
+1 0 0 -1 428.150 249.500 Tm(mask.)Tj
+1 0 0 -1 319.250 264.500 Tm(0=Focus,)Tj
+1 0 0 -1 362.750 264.500 Tm(auto)Tj
+1 0 0 -1 384.450 264.500 Tm(focus)Tj
+1 0 0 -1 411.050 264.500 Tm(single)Tj
+1 0 0 -1 440.100 264.500 Tm(shot)Tj
+1 0 0 -1 319.250 279.500 Tm(1=Focus,)Tj
+1 0 0 -1 362.750 279.500 Tm(motor)Tj
+1 0 0 -1 319.250 294.500 Tm(2=Digital)Tj
+1 0 0 -1 364.300 294.500 Tm(I/O)Tj
+1 0 0 -1 381.750 294.500 Tm(capable)Tj
+1 0 0 -1 319.250 309.500 Tm(3=IRWindowing)Tj
+ET
+q 0.000 g 140.750 354.400 104.000 0.100 re f Q
+q 0.000 g 244.650 319.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 143.250 329.500 Tm(PowerMode)Tj
+ET
+q 0.000 g 244.750 354.400 36.000 0.100 re f Q
+q 0.000 g 280.650 319.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 247.250 329.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 354.400 36.000 0.100 re f Q
+q 0.000 g 316.650 319.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 283.250 329.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 354.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 329.500 Tm(0=A/C)Tj
+1 0 0 -1 352.050 329.500 Tm(powered)Tj
+1 0 0 -1 319.250 344.500 Tm(1=Power)Tj
+1 0 0 -1 361.850 344.500 Tm(over)Tj
+1 0 0 -1 384.150 344.500 Tm(Ethernet)Tj
+ET
+q 0.000 g 244.650 354.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 364.500 Tm(PT1000Reset)Tj
+ET
+q 0.000 g 280.650 354.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 364.500 Tm(Cmd)Tj
+ET
+q 0.000 g 316.650 354.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 364.500 Tm(WO)Tj
+1 0 0 -1 319.250 364.500 Tm(Reset)Tj
+1 0 0 -1 346.450 364.500 Tm(the)Tj
+1 0 0 -1 362.650 364.500 Tm(iPORT)Tj
+1 0 0 -1 396.600 364.500 Tm(interface)Tj
+1 0 0 -1 437.850 364.500 Tm(board.)Tj
+ET
+endstream
+endobj
+78 0 obj
+4010
+endobj
+79 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 77 0 R
+>>
+endobj
+80 0 obj
+<< /Length 81 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(14)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4.2)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(Range)Tj
+1 0 0 -1 175.550 135.700 Tm(\(case\))Tj
+1 0 0 -1 209.250 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(The)Tj
+1 0 0 -1 159.900 160.500 Tm(camera)Tj
+1 0 0 -1 194.450 160.500 Tm(has)Tj
+1 0 0 -1 211.900 160.500 Tm(a)Tj
+1 0 0 -1 219.550 160.500 Tm(list)Tj
+1 0 0 -1 235.800 160.500 Tm(of)Tj
+1 0 0 -1 247.750 160.500 Tm(measurement)Tj
+1 0 0 -1 309.200 160.500 Tm(ranges)Tj
+1 0 0 -1 340.700 160.500 Tm(\(called)Tj
+1 0 0 -1 373.400 160.500 Tm(calibration)Tj
+1 0 0 -1 423.200 160.500 Tm(cases\))Tj
+1 0 0 -1 452.850 160.500 Tm(which)Tj
+1 0 0 -1 482.500 160.500 Tm(you)Tj
+1 0 0 -1 501.800 160.500 Tm(can)Tj
+1 0 0 -1 140.000 173.500 Tm(inspect)Tj
+1 0 0 -1 173.950 173.500 Tm(through)Tj
+1 0 0 -1 210.950 173.500 Tm(these)Tj
+1 0 0 -1 236.350 173.500 Tm(registers.)Tj
+1 0 0 -1 279.150 173.500 Tm(You)Tj
+1 0 0 -1 300.850 173.500 Tm(can)Tj
+1 0 0 -1 318.900 173.500 Tm(also)Tj
+1 0 0 -1 339.400 173.500 Tm(make)Tj
+1 0 0 -1 366.000 173.500 Tm(the)Tj
+1 0 0 -1 382.200 173.500 Tm(camera)Tj
+1 0 0 -1 416.750 173.500 Tm(switch)Tj
+1 0 0 -1 448.250 173.500 Tm(to)Tj
+1 0 0 -1 459.600 173.500 Tm(one)Tj
+1 0 0 -1 478.250 173.500 Tm(of)Tj
+1 0 0 -1 490.200 173.500 Tm(them)Tj
+1 0 0 -1 515.000 173.500 Tm(using)Tj
+1 0 0 -1 140.000 186.500 Tm(the)Tj
+1 0 0 -1 156.200 186.500 Tm(CurrentCase)Tj
+1 0 0 -1 213.950 186.500 Tm(register.)Tj
+1 0 0 -1 140.000 205.500 Tm(There)Tj
+1 0 0 -1 168.450 205.500 Tm(is)Tj
+1 0 0 -1 178.550 205.500 Tm(one)Tj
+1 0 0 -1 197.200 205.500 Tm(set)Tj
+1 0 0 -1 212.200 205.500 Tm(of)Tj
+1 0 0 -1 224.150 205.500 Tm(cases)Tj
+1 0 0 -1 250.150 205.500 Tm(for)Tj
+1 0 0 -1 265.750 205.500 Tm(each)Tj
+1 0 0 -1 288.700 205.500 Tm(lens)Tj
+1 0 0 -1 309.200 205.500 Tm(the)Tj
+1 0 0 -1 325.400 205.500 Tm(camera)Tj
+1 0 0 -1 359.950 205.500 Tm(has)Tj
+1 0 0 -1 377.400 205.500 Tm(been)Tj
+1 0 0 -1 400.950 205.500 Tm(calibrated)Tj
+1 0 0 -1 447.100 205.500 Tm(with.)Tj
+1 0 0 -1 472.200 205.500 Tm(The)Tj
+1 0 0 -1 492.100 205.500 Tm(first)Tj
+1 0 0 -1 512.600 205.500 Tm(lens)Tj
+1 0 0 -1 140.000 218.500 Tm(would)Tj
+1 0 0 -1 170.250 218.500 Tm(normally)Tj
+1 0 0 -1 212.750 218.500 Tm(occupy)Tj
+1 0 0 -1 247.300 218.500 Tm(cases)Tj
+1 0 0 -1 273.300 218.500 Tm(0,)Tj
+1 0 0 -1 284.350 218.500 Tm(1)Tj
+1 0 0 -1 292.600 218.500 Tm(and)Tj
+1 0 0 -1 311.250 218.500 Tm(2.)Tj
+1 0 0 -1 322.300 218.500 Tm(The)Tj
+1 0 0 -1 342.200 218.500 Tm(second)Tj
+1 0 0 -1 375.500 218.500 Tm(lens)Tj
+1 0 0 -1 396.000 218.500 Tm(cases)Tj
+1 0 0 -1 422.000 218.500 Tm(3,)Tj
+1 0 0 -1 433.050 218.500 Tm(4)Tj
+1 0 0 -1 441.300 218.500 Tm(and)Tj
+1 0 0 -1 459.950 218.500 Tm(5.)Tj
+1 0 0 -1 140.000 237.500 Tm(Some)Tj
+1 0 0 -1 167.850 237.500 Tm(cases)Tj
+1 0 0 -1 193.850 237.500 Tm(can)Tj
+1 0 0 -1 211.900 237.500 Tm(be)Tj
+1 0 0 -1 225.050 237.500 Tm(disabled.)Tj
+1 0 0 -1 267.250 237.500 Tm(If)Tj
+1 0 0 -1 277.350 237.500 Tm(the)Tj
+1 0 0 -1 293.550 237.500 Tm(camera)Tj
+1 0 0 -1 328.100 237.500 Tm(doesn't)Tj
+1 0 0 -1 363.250 237.500 Tm(have)Tj
+1 0 0 -1 386.800 237.500 Tm(a)Tj
+1 0 0 -1 394.450 237.500 Tm(high)Tj
+1 0 0 -1 416.800 237.500 Tm(temperature)Tj
+1 0 0 -1 472.100 237.500 Tm(option,)Tj
+1 0 0 -1 505.750 237.500 Tm(cases)Tj
+1 0 0 -1 140.000 250.500 Tm(2,)Tj
+1 0 0 -1 151.050 250.500 Tm(5,)Tj
+1 0 0 -1 162.100 250.500 Tm(8)Tj
+1 0 0 -1 170.350 250.500 Tm(etc)Tj
+1 0 0 -1 185.950 250.500 Tm(will)Tj
+1 0 0 -1 205.850 250.500 Tm(normally)Tj
+1 0 0 -1 248.350 250.500 Tm(be)Tj
+1 0 0 -1 261.500 250.500 Tm(disabled.)Tj
+1 0 0 -1 140.000 269.500 Tm(To)Tj
+1 0 0 -1 155.000 269.500 Tm(retrieve)Tj
+1 0 0 -1 191.350 269.500 Tm(data)Tj
+1 0 0 -1 212.450 269.500 Tm(for)Tj
+1 0 0 -1 228.050 269.500 Tm(a)Tj
+1 0 0 -1 235.700 269.500 Tm(particular)Tj
+1 0 0 -1 280.650 269.500 Tm(case,)Tj
+1 0 0 -1 305.100 269.500 Tm(set)Tj
+1 0 0 -1 320.100 269.500 Tm(its)Tj
+1 0 0 -1 333.250 269.500 Tm(number)Tj
+1 0 0 -1 369.650 269.500 Tm(in)Tj
+1 0 0 -1 381.000 269.500 Tm(QueryCase)Tj
+1 0 0 -1 432.650 269.500 Tm(register)Tj
+1 0 0 -1 468.400 269.500 Tm(and)Tj
+1 0 0 -1 487.050 269.500 Tm(read)Tj
+1 0 0 -1 508.750 269.500 Tm(the)Tj
+1 0 0 -1 140.000 282.500 Tm(range)Tj
+1 0 0 -1 167.200 282.500 Tm(data)Tj
+1 0 0 -1 188.300 282.500 Tm(in)Tj
+1 0 0 -1 199.650 282.500 Tm(the)Tj
+1 0 0 -1 215.850 282.500 Tm(QueryCaseXXXX)Tj
+1 0 0 -1 299.250 282.500 Tm(registers.)Tj
+1 0 0 -1 140.000 301.500 Tm(Switching)Tj
+1 0 0 -1 187.400 301.500 Tm(cases)Tj
+1 0 0 -1 213.400 301.500 Tm(is)Tj
+1 0 0 -1 223.500 301.500 Tm(quite)Tj
+1 0 0 -1 248.300 301.500 Tm(a)Tj
+1 0 0 -1 255.950 301.500 Tm(slow)Tj
+1 0 0 -1 279.500 301.500 Tm(procedure.)Tj
+1 0 0 -1 329.000 301.500 Tm(It)Tj
+1 0 0 -1 338.500 301.500 Tm(can)Tj
+1 0 0 -1 356.550 301.500 Tm(take)Tj
+1 0 0 -1 377.650 301.500 Tm(up)Tj
+1 0 0 -1 391.450 301.500 Tm(to)Tj
+1 0 0 -1 402.800 301.500 Tm(10)Tj
+1 0 0 -1 416.600 301.500 Tm(seconds.)Tj
+1 0 0 -1 456.950 301.500 Tm(If)Tj
+1 0 0 -1 467.050 301.500 Tm(it)Tj
+1 0 0 -1 475.950 301.500 Tm(fails,)Tj
+1 0 0 -1 500.400 301.500 Tm(the)Tj
+1 0 0 -1 140.000 314.500 Tm(CurrentCase)Tj
+1 0 0 -1 197.750 314.500 Tm(will)Tj
+1 0 0 -1 217.650 314.500 Tm(eventually)Tj
+1 0 0 -1 266.250 314.500 Tm(return)Tj
+1 0 0 -1 295.300 314.500 Tm(to)Tj
+1 0 0 -1 306.650 314.500 Tm(the)Tj
+1 0 0 -1 322.850 314.500 Tm(previous)Tj
+1 0 0 -1 363.500 314.500 Tm(value.)Tj
+ET
+q 0.000 g 140.000 333.000 384.500 0.750 re f Q
+q 0.000 g 140.000 353.750 384.500 0.750 re f Q
+q 0.000 g 140.000 333.000 0.750 21.500 re f Q
+q 0.000 g 523.750 333.000 0.750 21.500 re f Q
+q 0.000 g 244.650 333.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 343.750 Tm(Name)Tj
+ET
+q 0.000 g 280.650 333.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 343.750 Tm(Type)Tj
+ET
+q 0.000 g 316.650 333.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 343.750 Tm(Access)Tj
+1 0 0 -1 319.250 343.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 513.500 384.500 0.750 re f Q
+q 0.000 g 140.000 354.500 0.750 159.750 re f Q
+q 0.000 g 523.750 354.500 0.750 159.750 re f Q
+q 0.000 g 140.750 374.400 104.000 0.100 re f Q
+q 0.000 g 244.650 354.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 364.500 Tm(NumCases)Tj
+ET
+q 0.000 g 244.750 374.400 36.000 0.100 re f Q
+q 0.000 g 280.650 354.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 364.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 374.400 36.000 0.100 re f Q
+q 0.000 g 316.650 354.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 364.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 374.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 364.500 Tm(Number)Tj
+1 0 0 -1 358.050 364.500 Tm(of)Tj
+1 0 0 -1 370.000 364.500 Tm(available)Tj
+1 0 0 -1 412.500 364.500 Tm(cases)Tj
+ET
+q 0.000 g 140.750 394.400 104.000 0.100 re f Q
+q 0.000 g 244.650 374.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 384.500 Tm(CurrentCase)Tj
+ET
+q 0.000 g 244.750 394.400 36.000 0.100 re f Q
+q 0.000 g 280.650 374.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 384.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 394.400 36.000 0.100 re f Q
+q 0.000 g 316.650 374.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 384.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 394.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 384.500 Tm(Current)Tj
+1 0 0 -1 355.650 384.500 Tm(zero)Tj
+1 0 0 -1 377.350 384.500 Tm(based)Tj
+1 0 0 -1 405.150 384.500 Tm(case.)Tj
+ET
+q 0.000 g 140.750 453.400 104.000 0.100 re f Q
+q 0.000 g 244.650 394.500 0.100 59.000 re f Q
+BT
+1 0 0 -1 143.250 404.500 Tm(QueryCase)Tj
+ET
+q 0.000 g 244.750 453.400 36.000 0.100 re f Q
+q 0.000 g 280.650 394.500 0.100 59.000 re f Q
+BT
+1 0 0 -1 247.250 404.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 453.400 36.000 0.100 re f Q
+q 0.000 g 316.650 394.500 0.100 59.000 re f Q
+BT
+1 0 0 -1 283.250 404.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 453.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 404.500 Tm(Query)Tj
+1 0 0 -1 349.500 404.500 Tm(case)Tj
+1 0 0 -1 371.200 404.500 Tm(zero)Tj
+1 0 0 -1 392.900 404.500 Tm(based)Tj
+1 0 0 -1 420.700 404.500 Tm(index.)Tj
+1 0 0 -1 319.250 417.500 Tm(This)Tj
+1 0 0 -1 341.600 417.500 Tm(register)Tj
+1 0 0 -1 377.350 417.500 Tm(controls)Tj
+1 0 0 -1 415.550 417.500 Tm(the)Tj
+1 0 0 -1 431.750 417.500 Tm(content)Tj
+1 0 0 -1 466.900 417.500 Tm(of)Tj
+1 0 0 -1 319.250 430.500 Tm(QueryCaseLowLimit,)Tj
+1 0 0 -1 418.250 430.500 Tm(QueryCaseHighLimit)Tj
+1 0 0 -1 319.250 443.500 Tm(and)Tj
+1 0 0 -1 337.900 443.500 Tm(QueryCaseEnabled.)Tj
+ET
+q 0.000 g 140.750 473.400 104.000 0.100 re f Q
+q 0.000 g 244.650 453.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 463.500 Tm(QueryCaseLowLimit)Tj
+ET
+q 0.000 g 244.750 473.400 36.000 0.100 re f Q
+q 0.000 g 280.650 453.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 463.500 Tm(Float)Tj
+ET
+q 0.000 g 280.750 473.400 36.000 0.100 re f Q
+q 0.000 g 316.650 453.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 463.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 473.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 463.500 Tm(Queried)Tj
+1 0 0 -1 357.450 463.500 Tm(case)Tj
+1 0 0 -1 379.150 463.500 Tm(low)Tj
+1 0 0 -1 398.450 463.500 Tm(limit)Tj
+1 0 0 -1 422.000 463.500 Tm(in)Tj
+1 0 0 -1 433.350 463.500 Tm(Kelvin.)Tj
+ET
+q 0.000 g 140.750 493.400 104.000 0.100 re f Q
+q 0.000 g 244.650 473.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 483.500 Tm(QueryCaseHighLimit)Tj
+ET
+q 0.000 g 244.750 493.400 36.000 0.100 re f Q
+q 0.000 g 280.650 473.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 483.500 Tm(Float)Tj
+ET
+q 0.000 g 280.750 493.400 36.000 0.100 re f Q
+q 0.000 g 316.650 473.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 483.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 493.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 483.500 Tm(Queried)Tj
+1 0 0 -1 357.450 483.500 Tm(case)Tj
+1 0 0 -1 379.150 483.500 Tm(high)Tj
+1 0 0 -1 401.500 483.500 Tm(limit)Tj
+1 0 0 -1 425.050 483.500 Tm(in)Tj
+1 0 0 -1 436.400 483.500 Tm(Kelvin.)Tj
+ET
+q 0.000 g 244.650 493.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 503.500 Tm(QueryCaseEnabled)Tj
+ET
+q 0.000 g 280.650 493.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 503.500 Tm(Bool)Tj
+ET
+q 0.000 g 316.650 493.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 503.500 Tm(RO)Tj
+1 0 0 -1 319.250 503.500 Tm(True)Tj
+1 0 0 -1 342.800 503.500 Tm(if)Tj
+1 0 0 -1 352.300 503.500 Tm(the)Tj
+1 0 0 -1 368.500 503.500 Tm(queried)Tj
+1 0 0 -1 404.250 503.500 Tm(case)Tj
+1 0 0 -1 425.950 503.500 Tm(is)Tj
+1 0 0 -1 436.050 503.500 Tm(enabled.)Tj
+ET
+endstream
+endobj
+81 0 obj
+10741
+endobj
+82 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 80 0 R
+>>
+endobj
+83 0 obj
+<< /Length 84 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(15)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4.3)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(Object)Tj
+1 0 0 -1 174.900 135.700 Tm(Parameter)Tj
+1 0 0 -1 229.350 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(infrared)Tj
+1 0 0 -1 291.650 160.500 Tm(measurement)Tj
+1 0 0 -1 353.100 160.500 Tm(conditions.)Tj
+ET
+q 0.000 g 140.000 179.000 396.500 0.750 re f Q
+q 0.000 g 140.000 199.750 396.500 0.750 re f Q
+q 0.000 g 140.000 179.000 0.750 21.500 re f Q
+q 0.000 g 535.750 179.000 0.750 21.500 re f Q
+q 0.000 g 258.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 189.750 Tm(Name)Tj
+ET
+q 0.000 g 292.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 189.750 Tm(Type)Tj
+ET
+q 0.000 g 328.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 189.750 Tm(Access)Tj
+1 0 0 -1 331.250 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 375.500 396.500 0.750 re f Q
+q 0.000 g 140.000 200.500 0.750 175.750 re f Q
+q 0.000 g 535.750 200.500 0.750 175.750 re f Q
+q 0.000 g 140.750 220.400 118.000 0.100 re f Q
+q 0.000 g 258.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 210.500 Tm(ReflectedTemperature)Tj
+ET
+q 0.000 g 258.750 220.400 34.000 0.100 re f Q
+q 0.000 g 292.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 210.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 220.400 36.000 0.100 re f Q
+q 0.000 g 328.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 210.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 220.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 210.500 Tm(Kelvin,)Tj
+1 0 0 -1 366.700 210.500 Tm(0.0)Tj
+1 0 0 -1 383.200 210.500 Tm(-)Tj
+1 0 0 -1 389.650 210.500 Tm(5000.0)Tj
+ET
+q 0.000 g 140.750 240.400 118.000 0.100 re f Q
+q 0.000 g 258.650 220.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 230.500 Tm(AtmosphericTemperature)Tj
+ET
+q 0.000 g 258.750 240.400 34.000 0.100 re f Q
+q 0.000 g 292.650 220.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 230.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 240.400 36.000 0.100 re f Q
+q 0.000 g 328.650 220.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 230.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 240.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 230.500 Tm(Kelvin,)Tj
+1 0 0 -1 366.700 230.500 Tm(0.0)Tj
+1 0 0 -1 383.200 230.500 Tm(-)Tj
+1 0 0 -1 389.650 230.500 Tm(5000.0)Tj
+ET
+q 0.000 g 140.750 260.400 118.000 0.100 re f Q
+q 0.000 g 258.650 240.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 250.500 Tm(ObjectDistance)Tj
+ET
+q 0.000 g 258.750 260.400 34.000 0.100 re f Q
+q 0.000 g 292.650 240.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 250.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 260.400 36.000 0.100 re f Q
+q 0.000 g 328.650 240.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 250.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 260.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 250.500 Tm(Meter,)Tj
+1 0 0 -1 363.050 250.500 Tm(0.0)Tj
+1 0 0 -1 379.550 250.500 Tm(-)Tj
+1 0 0 -1 386.000 250.500 Tm(10000.0)Tj
+ET
+q 0.000 g 140.750 280.400 118.000 0.100 re f Q
+q 0.000 g 258.650 260.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 270.500 Tm(ObjectEmissivity)Tj
+ET
+q 0.000 g 258.750 280.400 34.000 0.100 re f Q
+q 0.000 g 292.650 260.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 270.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 280.400 36.000 0.100 re f Q
+q 0.000 g 328.650 260.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 270.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 280.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 270.500 Tm(0.0)Tj
+1 0 0 -1 347.750 270.500 Tm(-)Tj
+1 0 0 -1 354.200 270.500 Tm(1.0)Tj
+ET
+q 0.000 g 140.750 300.400 118.000 0.100 re f Q
+q 0.000 g 258.650 280.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 290.500 Tm(RelativeHumidity)Tj
+ET
+q 0.000 g 258.750 300.400 34.000 0.100 re f Q
+q 0.000 g 292.650 280.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 290.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 300.400 36.000 0.100 re f Q
+q 0.000 g 328.650 280.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 290.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 300.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 290.500 Tm(Percent,)Tj
+1 0 0 -1 369.750 290.500 Tm(0.0)Tj
+1 0 0 -1 386.250 290.500 Tm(-)Tj
+1 0 0 -1 392.700 290.500 Tm(100.0)Tj
+ET
+q 0.000 g 140.750 320.400 118.000 0.100 re f Q
+q 0.000 g 258.650 300.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 310.500 Tm(ExtOpticsTemperature)Tj
+ET
+q 0.000 g 258.750 320.400 34.000 0.100 re f Q
+q 0.000 g 292.650 300.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 310.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 320.400 36.000 0.100 re f Q
+q 0.000 g 328.650 300.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 310.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 320.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 310.500 Tm(Kelvin,)Tj
+1 0 0 -1 366.700 310.500 Tm(0.0)Tj
+1 0 0 -1 383.200 310.500 Tm(-)Tj
+1 0 0 -1 389.650 310.500 Tm(5000.0)Tj
+ET
+q 0.000 g 140.750 340.400 118.000 0.100 re f Q
+q 0.000 g 258.650 320.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 330.500 Tm(ExtOpticsTransmission)Tj
+ET
+q 0.000 g 258.750 340.400 34.000 0.100 re f Q
+q 0.000 g 292.650 320.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 261.250 330.500 Tm(Float)Tj
+ET
+q 0.000 g 292.750 340.400 36.000 0.100 re f Q
+q 0.000 g 328.650 320.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 295.250 330.500 Tm(RW)Tj
+ET
+q 0.000 g 328.750 340.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 331.250 330.500 Tm(0.0)Tj
+1 0 0 -1 347.750 330.500 Tm(-)Tj
+1 0 0 -1 354.200 330.500 Tm(1.0)Tj
+ET
+q 0.000 g 258.650 340.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 143.250 350.500 Tm(EstimatedTransmission)Tj
+ET
+q 0.000 g 292.650 340.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 261.250 350.500 Tm(Float)Tj
+ET
+q 0.000 g 328.650 340.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 295.250 350.500 Tm(RW)Tj
+1 0 0 -1 331.250 350.500 Tm(0.01)Tj
+1 0 0 -1 353.300 350.500 Tm(-)Tj
+1 0 0 -1 359.750 350.500 Tm(1.0)Tj
+1 0 0 -1 331.250 365.500 Tm(0.0)Tj
+1 0 0 -1 347.750 365.500 Tm(=)Tj
+1 0 0 -1 356.750 365.500 Tm(Use)Tj
+1 0 0 -1 376.650 365.500 Tm(calculated)Tj
+1 0 0 -1 424.000 365.500 Tm(value.)Tj
+ET
+endstream
+endobj
+84 0 obj
+6533
+endobj
+85 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 83 0 R
+>>
+endobj
+86 0 obj
+<< /Length 87 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(16)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4.4)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(Focus)Tj
+1 0 0 -1 173.100 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(camera)Tj
+1 0 0 -1 288.600 160.500 Tm(focus)Tj
+1 0 0 -1 315.200 160.500 Tm(operation)Tj
+ET
+q 0.000 g 140.000 179.000 384.500 0.750 re f Q
+q 0.000 g 140.000 199.750 384.500 0.750 re f Q
+q 0.000 g 140.000 179.000 0.750 21.500 re f Q
+q 0.000 g 523.750 179.000 0.750 21.500 re f Q
+q 0.000 g 244.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 189.750 Tm(Name)Tj
+ET
+q 0.000 g 280.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 189.750 Tm(Type)Tj
+ET
+q 0.000 g 316.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 189.750 Tm(Access)Tj
+1 0 0 -1 319.250 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 580.500 384.500 0.750 re f Q
+q 0.000 g 140.000 200.500 0.750 380.750 re f Q
+q 0.000 g 523.750 200.500 0.750 380.750 re f Q
+q 0.000 g 140.750 220.400 104.000 0.100 re f Q
+q 0.000 g 244.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 210.500 Tm(FocusSpeed)Tj
+ET
+q 0.000 g 244.750 220.400 36.000 0.100 re f Q
+q 0.000 g 280.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 210.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 220.400 36.000 0.100 re f Q
+q 0.000 g 316.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 210.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 220.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 210.500 Tm(0)Tj
+1 0 0 -1 327.500 210.500 Tm(to)Tj
+1 0 0 -1 338.850 210.500 Tm(100)Tj
+1 0 0 -1 358.150 210.500 Tm(\(0)Tj
+1 0 0 -1 370.100 210.500 Tm(=)Tj
+1 0 0 -1 379.100 210.500 Tm(permanent)Tj
+1 0 0 -1 428.300 210.500 Tm(stop\))Tj
+ET
+q 0.000 g 140.750 270.400 104.000 0.100 re f Q
+q 0.000 g 244.650 220.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 230.500 Tm(FocusDirection)Tj
+ET
+q 0.000 g 244.750 270.400 36.000 0.100 re f Q
+q 0.000 g 280.650 220.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 230.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 270.400 36.000 0.100 re f Q
+q 0.000 g 316.650 220.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 283.250 230.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 270.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 230.500 Tm(Stop)Tj
+1 0 0 -1 342.200 230.500 Tm(=)Tj
+1 0 0 -1 351.200 230.500 Tm(0)Tj
+1 0 0 -1 319.250 245.500 Tm(Far)Tj
+1 0 0 -1 336.700 245.500 Tm(=)Tj
+1 0 0 -1 345.700 245.500 Tm(1)Tj
+1 0 0 -1 319.250 260.500 Tm(Near)Tj
+1 0 0 -1 343.400 260.500 Tm(=)Tj
+1 0 0 -1 352.400 260.500 Tm(2)Tj
+ET
+q 0.000 g 140.750 305.400 104.000 0.100 re f Q
+q 0.000 g 244.650 270.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 143.250 280.500 Tm(AutoFocusMethod)Tj
+ET
+q 0.000 g 244.750 305.400 36.000 0.100 re f Q
+q 0.000 g 280.650 270.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 247.250 280.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 305.400 36.000 0.100 re f Q
+q 0.000 g 316.650 270.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 283.250 280.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 305.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 280.500 Tm(0=Coarse)Tj
+1 0 0 -1 319.250 295.500 Tm(1=Fine)Tj
+ET
+q 0.000 g 140.750 325.400 104.000 0.100 re f Q
+q 0.000 g 244.650 305.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 315.500 Tm(AutoFocus)Tj
+ET
+q 0.000 g 244.750 325.400 36.000 0.100 re f Q
+q 0.000 g 280.650 305.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 315.500 Tm(Cmd)Tj
+ET
+q 0.000 g 280.750 325.400 36.000 0.100 re f Q
+q 0.000 g 316.650 305.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 315.500 Tm(WO)Tj
+ET
+q 0.000 g 316.750 325.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 315.500 Tm(Perform)Tj
+1 0 0 -1 358.050 315.500 Tm(auto)Tj
+1 0 0 -1 379.750 315.500 Tm(focus)Tj
+1 0 0 -1 406.350 315.500 Tm(operation.)Tj
+ET
+q 0.000 g 140.750 373.400 104.000 0.100 re f Q
+q 0.000 g 244.650 325.500 0.100 48.000 re f Q
+BT
+1 0 0 -1 143.250 335.500 Tm(FocusPos)Tj
+ET
+q 0.000 g 244.750 373.400 36.000 0.100 re f Q
+q 0.000 g 280.650 325.500 0.100 48.000 re f Q
+BT
+1 0 0 -1 247.250 335.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 373.400 36.000 0.100 re f Q
+q 0.000 g 316.650 325.500 0.100 48.000 re f Q
+BT
+1 0 0 -1 283.250 335.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 373.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 335.500 Tm(Absolute)Tj
+1 0 0 -1 361.750 335.500 Tm(focus)Tj
+1 0 0 -1 388.350 335.500 Tm(position)Tj
+1 0 0 -1 319.250 350.500 Tm(A)Tj
+1 0 0 -1 329.950 350.500 Tm(high)Tj
+1 0 0 -1 352.300 350.500 Tm(value)Tj
+1 0 0 -1 378.900 350.500 Tm(means)Tj
+1 0 0 -1 409.800 350.500 Tm(a)Tj
+1 0 0 -1 417.450 350.500 Tm(far)Tj
+1 0 0 -1 432.450 350.500 Tm(distance)Tj
+1 0 0 -1 471.250 350.500 Tm(on)Tj
+1 0 0 -1 485.050 350.500 Tm(some)Tj
+1 0 0 -1 319.250 363.500 Tm(types)Tj
+1 0 0 -1 345.250 363.500 Tm(of)Tj
+1 0 0 -1 357.200 363.500 Tm(cameras,)Tj
+1 0 0 -1 398.750 363.500 Tm(a)Tj
+1 0 0 -1 406.400 363.500 Tm(near)Tj
+1 0 0 -1 428.100 363.500 Tm(distance)Tj
+1 0 0 -1 466.900 363.500 Tm(on)Tj
+1 0 0 -1 480.700 363.500 Tm(others.)Tj
+ET
+q 0.000 g 140.750 423.400 104.000 0.100 re f Q
+q 0.000 g 244.650 373.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 383.500 Tm(FocusDistance)Tj
+ET
+q 0.000 g 244.750 423.400 36.000 0.100 re f Q
+q 0.000 g 280.650 373.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 383.500 Tm(Float)Tj
+ET
+q 0.000 g 280.750 423.400 36.000 0.100 re f Q
+q 0.000 g 316.650 373.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 283.250 383.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 423.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 383.500 Tm(Focus)Tj
+1 0 0 -1 348.300 383.500 Tm(position)Tj
+1 0 0 -1 386.550 383.500 Tm(as)Tj
+1 0 0 -1 398.500 383.500 Tm(distance)Tj
+1 0 0 -1 437.300 383.500 Tm(in)Tj
+1 0 0 -1 448.650 383.500 Tm(meters)Tj
+1 0 0 -1 480.750 383.500 Tm(*\))Tj
+1 0 0 -1 319.250 398.500 Tm(Min)Tj
+1 0 0 -1 340.350 398.500 Tm(=)Tj
+1 0 0 -1 349.350 398.500 Tm(0)Tj
+1 0 0 -1 319.250 413.500 Tm(Max)Tj
+1 0 0 -1 342.200 413.500 Tm(=)Tj
+1 0 0 -1 351.200 413.500 Tm(1000)Tj
+ET
+q 0.000 g 140.750 514.400 104.000 0.100 re f Q
+q 0.000 g 244.650 423.500 0.100 91.000 re f Q
+BT
+1 0 0 -1 143.250 433.500 Tm(FocusStep)Tj
+ET
+q 0.000 g 244.750 514.400 36.000 0.100 re f Q
+q 0.000 g 280.650 423.500 0.100 91.000 re f Q
+BT
+1 0 0 -1 247.250 433.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 514.400 36.000 0.100 re f Q
+q 0.000 g 316.650 423.500 0.100 91.000 re f Q
+BT
+1 0 0 -1 283.250 433.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 514.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 433.500 Tm(Absolute)Tj
+1 0 0 -1 361.750 433.500 Tm(focus)Tj
+1 0 0 -1 388.350 433.500 Tm(position)Tj
+1 0 0 -1 426.600 433.500 Tm(change)Tj
+1 0 0 -1 460.550 433.500 Tm(amount)Tj
+1 0 0 -1 496.350 433.500 Tm(for)Tj
+1 0 0 -1 319.250 446.500 Tm(FocusDecrement)Tj
+1 0 0 -1 396.550 446.500 Tm(and)Tj
+1 0 0 -1 415.200 446.500 Tm(FocusIncrement.)Tj
+1 0 0 -1 491.600 446.500 Tm(*\))Tj
+1 0 0 -1 319.250 461.500 Tm(Small)Tj
+1 0 0 -1 347.700 461.500 Tm(values)Tj
+1 0 0 -1 378.600 461.500 Tm(\(<250\))Tj
+1 0 0 -1 411.400 461.500 Tm(might)Tj
+1 0 0 -1 439.850 461.500 Tm(not)Tj
+1 0 0 -1 456.700 461.500 Tm(move)Tj
+1 0 0 -1 483.900 461.500 Tm(the)Tj
+1 0 0 -1 319.250 474.500 Tm(focus.)Tj
+1 0 0 -1 319.250 489.500 Tm(Min)Tj
+1 0 0 -1 340.350 489.500 Tm(=)Tj
+1 0 0 -1 349.350 489.500 Tm(0)Tj
+1 0 0 -1 319.250 504.500 Tm(Max)Tj
+1 0 0 -1 342.200 504.500 Tm(=)Tj
+1 0 0 -1 351.200 504.500 Tm(1000)Tj
+ET
+q 0.000 g 140.750 547.400 104.000 0.100 re f Q
+q 0.000 g 244.650 514.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 524.500 Tm(FocusDecrement)Tj
+ET
+q 0.000 g 244.750 547.400 36.000 0.100 re f Q
+q 0.000 g 280.650 514.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 247.250 524.500 Tm(Cmd)Tj
+ET
+q 0.000 g 280.750 547.400 36.000 0.100 re f Q
+q 0.000 g 316.650 514.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 283.250 524.500 Tm(WO)Tj
+ET
+q 0.000 g 316.750 547.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 524.500 Tm(Decrements)Tj
+1 0 0 -1 374.550 524.500 Tm(the)Tj
+1 0 0 -1 390.750 524.500 Tm(focus)Tj
+1 0 0 -1 417.350 524.500 Tm(position)Tj
+1 0 0 -1 455.600 524.500 Tm(by)Tj
+1 0 0 -1 469.400 524.500 Tm(the)Tj
+1 0 0 -1 485.600 524.500 Tm(value)Tj
+1 0 0 -1 512.200 524.500 Tm(in)Tj
+1 0 0 -1 319.250 537.500 Tm(FocusStep)Tj
+1 0 0 -1 367.850 537.500 Tm(*\))Tj
+ET
+q 0.000 g 244.650 547.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 143.250 557.500 Tm(FocusIncrement)Tj
+ET
+q 0.000 g 280.650 547.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 247.250 557.500 Tm(Cmd)Tj
+ET
+q 0.000 g 316.650 547.500 0.100 33.000 re f Q
+BT
+1 0 0 -1 283.250 557.500 Tm(WO)Tj
+1 0 0 -1 319.250 557.500 Tm(Increments)Tj
+1 0 0 -1 370.900 557.500 Tm(the)Tj
+1 0 0 -1 387.100 557.500 Tm(focus)Tj
+1 0 0 -1 413.700 557.500 Tm(position)Tj
+1 0 0 -1 451.950 557.500 Tm(by)Tj
+1 0 0 -1 465.750 557.500 Tm(the)Tj
+1 0 0 -1 481.950 557.500 Tm(value)Tj
+1 0 0 -1 508.550 557.500 Tm(in)Tj
+1 0 0 -1 319.250 570.500 Tm(FocusStep)Tj
+1 0 0 -1 367.850 570.500 Tm(*\))Tj
+1 0 0 -1 140.000 615.500 Tm(*\))Tj
+1 0 0 -1 151.950 615.500 Tm(Needs)Tj
+1 0 0 -1 182.200 615.500 Tm(command)Tj
+1 0 0 -1 228.350 615.500 Tm(interface)Tj
+1 0 0 -1 269.600 615.500 Tm(version)Tj
+1 0 0 -1 304.750 615.500 Tm(0.2.12.)Tj
+1 0 0 -1 337.750 615.500 Tm(See)Tj
+1 0 0 -1 356.400 615.500 Tm(the)Tj
+1 0 0 -1 372.600 615.500 Tm(DeviceManufacturerInfo)Tj
+1 0 0 -1 484.700 615.500 Tm(register)Tj
+ET
+endstream
+endobj
+87 0 obj
+9674
+endobj
+88 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 86 0 R
+>>
+endobj
+89 0 obj
+<< /Length 90 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(17)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4.5)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(Image)Tj
+1 0 0 -1 173.700 135.700 Tm(quality)Tj
+1 0 0 -1 208.600 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(the)Tj
+1 0 0 -1 270.250 160.500 Tm(image)Tj
+1 0 0 -1 299.900 160.500 Tm(quality)Tj
+ET
+q 0.000 g 140.000 179.000 382.500 0.750 re f Q
+q 0.000 g 140.000 199.750 382.500 0.750 re f Q
+q 0.000 g 140.000 179.000 0.750 21.500 re f Q
+q 0.000 g 521.750 179.000 0.750 21.500 re f Q
+q 0.000 g 244.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 189.750 Tm(Name)Tj
+ET
+q 0.000 g 278.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 189.750 Tm(Type)Tj
+ET
+q 0.000 g 314.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 281.250 189.750 Tm(Access)Tj
+1 0 0 -1 317.250 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 320.500 382.500 0.750 re f Q
+q 0.000 g 140.000 200.500 0.750 120.750 re f Q
+q 0.000 g 521.750 200.500 0.750 120.750 re f Q
+q 0.000 g 140.750 235.400 104.000 0.100 re f Q
+q 0.000 g 244.650 200.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 143.250 210.500 Tm(NoiseReduction)Tj
+ET
+q 0.000 g 244.750 235.400 34.000 0.100 re f Q
+q 0.000 g 278.650 200.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 247.250 210.500 Tm(Enum)Tj
+ET
+q 0.000 g 278.750 235.400 36.000 0.100 re f Q
+q 0.000 g 314.650 200.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 281.250 210.500 Tm(RW)Tj
+ET
+q 0.000 g 314.750 235.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 317.250 210.500 Tm(0)Tj
+1 0 0 -1 325.500 210.500 Tm(=)Tj
+1 0 0 -1 334.500 210.500 Tm(Off)Tj
+1 0 0 -1 317.250 225.500 Tm(1)Tj
+1 0 0 -1 325.500 225.500 Tm(=)Tj
+1 0 0 -1 334.500 225.500 Tm(Low)Tj
+1 0 0 -1 357.450 225.500 Tm(etc.)Tj
+ET
+q 0.000 g 140.750 285.400 104.000 0.100 re f Q
+q 0.000 g 244.650 235.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 245.500 Tm(NUCMode)Tj
+ET
+q 0.000 g 244.750 285.400 34.000 0.100 re f Q
+q 0.000 g 278.650 235.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 245.500 Tm(Enum)Tj
+ET
+q 0.000 g 278.750 285.400 36.000 0.100 re f Q
+q 0.000 g 314.650 235.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 281.250 245.500 Tm(RW)Tj
+ET
+q 0.000 g 314.750 285.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 317.250 245.500 Tm(Non-)Tj
+1 0 0 -1 339.900 245.500 Tm(Uniform)Tj
+1 0 0 -1 380.550 245.500 Tm(Correction)Tj
+1 0 0 -1 430.350 245.500 Tm(\(NUC\))Tj
+1 0 0 -1 463.650 245.500 Tm(mode)Tj
+1 0 0 -1 317.250 260.500 Tm(Off)Tj
+1 0 0 -1 335.300 260.500 Tm(=)Tj
+1 0 0 -1 344.300 260.500 Tm(0)Tj
+1 0 0 -1 317.250 275.500 Tm(Automatic)Tj
+1 0 0 -1 366.450 275.500 Tm(by)Tj
+1 0 0 -1 380.250 275.500 Tm(camera=1)Tj
+ET
+q 0.000 g 244.650 285.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 143.250 295.500 Tm(NUCAction)Tj
+ET
+q 0.000 g 278.650 285.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 247.250 295.500 Tm(Cmd)Tj
+ET
+q 0.000 g 314.650 285.500 0.100 35.000 re f Q
+BT
+1 0 0 -1 281.250 295.500 Tm(WO)Tj
+1 0 0 -1 317.250 295.500 Tm(Do)Tj
+1 0 0 -1 333.450 295.500 Tm(NUC)Tj
+1 0 0 -1 359.450 295.500 Tm(operation.)Tj
+1 0 0 -1 317.250 310.500 Tm(This)Tj
+1 0 0 -1 339.600 310.500 Tm(can)Tj
+1 0 0 -1 357.650 310.500 Tm(take)Tj
+1 0 0 -1 378.750 310.500 Tm(up)Tj
+1 0 0 -1 392.550 310.500 Tm(to)Tj
+1 0 0 -1 403.900 310.500 Tm(10)Tj
+1 0 0 -1 417.700 310.500 Tm(seconds.)Tj
+ET
+endstream
+endobj
+90 0 obj
+3924
+endobj
+91 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 89 0 R
+>>
+endobj
+92 0 obj
+<< /Length 93 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(18)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4.6)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(Image)Tj
+1 0 0 -1 173.700 135.700 Tm(stream)Tj
+1 0 0 -1 210.450 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(the)Tj
+1 0 0 -1 270.250 160.500 Tm(image)Tj
+1 0 0 -1 299.900 160.500 Tm(format)Tj
+1 0 0 -1 332.000 160.500 Tm(or)Tj
+1 0 0 -1 343.950 160.500 Tm(with)Tj
+1 0 0 -1 366.300 160.500 Tm(the)Tj
+1 0 0 -1 382.500 160.500 Tm(image)Tj
+1 0 0 -1 412.150 160.500 Tm(stream..)Tj
+ET
+q 0.000 g 140.000 179.000 382.500 0.750 re f Q
+q 0.000 g 140.000 199.750 382.500 0.750 re f Q
+q 0.000 g 140.000 179.000 0.750 21.500 re f Q
+q 0.000 g 521.750 179.000 0.750 21.500 re f Q
+q 0.000 g 244.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 189.750 Tm(Name)Tj
+ET
+q 0.000 g 278.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 189.750 Tm(Type)Tj
+ET
+q 0.000 g 314.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 281.250 189.750 Tm(Access)Tj
+1 0 0 -1 317.250 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 603.500 382.500 0.750 re f Q
+q 0.000 g 140.000 200.500 0.750 403.750 re f Q
+q 0.000 g 521.750 200.500 0.750 403.750 re f Q
+q 0.000 g 140.750 250.400 104.000 0.100 re f Q
+q 0.000 g 244.650 200.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 210.500 Tm(IRFormat)Tj
+ET
+q 0.000 g 244.750 250.400 34.000 0.100 re f Q
+q 0.000 g 278.650 200.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 210.500 Tm(Enum)Tj
+ET
+q 0.000 g 278.750 250.400 36.000 0.100 re f Q
+q 0.000 g 314.650 200.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 281.250 210.500 Tm(RW)Tj
+ET
+q 0.000 g 314.750 250.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 317.250 210.500 Tm(0=Signal)Tj
+1 0 0 -1 359.850 210.500 Tm(linear)Tj
+1 0 0 -1 317.250 225.500 Tm(1=Temperature)Tj
+1 0 0 -1 387.950 225.500 Tm(linear,)Tj
+1 0 0 -1 418.500 225.500 Tm(0.1K)Tj
+1 0 0 -1 442.950 225.500 Tm(resolution)Tj
+1 0 0 -1 317.250 240.500 Tm(2=Temperature)Tj
+1 0 0 -1 387.950 240.500 Tm(linear,)Tj
+1 0 0 -1 418.500 240.500 Tm(0.01K)Tj
+1 0 0 -1 448.450 240.500 Tm(resolution)Tj
+ET
+q 0.000 g 140.750 313.400 104.000 0.100 re f Q
+q 0.000 g 244.650 250.500 0.100 63.000 re f Q
+BT
+1 0 0 -1 143.250 260.500 Tm(IRTestPattern)Tj
+ET
+q 0.000 g 244.750 313.400 34.000 0.100 re f Q
+q 0.000 g 278.650 250.500 0.100 63.000 re f Q
+BT
+1 0 0 -1 247.250 260.500 Tm(Enum)Tj
+ET
+q 0.000 g 278.750 313.400 36.000 0.100 re f Q
+q 0.000 g 314.650 250.500 0.100 63.000 re f Q
+BT
+1 0 0 -1 281.250 260.500 Tm(RW)Tj
+ET
+q 0.000 g 314.750 313.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 317.250 260.500 Tm(This)Tj
+1 0 0 -1 339.600 260.500 Tm(register)Tj
+1 0 0 -1 375.350 260.500 Tm(selects)Tj
+1 0 0 -1 407.450 260.500 Tm(the)Tj
+1 0 0 -1 423.650 260.500 Tm(type)Tj
+1 0 0 -1 445.350 260.500 Tm(of)Tj
+1 0 0 -1 457.300 260.500 Tm(test)Tj
+1 0 0 -1 475.350 260.500 Tm(image)Tj
+1 0 0 -1 317.250 273.500 Tm(that)Tj
+1 0 0 -1 336.550 273.500 Tm(is)Tj
+1 0 0 -1 346.650 273.500 Tm(created)Tj
+1 0 0 -1 381.200 273.500 Tm(by)Tj
+1 0 0 -1 395.000 273.500 Tm(the)Tj
+1 0 0 -1 411.200 273.500 Tm(IR)Tj
+1 0 0 -1 425.000 273.500 Tm(camera.)Tj
+1 0 0 -1 317.250 288.500 Tm(0=Off)Tj
+1 0 0 -1 347.000 288.500 Tm(\(see)Tj
+1 0 0 -1 367.500 288.500 Tm(IRFormat\))Tj
+1 0 0 -1 317.250 303.500 Tm(1=)Tj
+1 0 0 -1 331.750 303.500 Tm(TestPattern)Tj
+ET
+q 0.000 g 140.750 486.400 104.000 0.100 re f Q
+q 0.000 g 244.650 313.500 0.100 173.000 re f Q
+BT
+1 0 0 -1 143.250 323.500 Tm(IRFrameRate)Tj
+ET
+q 0.000 g 244.750 486.400 34.000 0.100 re f Q
+q 0.000 g 278.650 313.500 0.100 173.000 re f Q
+BT
+1 0 0 -1 247.250 323.500 Tm(Enum)Tj
+ET
+q 0.000 g 278.750 486.400 36.000 0.100 re f Q
+q 0.000 g 314.650 313.500 0.100 173.000 re f Q
+BT
+1 0 0 -1 281.250 323.500 Tm(RW)Tj
+ET
+q 0.000 g 314.750 486.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 317.250 323.500 Tm(Camera)Tj
+1 0 0 -1 354.250 323.500 Tm(model)Tj
+1 0 0 -1 384.500 323.500 Tm(dependent)Tj
+1 0 0 -1 432.500 323.500 Tm(values,)Tj
+1 0 0 -1 466.150 323.500 Tm(normal)Tj
+1 0 0 -1 317.250 336.500 Tm(non-)Tj
+1 0 0 -1 337.450 336.500 Tm(windowing)Tj
+1 0 0 -1 389.750 336.500 Tm(examples:)Tj
+1 0 0 -1 317.250 351.500 Tm(0=)Tj
+1 0 0 -1 331.750 351.500 Tm(60Hz/50Hz)Tj
+1 0 0 -1 317.250 366.500 Tm(1=)Tj
+1 0 0 -1 331.750 366.500 Tm(30Hz/25Hz)Tj
+1 0 0 -1 317.250 381.500 Tm(2=)Tj
+1 0 0 -1 331.750 381.500 Tm(15Hz/12.5Hz)Tj
+1 0 0 -1 317.250 396.500 Tm(...)Tj
+1 0 0 -1 317.250 409.500 Tm(The)Tj
+1 0 0 -1 337.150 409.500 Tm(availability)Tj
+1 0 0 -1 389.450 409.500 Tm(of)Tj
+1 0 0 -1 401.400 409.500 Tm(some)Tj
+1 0 0 -1 427.400 409.500 Tm(frame)Tj
+1 0 0 -1 455.850 409.500 Tm(rates)Tj
+1 0 0 -1 479.400 409.500 Tm(can)Tj
+1 0 0 -1 317.250 422.500 Tm(depend)Tj
+1 0 0 -1 351.800 422.500 Tm(on)Tj
+1 0 0 -1 365.600 422.500 Tm(the)Tj
+1 0 0 -1 381.800 422.500 Tm(image)Tj
+1 0 0 -1 411.450 422.500 Tm(width,)Tj
+1 0 0 -1 442.050 422.500 Tm(height)Tj
+1 0 0 -1 472.300 422.500 Tm(and)Tj
+1 0 0 -1 490.950 422.500 Tm(offset)Tj
+1 0 0 -1 317.250 435.500 Tm(settings.)Tj
+1 0 0 -1 317.250 450.500 Tm(When)Tj
+1 0 0 -1 346.300 450.500 Tm(IRWindowing)Tj
+1 0 0 -1 412.000 450.500 Tm(is)Tj
+1 0 0 -1 422.100 450.500 Tm(used,)Tj
+1 0 0 -1 447.800 450.500 Tm(the)Tj
+1 0 0 -1 464.000 450.500 Tm(frame)Tj
+1 0 0 -1 492.450 450.500 Tm(rate)Tj
+1 0 0 -1 317.250 463.500 Tm(increases)Tj
+1 0 0 -1 360.350 463.500 Tm(by)Tj
+1 0 0 -1 374.150 463.500 Tm(the)Tj
+1 0 0 -1 390.350 463.500 Tm(same)Tj
+1 0 0 -1 415.750 463.500 Tm(amount)Tj
+1 0 0 -1 451.550 463.500 Tm(as)Tj
+1 0 0 -1 463.500 463.500 Tm(the)Tj
+1 0 0 -1 479.700 463.500 Tm(image)Tj
+1 0 0 -1 317.250 476.500 Tm(height)Tj
+1 0 0 -1 347.500 476.500 Tm(decreases.)Tj
+ET
+q 0.000 g 244.650 486.500 0.100 117.000 re f Q
+BT
+1 0 0 -1 143.250 496.500 Tm(IRWindowing)Tj
+ET
+q 0.000 g 278.650 486.500 0.100 117.000 re f Q
+BT
+1 0 0 -1 247.250 496.500 Tm(Enum)Tj
+ET
+q 0.000 g 314.650 486.500 0.100 117.000 re f Q
+BT
+1 0 0 -1 281.250 496.500 Tm(RW)Tj
+1 0 0 -1 317.250 496.500 Tm(This)Tj
+1 0 0 -1 339.600 496.500 Tm(register)Tj
+1 0 0 -1 375.350 496.500 Tm(can)Tj
+1 0 0 -1 393.400 496.500 Tm(only)Tj
+1 0 0 -1 415.750 496.500 Tm(be)Tj
+1 0 0 -1 428.900 496.500 Tm(changed)Tj
+1 0 0 -1 468.350 496.500 Tm(when)Tj
+1 0 0 -1 494.950 496.500 Tm(no)Tj
+1 0 0 -1 317.250 509.500 Tm(streaming)Tj
+1 0 0 -1 363.400 509.500 Tm(is)Tj
+1 0 0 -1 373.500 509.500 Tm(going)Tj
+1 0 0 -1 401.350 509.500 Tm(on.)Tj
+1 0 0 -1 417.850 509.500 Tm(It)Tj
+1 0 0 -1 427.350 509.500 Tm(moves)Tj
+1 0 0 -1 458.850 509.500 Tm(the)Tj
+1 0 0 -1 475.050 509.500 Tm(vertical)Tj
+1 0 0 -1 317.250 522.500 Tm(start)Tj
+1 0 0 -1 338.950 522.500 Tm(of)Tj
+1 0 0 -1 350.900 522.500 Tm(the)Tj
+1 0 0 -1 367.100 522.500 Tm(image)Tj
+1 0 0 -1 396.750 522.500 Tm(and)Tj
+1 0 0 -1 415.400 522.500 Tm(changes)Tj
+1 0 0 -1 453.600 522.500 Tm(the)Tj
+1 0 0 -1 469.800 522.500 Tm(frame)Tj
+1 0 0 -1 498.250 522.500 Tm(rate.)Tj
+1 0 0 -1 317.250 535.500 Tm(You)Tj
+1 0 0 -1 338.950 535.500 Tm(must)Tj
+1 0 0 -1 363.100 535.500 Tm(change)Tj
+1 0 0 -1 397.050 535.500 Tm(the)Tj
+1 0 0 -1 413.250 535.500 Tm("Height")Tj
+1 0 0 -1 454.950 535.500 Tm(register)Tj
+1 0 0 -1 317.250 548.500 Tm(accordingly.)Tj
+1 0 0 -1 317.250 563.500 Tm(0=Off)Tj
+1 0 0 -1 349.750 563.500 Tm(\(Full)Tj
+1 0 0 -1 373.900 563.500 Tm(height,)Tj
+1 0 0 -1 406.900 563.500 Tm(normal)Tj
+1 0 0 -1 440.850 563.500 Tm(rate\))Tj
+1 0 0 -1 317.250 578.500 Tm(1=Half)Tj
+1 0 0 -1 351.300 578.500 Tm(\(Half)Tj
+1 0 0 -1 377.300 578.500 Tm(height,)Tj
+1 0 0 -1 410.300 578.500 Tm(double)Tj
+1 0 0 -1 443.000 578.500 Tm(rate\))Tj
+1 0 0 -1 317.250 593.500 Tm(2=Quarter)Tj
+1 0 0 -1 365.300 593.500 Tm(\(Quarter)Tj
+1 0 0 -1 405.350 593.500 Tm(height,)Tj
+1 0 0 -1 438.350 593.500 Tm(fourfold)Tj
+1 0 0 -1 477.150 593.500 Tm(rate\))Tj
+1 0 0 -1 140.000 638.500 Tm(The)Tj
+1 0 0 -1 159.900 638.500 Tm(image)Tj
+1 0 0 -1 189.550 638.500 Tm(pixels)Tj
+1 0 0 -1 218.600 638.500 Tm(are)Tj
+1 0 0 -1 234.800 638.500 Tm(transferred)Tj
+1 0 0 -1 285.200 638.500 Tm(left)Tj
+1 0 0 -1 302.650 638.500 Tm(to)Tj
+1 0 0 -1 314.000 638.500 Tm(right,)Tj
+1 0 0 -1 340.300 638.500 Tm(row)Tj
+1 0 0 -1 360.200 638.500 Tm(by)Tj
+1 0 0 -1 374.000 638.500 Tm(row,)Tj
+1 0 0 -1 396.650 638.500 Tm(from)Tj
+1 0 0 -1 420.800 638.500 Tm(top)Tj
+1 0 0 -1 437.650 638.500 Tm(to)Tj
+1 0 0 -1 449.000 638.500 Tm(bottom.)Tj
+1 0 0 -1 485.700 638.500 Tm(The)Tj
+1 0 0 -1 505.600 638.500 Tm(byte)Tj
+1 0 0 -1 140.000 651.500 Tm(order)Tj
+1 0 0 -1 166.000 651.500 Tm(is)Tj
+1 0 0 -1 176.100 651.500 Tm(in)Tj
+1 0 0 -1 187.450 651.500 Tm(accordance)Tj
+1 0 0 -1 239.700 651.500 Tm(with)Tj
+1 0 0 -1 262.050 651.500 Tm(the)Tj
+1 0 0 -1 278.250 651.500 Tm(GevDeviceModeIsBigEndian)Tj
+1 0 0 -1 411.150 651.500 Tm(register.)Tj
+ET
+endstream
+endobj
+93 0 obj
+9189
+endobj
+94 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 92 0 R
+>>
+endobj
+95 0 obj
+<< /Length 96 0 R >>
+stream
+1 0 0 -1 0 842 cm
+BT
+/F4Western 6.000 Tf
+1 0 0 -1 370.000 71.350 Tm(Date)Tj
+/F4Western 10.000 Tf
+1 0 0 -1 370.000 84.250 Tm(3)Tj
+1 0 0 -1 375.600 84.250 Tm(/)Tj
+1 0 0 -1 378.400 84.250 Tm(4)Tj
+1 0 0 -1 384.000 84.250 Tm(/)Tj
+1 0 0 -1 386.800 84.250 Tm(12)Tj
+1 0 0 -1 45.000 814.250 Tm(© 2007-2012, FLIR Systems AB. All rights reserved worldwide. Publ. No. T 559 505, Rev. B)Tj
+1 0 0 -1 513.000 54.250 Tm(19)Tj
+1 0 0 -1 524.150 54.250 Tm( \()Tj
+1 0 0 -1 530.300 54.250 Tm(19)Tj
+1 0 0 -1 541.450 54.250 Tm(\))Tj
+1 0 0 -1 45.000 99.250 Tm( )Tj
+ET
+0.000 G 0.500 w 45.000 96.300 m 47.800 96.300 l S
+0.000 G 0.500 w 47.800 96.350 m 538.000 96.350 l S
+BT
+/F6Western 12.000 Tf
+1 0 0 -1 80.000 135.700 Tm(2.2.4.7)Tj
+/F4Western 11.000 Tf
+1 0 0 -1 140.000 135.700 Tm(External)Tj
+1 0 0 -1 183.450 135.700 Tm(I/O)Tj
+1 0 0 -1 201.250 135.700 Tm(registers)Tj
+/F0Western 11.000 Tf
+1 0 0 -1 140.000 160.500 Tm(Registers)Tj
+1 0 0 -1 183.700 160.500 Tm(associated)Tj
+1 0 0 -1 231.700 160.500 Tm(with)Tj
+1 0 0 -1 254.050 160.500 Tm(configuring)Tj
+1 0 0 -1 308.150 160.500 Tm(camera)Tj
+1 0 0 -1 342.700 160.500 Tm(external)Tj
+1 0 0 -1 380.900 160.500 Tm(I/O)Tj
+1 0 0 -1 398.350 160.500 Tm(ports.)Tj
+ET
+q 0.000 g 140.000 179.000 384.500 0.750 re f Q
+q 0.000 g 140.000 199.750 384.500 0.750 re f Q
+q 0.000 g 140.000 179.000 0.750 21.500 re f Q
+q 0.000 g 523.750 179.000 0.750 21.500 re f Q
+q 0.000 g 244.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 189.750 Tm(Name)Tj
+ET
+q 0.000 g 280.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 189.750 Tm(Type)Tj
+ET
+q 0.000 g 316.650 179.750 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 189.750 Tm(Access)Tj
+1 0 0 -1 319.250 189.750 Tm(Comment)Tj
+ET
+q 0.000 g 140.000 643.500 384.500 0.750 re f Q
+q 0.000 g 140.000 200.500 0.750 443.750 re f Q
+q 0.000 g 523.750 200.500 0.750 443.750 re f Q
+q 0.000 g 140.750 220.400 104.000 0.100 re f Q
+q 0.000 g 244.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 210.500 Tm(NumPorts)Tj
+ET
+q 0.000 g 244.750 220.400 36.000 0.100 re f Q
+q 0.000 g 280.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 210.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 220.400 36.000 0.100 re f Q
+q 0.000 g 316.650 200.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 210.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 220.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 210.500 Tm(Number)Tj
+1 0 0 -1 358.050 210.500 Tm(of)Tj
+1 0 0 -1 370.000 210.500 Tm(available)Tj
+1 0 0 -1 412.500 210.500 Tm(I/O)Tj
+1 0 0 -1 429.950 210.500 Tm(ports.)Tj
+ET
+q 0.000 g 140.750 240.400 104.000 0.100 re f Q
+q 0.000 g 244.650 220.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 143.250 230.500 Tm(CurrentPort)Tj
+ET
+q 0.000 g 244.750 240.400 36.000 0.100 re f Q
+q 0.000 g 280.650 220.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 247.250 230.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 240.400 36.000 0.100 re f Q
+q 0.000 g 316.650 220.500 0.100 20.000 re f Q
+BT
+1 0 0 -1 283.250 230.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 240.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 230.500 Tm(Current)Tj
+1 0 0 -1 355.650 230.500 Tm(selected)Tj
+1 0 0 -1 393.850 230.500 Tm(I/O)Tj
+1 0 0 -1 411.300 230.500 Tm(port.)Tj
+1 0 0 -1 434.550 230.500 Tm(Zero)Tj
+1 0 0 -1 458.100 230.500 Tm(based)Tj
+1 0 0 -1 485.900 230.500 Tm(index.)Tj
+ET
+q 0.000 g 140.750 290.400 104.000 0.100 re f Q
+q 0.000 g 244.650 240.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 250.500 Tm(CurrentIOType)Tj
+ET
+q 0.000 g 244.750 290.400 36.000 0.100 re f Q
+q 0.000 g 280.650 240.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 250.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 290.400 36.000 0.100 re f Q
+q 0.000 g 316.650 240.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 283.250 250.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 290.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 250.500 Tm(Type)Tj
+1 0 0 -1 344.650 250.500 Tm(of)Tj
+1 0 0 -1 356.600 250.500 Tm(I/O)Tj
+1 0 0 -1 374.050 250.500 Tm(port)Tj
+1 0 0 -1 319.250 265.500 Tm(0=Digital)Tj
+1 0 0 -1 319.250 280.500 Tm(1=Analog)Tj
+ET
+q 0.000 g 140.750 340.400 104.000 0.100 re f Q
+q 0.000 g 244.650 290.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 300.500 Tm(CurrentIODirection)Tj
+ET
+q 0.000 g 244.750 340.400 36.000 0.100 re f Q
+q 0.000 g 280.650 290.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 300.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 340.400 36.000 0.100 re f Q
+q 0.000 g 316.650 290.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 283.250 300.500 Tm(RO)Tj
+ET
+q 0.000 g 316.750 340.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 300.500 Tm(0=Input)Tj
+1 0 0 -1 319.250 315.500 Tm(1=Output)Tj
+1 0 0 -1 319.250 330.500 Tm(2=Bi-)Tj
+1 0 0 -1 345.050 330.500 Tm(directional)Tj
+ET
+q 0.000 g 140.750 465.400 104.000 0.100 re f Q
+q 0.000 g 244.650 340.500 0.100 125.000 re f Q
+BT
+1 0 0 -1 143.250 350.500 Tm(CurrentIOConfig)Tj
+ET
+q 0.000 g 244.750 465.400 36.000 0.100 re f Q
+q 0.000 g 280.650 340.500 0.100 125.000 re f Q
+BT
+1 0 0 -1 247.250 350.500 Tm(Integer)Tj
+ET
+q 0.000 g 280.750 465.400 36.000 0.100 re f Q
+q 0.000 g 316.650 340.500 0.100 125.000 re f Q
+BT
+1 0 0 -1 283.250 350.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 465.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 350.500 Tm(Port)Tj
+1 0 0 -1 340.350 350.500 Tm(function)Tj
+1 0 0 -1 379.800 350.500 Tm(configuration.)Tj
+1 0 0 -1 319.250 365.500 Tm(0=General)Tj
+1 0 0 -1 368.550 365.500 Tm(Purpose)Tj
+1 0 0 -1 319.250 380.500 Tm(1=Vertical)Tj
+1 0 0 -1 369.150 380.500 Tm(sync)Tj
+1 0 0 -1 392.100 380.500 Tm(\(output)Tj
+1 0 0 -1 426.650 380.500 Tm(only\))Tj
+1 0 0 -1 319.250 395.500 Tm(2=Set)Tj
+1 0 0 -1 347.800 395.500 Tm(Mark)Tj
+1 0 0 -1 374.400 395.500 Tm(in)Tj
+1 0 0 -1 385.750 395.500 Tm(IR)Tj
+1 0 0 -1 399.550 395.500 Tm(image)Tj
+1 0 0 -1 429.200 395.500 Tm(\(input)Tj
+1 0 0 -1 458.250 395.500 Tm(only\))Tj
+1 0 0 -1 319.250 410.500 Tm(3=Set)Tj
+1 0 0 -1 347.800 410.500 Tm(Start)Tj
+1 0 0 -1 371.350 410.500 Tm(mark)Tj
+1 0 0 -1 396.750 410.500 Tm(in)Tj
+1 0 0 -1 408.100 410.500 Tm(IR)Tj
+1 0 0 -1 421.900 410.500 Tm(image)Tj
+1 0 0 -1 451.550 410.500 Tm(\(input)Tj
+1 0 0 -1 480.600 410.500 Tm(only\))Tj
+1 0 0 -1 319.250 425.500 Tm(4=Set)Tj
+1 0 0 -1 347.800 425.500 Tm(Stop)Tj
+1 0 0 -1 370.750 425.500 Tm(mark)Tj
+1 0 0 -1 396.150 425.500 Tm(in)Tj
+1 0 0 -1 407.500 425.500 Tm(IR)Tj
+1 0 0 -1 421.300 425.500 Tm(image)Tj
+1 0 0 -1 450.950 425.500 Tm(\(input)Tj
+1 0 0 -1 480.000 425.500 Tm(only\))Tj
+1 0 0 -1 319.250 440.500 Tm(5=Enable)Tj
+1 0 0 -1 364.300 440.500 Tm(image)Tj
+1 0 0 -1 393.950 440.500 Tm(flow)Tj
+1 0 0 -1 416.900 440.500 Tm(\(input)Tj
+1 0 0 -1 445.950 440.500 Tm(only\))Tj
+1 0 0 -1 319.250 455.500 Tm(6=Disable)Tj
+1 0 0 -1 367.350 455.500 Tm(image)Tj
+1 0 0 -1 397.000 455.500 Tm(flow)Tj
+1 0 0 -1 419.950 455.500 Tm(\(input)Tj
+1 0 0 -1 449.000 455.500 Tm(only\))Tj
+ET
+q 0.000 g 140.750 515.400 104.000 0.100 re f Q
+q 0.000 g 244.650 465.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 475.500 Tm(CurrentIOPolarity)Tj
+ET
+q 0.000 g 244.750 515.400 36.000 0.100 re f Q
+q 0.000 g 280.650 465.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 475.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 515.400 36.000 0.100 re f Q
+q 0.000 g 316.650 465.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 283.250 475.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 515.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 475.500 Tm(Output)Tj
+1 0 0 -1 352.600 475.500 Tm(port)Tj
+1 0 0 -1 373.100 475.500 Tm(polarity)Tj
+1 0 0 -1 319.250 490.500 Tm(0=Active)Tj
+1 0 0 -1 363.050 490.500 Tm(High)Tj
+1 0 0 -1 319.250 505.500 Tm(1=Active)Tj
+1 0 0 -1 363.050 505.500 Tm(Low)Tj
+ET
+q 0.000 g 140.750 593.400 104.000 0.100 re f Q
+q 0.000 g 244.650 515.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 143.250 525.500 Tm(CurrentIOSensitivity)Tj
+ET
+q 0.000 g 244.750 593.400 36.000 0.100 re f Q
+q 0.000 g 280.650 515.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 247.250 525.500 Tm(Enum)Tj
+ET
+q 0.000 g 280.750 593.400 36.000 0.100 re f Q
+q 0.000 g 316.650 515.500 0.100 78.000 re f Q
+BT
+1 0 0 -1 283.250 525.500 Tm(RW)Tj
+ET
+q 0.000 g 316.750 593.400 207.000 0.100 re f Q
+BT
+1 0 0 -1 319.250 525.500 Tm(Input)Tj
+1 0 0 -1 345.250 525.500 Tm(port)Tj
+1 0 0 -1 365.750 525.500 Tm(edge)Tj
+1 0 0 -1 389.300 525.500 Tm(sensitivity)Tj
+1 0 0 -1 319.250 538.500 Tm(\(IOConfig)Tj
+1 0 0 -1 367.850 538.500 Tm(2,3,4,)Tj
+1 0 0 -1 395.400 538.500 Tm(5)Tj
+1 0 0 -1 403.650 538.500 Tm(and)Tj
+1 0 0 -1 422.300 538.500 Tm(6)Tj
+1 0 0 -1 430.550 538.500 Tm(only\))Tj
+1 0 0 -1 319.250 553.500 Tm(0=Rising)Tj
+1 0 0 -1 362.450 553.500 Tm(edge)Tj
+1 0 0 -1 319.250 568.500 Tm(1=Falling)Tj
+1 0 0 -1 364.900 568.500 Tm(edge)Tj
+1 0 0 -1 319.250 583.500 Tm(2=Both)Tj
+1 0 0 -1 355.100 583.500 Tm(rising)Tj
+1 0 0 -1 382.950 583.500 Tm(and)Tj
+1 0 0 -1 401.600 583.500 Tm(falling)Tj
+1 0 0 -1 433.100 583.500 Tm(edge)Tj
+ET
+q 0.000 g 244.650 593.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 143.250 603.500 Tm(CurrentIOState)Tj
+ET
+q 0.000 g 280.650 593.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 247.250 603.500 Tm(Enum)Tj
+ET
+q 0.000 g 316.650 593.500 0.100 50.000 re f Q
+BT
+1 0 0 -1 283.250 603.500 Tm(RW)Tj
+1 0 0 -1 319.250 603.500 Tm(Current)Tj
+1 0 0 -1 355.650 603.500 Tm(I/O)Tj
+1 0 0 -1 373.100 603.500 Tm(port)Tj
+1 0 0 -1 393.600 603.500 Tm(state)Tj
+1 0 0 -1 319.250 618.500 Tm(0=Deasserted)Tj
+1 0 0 -1 319.250 633.500 Tm(1=Asserted)Tj
+1 0 0 -1 140.000 678.500 Tm(The)Tj
+1 0 0 -1 159.900 678.500 Tm(CurrentIOConfig)Tj
+1 0 0 -1 238.450 678.500 Tm(Vertical)Tj
+1 0 0 -1 276.650 678.500 Tm(sync)Tj
+1 0 0 -1 299.600 678.500 Tm(output)Tj
+1 0 0 -1 330.500 678.500 Tm(configuration)Tj
+1 0 0 -1 392.550 678.500 Tm(provides)Tj
+1 0 0 -1 433.200 678.500 Tm(a)Tj
+1 0 0 -1 440.850 678.500 Tm(short)Tj
+1 0 0 -1 465.650 678.500 Tm(pulse)Tj
+1 0 0 -1 491.650 678.500 Tm(\(about)Tj
+1 0 0 -1 522.550 678.500 Tm(150)Tj
+1 0 0 -1 140.000 691.500 Tm(µs\))Tj
+1 0 0 -1 156.200 691.500 Tm(whenever)Tj
+1 0 0 -1 201.750 691.500 Tm(a)Tj
+1 0 0 -1 209.400 691.500 Tm(new)Tj
+1 0 0 -1 230.500 691.500 Tm(image)Tj
+1 0 0 -1 260.150 691.500 Tm(starts.)Tj
+ET
+endstream
+endobj
+96 0 obj
+9645
+endobj
+97 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595.0 842.0 ]
+/Contents 95 0 R
+>>
+endobj
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+/Outlines 3 0 R
+/OpenAction [ 43 0 R /Fit ]
+/PageMode /UseOutlines
+/ViewerPreferences << /PageLayout /SinglePage >>
+>>
+endobj
+98 0 obj
+<<
+/Title (Connectivity Overview)
+/Dest [46 0 R /XYZ null null null]
+/Parent 3 0 R
+/Next 109 0 R
+/First 99 0 R
+/Last 106 0 R
+/Count -3
+>>
+endobj
+99 0 obj
+<<
+/Title (Physical interfaces)
+/Dest [46 0 R /XYZ null null null]
+/Parent 98 0 R
+/Next 100 0 R
+>>
+endobj
+100 0 obj
+<<
+/Title (Low level protocols)
+/Dest [46 0 R /XYZ null null null]
+/Parent 98 0 R
+/Prev 99 0 R
+/Next 102 0 R
+/First 101 0 R
+/Last 101 0 R
+/Count -1
+>>
+endobj
+101 0 obj
+<<
+/Title (Ethernet)
+/Dest [46 0 R /XYZ null null null]
+/Parent 100 0 R
+>>
+endobj
+102 0 obj
+<<
+/Title (Functionality)
+/Dest [46 0 R /XYZ null null null]
+/Parent 98 0 R
+/Prev 100 0 R
+/First 103 0 R
+/Last 107 0 R
+/Count -2
+>>
+endobj
+103 0 obj
+<<
+/Title (GenICam)
+/Dest [46 0 R /XYZ null null null]
+/Parent 102 0 R
+/Next 104 0 R
+>>
+endobj
+104 0 obj
+<<
+/Title (IP services)
+/Dest [49 0 R /XYZ null null null]
+/Parent 102 0 R
+/Prev 103 0 R
+/First 105 0 R
+/Last 107 0 R
+/Count -2
+>>
+endobj
+105 0 obj
+<<
+/Title (DHCP)
+/Dest [49 0 R /XYZ null null null]
+/Parent 104 0 R
+/Next 106 0 R
+>>
+endobj
+106 0 obj
+<<
+/Title (Remote detection)
+/Dest [49 0 R /XYZ null null null]
+/Parent 104 0 R
+/Prev 105 0 R
+/First 107 0 R
+/Last 108 0 R
+/Count -2
+>>
+endobj
+107 0 obj
+<<
+/Title (Multicast DNS (Bonjour))
+/Dest [49 0 R /XYZ null null null]
+/Parent 106 0 R
+/Next 108 0 R
+>>
+endobj
+108 0 obj
+<<
+/Title (GigEVision Control Protocol (GVCP))
+/Dest [52 0 R /XYZ null null null]
+/Parent 106 0 R
+/Prev 107 0 R
+>>
+endobj
+109 0 obj
+<<
+/Title (GeniCam Commands)
+/Dest [55 0 R /XYZ null null null]
+/Parent 3 0 R
+/Prev 98 0 R
+/First 110 0 R
+/Last 126 0 R
+/Count -2
+>>
+endobj
+110 0 obj
+<<
+/Title (Introduction)
+/Dest [55 0 R /XYZ null null null]
+/Parent 109 0 R
+/Next 111 0 R
+>>
+endobj
+111 0 obj
+<<
+/Title (GenICam registers )
+/Dest [58 0 R /XYZ null null null]
+/Parent 109 0 R
+/Prev 110 0 R
+/First 112 0 R
+/Last 124 0 R
+/Count -4
+>>
+endobj
+112 0 obj
+<<
+/Title (Register types)
+/Dest [58 0 R /XYZ null null null]
+/Parent 111 0 R
+/Next 113 0 R
+>>
+endobj
+113 0 obj
+<<
+/Title (IP Engine status and control)
+/Dest [61 0 R /XYZ null null null]
+/Parent 111 0 R
+/Prev 112 0 R
+/Next 116 0 R
+/First 114 0 R
+/Last 115 0 R
+/Count -2
+>>
+endobj
+114 0 obj
+<<
+/Title (Device Information registers)
+/Dest [61 0 R /XYZ null null null]
+/Parent 113 0 R
+/Next 115 0 R
+>>
+endobj
+115 0 obj
+<<
+/Title (IP Engine status registers)
+/Dest [64 0 R /XYZ null null null]
+/Parent 113 0 R
+/Prev 114 0 R
+>>
+endobj
+116 0 obj
+<<
+/Title (GigE Vision (GEV) standard interface)
+/Dest [67 0 R /XYZ null null null]
+/Parent 111 0 R
+/Prev 113 0 R
+/Next 120 0 R
+/First 117 0 R
+/Last 119 0 R
+/Count -3
+>>
+endobj
+117 0 obj
+<<
+/Title (GigE Vision Image size control registers)
+/Dest [67 0 R /XYZ null null null]
+/Parent 116 0 R
+/Next 118 0 R
+>>
+endobj
+118 0 obj
+<<
+/Title (GigE Vision Acquisition control registers)
+/Dest [70 0 R /XYZ null null null]
+/Parent 116 0 R
+/Prev 117 0 R
+/Next 119 0 R
+>>
+endobj
+119 0 obj
+<<
+/Title (GigE Vision Network Configuration registers)
+/Dest [73 0 R /XYZ null null null]
+/Parent 116 0 R
+/Prev 118 0 R
+>>
+endobj
+120 0 obj
+<<
+/Title (FLIR Camera interface)
+/Dest [79 0 R /XYZ null null null]
+/Parent 111 0 R
+/Prev 116 0 R
+/First 121 0 R
+/Last 127 0 R
+/Count -7
+>>
+endobj
+121 0 obj
+<<
+/Title (Feature registers)
+/Dest [79 0 R /XYZ null null null]
+/Parent 120 0 R
+/Next 122 0 R
+>>
+endobj
+122 0 obj
+<<
+/Title (Range (case) registers)
+/Dest [82 0 R /XYZ null null null]
+/Parent 120 0 R
+/Prev 121 0 R
+/Next 123 0 R
+>>
+endobj
+123 0 obj
+<<
+/Title (Object Parameter registers)
+/Dest [85 0 R /XYZ null null null]
+/Parent 120 0 R
+/Prev 122 0 R
+/Next 124 0 R
+>>
+endobj
+124 0 obj
+<<
+/Title (Focus registers)
+/Dest [88 0 R /XYZ null null null]
+/Parent 120 0 R
+/Prev 123 0 R
+/Next 125 0 R
+>>
+endobj
+125 0 obj
+<<
+/Title (Image quality registers)
+/Dest [91 0 R /XYZ null null null]
+/Parent 120 0 R
+/Prev 124 0 R
+/Next 126 0 R
+>>
+endobj
+126 0 obj
+<<
+/Title (Image stream registers)
+/Dest [94 0 R /XYZ null null null]
+/Parent 120 0 R
+/Prev 125 0 R
+/Next 127 0 R
+>>
+endobj
+127 0 obj
+<<
+/Title (External I/O registers)
+/Dest [97 0 R /XYZ null null null]
+/Parent 120 0 R
+/Prev 126 0 R
+>>
+endobj
+3 0 obj
+<<
+/Type /Outlines
+/First 98 0 R
+/Last 127 0 R
+/Count 2
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Count 19
+/Kids [ 43 0 R 46 0 R 49 0 R 52 0 R 55 0 R 58 0 R 61 0 R 64 0 R 67 0 R 70 0 R 73 0 R 76 0 R 79 0 R 82 0 R 85 0 R 88 0 R 91 0 R 94 0 R 97 0 R ]
+/Resources 6 0 R
+>>
+endobj
+4 0 obj
+<<
+/Creator (Excosoft XML Client)
+/Producer (Excosoft XML Client)
+/CreationDate (2012-04-03)
+>>
+endobj
+xref
+0 128
+0000000000 65535 f 
+0000162702 00000 n 
+0000167016 00000 n 
+0000166942 00000 n 
+0000167220 00000 n 
+0000000000 00000 n 
+0000000009 00000 n 
+0000000458 00000 n 
+0000000574 00000 n 
+0000000691 00000 n 
+0000000806 00000 n 
+0000000928 00000 n 
+0000001043 00000 n 
+0000001166 00000 n 
+0000001286 00000 n 
+0000001413 00000 n 
+0000001526 00000 n 
+0000001647 00000 n 
+0000001766 00000 n 
+0000001892 00000 n 
+0000002008 00000 n 
+0000002132 00000 n 
+0000002253 00000 n 
+0000002381 00000 n 
+0000002494 00000 n 
+0000002607 00000 n 
+0000002720 00000 n 
+0000002833 00000 n 
+0000006977 00000 n 
+0000006998 00000 n 
+0000007139 00000 n 
+0000007280 00000 n 
+0000007421 00000 n 
+0000007562 00000 n 
+0000007703 00000 n 
+0000007844 00000 n 
+0000007985 00000 n 
+0000008126 00000 n 
+0000008267 00000 n 
+0000008408 00000 n 
+0000008549 00000 n 
+0000008690 00000 n 
+0000008831 00000 n 
+0000008972 00000 n 
+0000009177 00000 n 
+0000019185 00000 n 
+0000019206 00000 n 
+0000019301 00000 n 
+0000027430 00000 n 
+0000027451 00000 n 
+0000027546 00000 n 
+0000029250 00000 n 
+0000029271 00000 n 
+0000029366 00000 n 
+0000039476 00000 n 
+0000039498 00000 n 
+0000039593 00000 n 
+0000047884 00000 n 
+0000047905 00000 n 
+0000048000 00000 n 
+0000057123 00000 n 
+0000057144 00000 n 
+0000057239 00000 n 
+0000062481 00000 n 
+0000062502 00000 n 
+0000062597 00000 n 
+0000073514 00000 n 
+0000073536 00000 n 
+0000073631 00000 n 
+0000079810 00000 n 
+0000079831 00000 n 
+0000079926 00000 n 
+0000095127 00000 n 
+0000095149 00000 n 
+0000095244 00000 n 
+0000107678 00000 n 
+0000107700 00000 n 
+0000107795 00000 n 
+0000111859 00000 n 
+0000111880 00000 n 
+0000111975 00000 n 
+0000122770 00000 n 
+0000122792 00000 n 
+0000122887 00000 n 
+0000129474 00000 n 
+0000129495 00000 n 
+0000129590 00000 n 
+0000139318 00000 n 
+0000139339 00000 n 
+0000139434 00000 n 
+0000143412 00000 n 
+0000143433 00000 n 
+0000143528 00000 n 
+0000152771 00000 n 
+0000152792 00000 n 
+0000152887 00000 n 
+0000162586 00000 n 
+0000162607 00000 n 
+0000162867 00000 n 
+0000163021 00000 n 
+0000163136 00000 n 
+0000163304 00000 n 
+0000163396 00000 n 
+0000163545 00000 n 
+0000163650 00000 n 
+0000163798 00000 n 
+0000163900 00000 n 
+0000164053 00000 n 
+0000164174 00000 n 
+0000164306 00000 n 
+0000164456 00000 n 
+0000164566 00000 n 
+0000164721 00000 n 
+0000164833 00000 n 
+0000165012 00000 n 
+0000165138 00000 n 
+0000165262 00000 n 
+0000165449 00000 n 
+0000165587 00000 n 
+0000165740 00000 n 
+0000165881 00000 n 
+0000166039 00000 n 
+0000166154 00000 n 
+0000166288 00000 n 
+0000166426 00000 n 
+0000166553 00000 n 
+0000166688 00000 n 
+0000166822 00000 n 
+trailer
+<<
+/Size 128
+/Root 1 0 R
+/Info 4 0 R
+>>
+startxref
+167331
+%%EOF

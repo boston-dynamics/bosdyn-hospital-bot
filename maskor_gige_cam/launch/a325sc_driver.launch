@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="maskor_flir_cam_node" pkg="maskor_gige_cam" type="maskor_flir_cam_node"
+        output="screen" respawn="true" respawn_delay="10">
+  </node>
+</launch>

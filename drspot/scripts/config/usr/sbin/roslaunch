@@ -1,0 +1,7 @@
+#!/bin/bash
+. ~/drspot_ws/devel/setup.bash
+. /etc/ros/env.sh
+export ROS_HOME=$(echo ~spot)/.ros
+roslaunch drspot vitals.launch &
+PID=$!
+wait "$PID"

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<package>
+  <name>optris_drivers</name>
+  <version>1.1.0</version>
+  <description>
+
+     ROS nodes wrapping the binary driver for Optris thermal imager devices.
+
+  </description>
+  <maintainer email="info@evocortex.com">Evocortex GmbH</maintainer>
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <license>BSD</license>
+
+  <!-- Url tags are optional, but multiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <url type="website">http://ros.org/wiki/optris_drivers</url>
+
+  <!-- Author tags are optional, multiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintainers, but could be -->
+  
+  <author>Stefan May (Nuremberg Institute of Technology Georg Simon Ohm - www.th-nuernberg.de)</author>
+  <author>64-Bit platform supported by Fraunhofer IPA (www.ipa.fraunhofer.de)</author>
+  <author>Support for ROS hydro migration by Christopher-Eyk Hrabia (DAI-Labor, Technische Universität Berlin)</author>
+
+  <!-- Buildtool dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- build dependencies -->
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>libudev-dev</build_depend>
+  <build_depend>libirimager</build_depend>
+  <build_depend>camera_info_manager</build_depend>
+
+  <!-- runtime dependencies -->
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>std_srvs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>camera_info_manager</run_depend>
+</package>
+

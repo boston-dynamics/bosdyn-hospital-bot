@@ -1,0 +1,6 @@
+int16 palette
+int16 paletteScaling
+float32 temperatureMin
+float32 temperatureMax
+---
+bool success

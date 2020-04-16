@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
+
+  <group if="$(eval thermal_ns == 'optris')">
+    <include file="$(find optris_drivers)/launch/optris_drivers.launch" />
+  </group>
+
+  <group if="$(eval thermal_ns == 'flir_camera')">
+    <include file="$(find maskor_gige_cam)/launch/a325sc_driver.launch" />
+  </group>
+
+  <group>
+    <remap from="temperature_image" to="$(arg thermal_ns)/temperature_image" />
+    <remap from="thermal_image_raw" to="$(arg thermal_ns)/thermal_image_raw" />
+
+    <node name="ir_face_tracker" pkg="drspot" type="ir_face_tracker" output="screen"
+          respawn="true">
+    </node>
+
+    <node name="respiratory_rate" pkg="drspot" type="respiratory_rate" output="screen"
+          respawn="true">
+    </node>
+
+    <node name="eye_temperature" pkg="drspot" type="skin_temperature" output="screen"
+          respawn="true">
+    </node>
+
+    <node name="mask_temperature" pkg="drspot" type="skin_temperature" output="screen"
+          respawn="true">
+      <remap from="skin_temp_roi" to="mask_roi" />
+      <remap from="full_skin_temp" to="full_mask_temp" />
+      <remap from="repeated_skin_temp" to="repeated_mask_temp" />
+      <remap from="full_data_skin_temp" to="full_data_mask_temp" />
+      <remap from="repeated_data_skin_temp" to="repeated_data_mask_temp" />
+    </node>
+  </group>
+</launch>

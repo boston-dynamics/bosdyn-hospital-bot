@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<imager xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <serial>0</serial>   <!-- Provide serial number, if you attach more than one camera -->
+  <videoformatindex>1</videoformatindex>
+  <formatspath>/usr/share/libirimager</formatspath>
+  <calipath>/usr/share/libirimager/cali</calipath>
+  <!-- Uncomment the following lines to specify user-defined parameters for the desired optic
+       and temperature range. Be aware to specify meaningful parameters.
+       See documentation for further information: http://evocortex.com/libirimager2/html/index.html
+       By default, the first available optic and the first meaningful temperature range are selected.
+  -->
+  <!--
+  <fov>33</fov>
+  <temperature>
+    <min>20</min>
+    <max>40</max>
+  </temperature>
+  <optics_text></optics_text>
+  -->
+  <framerate>80.0</framerate>             <!-- scaled down frame rate, must be less or equal than camera frame rate -->
+  <bispectral>0</bispectral>              <!-- 0=only thermal sensor, 1=bispectral technology (only PI200/PI230) -->
+  <average>0</average>                    <!-- average callback frames over intermediate frames -->
+  <autoflag>
+    <enable>1</enable>
+    <mininterval>15.0</mininterval>
+    <maxinterval>0.0</maxinterval>
+  </autoflag>
+  <pifmode>0</pifmode>                    <!-- 0=Image capture (default), 1=Flag control -->
+  <tchipmode>0</tchipmode>                <!-- 0=Floating (default), 1=Auto, 2=Fixed value -->
+  <tchipfixedvalue>40.0</tchipfixedvalue> <!-- Fixed value for tchipmode=2 -->
+</imager>
+

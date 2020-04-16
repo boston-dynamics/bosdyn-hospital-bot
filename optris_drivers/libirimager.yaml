@@ -1,0 +1,4 @@
+libirimager:
+  ubuntu:
+    source:
+      uri: "https://raw.githubusercontent.com/evocortex/optris_drivers/master/libirimager.rdmanifest"
