@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+DEBUG_PLOT = False
+if DEBUG_PLOT:
+    import cv2
+
 import numpy as np
 
 import rospy
@@ -67,6 +71,7 @@ class SkinTemperature(object):
         self.tlast = t
 
         if not self.roiset:
+            rospy.logwarn_throttle(1, 'No ROI received.')
             return
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
@@ -76,6 +81,16 @@ class SkinTemperature(object):
         if self.ymin < 0: self.ymin = 0
         if self.xmax >= cols: self.xmin = cols-1
         if self.ymax >= rows: self.ymin = rows-1
+
+        if DEBUG_PLOT:
+            imin = np.amin(cv_image)
+            imax = np.amax(cv_image)
+            irange = imax - imin
+            if irange != 0:
+                cv_image_dbg = cv2.convertScaleAbs((cv_image - imin) * 255 / irange)
+                cv2.rectangle(cv_image_dbg, (self.xmin, self.ymin), (self.xmax, self.ymax), (0,0,0), 2)
+                cv2.imshow('temperature ROI', cv_image_dbg)
+                cv2.waitKey(1)
 
         try:
             val = np.amax(cv_image[self.xmin:self.xmax, self.ymin:self.ymax])
