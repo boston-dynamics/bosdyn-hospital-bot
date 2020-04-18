@@ -211,7 +211,7 @@ class SkinTemperature(object):
         self.repeat_data_pub.publish(msg)
 
         val = np.median(data)
-        rospy.loginfo('{} {}: repeated: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
+        rospy.loginfo('{} {}: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
 
         msg = Float32()
         msg.data = val
