@@ -119,7 +119,7 @@ class RespiratoryRate(object):
                 self.clear_msmt_state()
                 return
 
-        val = np.median(cv_image[xmin:xmax, ymin:ymax])
+        val = np.mean(cv_image[xmin:xmax, ymin:ymax])
 
         if np.isnan(val):
             with self.lock:
