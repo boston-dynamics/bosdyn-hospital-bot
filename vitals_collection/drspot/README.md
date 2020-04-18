@@ -1,3 +1,15 @@
+# Attributions
+
+This code and these algorithms were developed in collaboration with:
+- Edward W. Boyer <eboyer@bwh.harvard.edu>
+- Peter Chai <pchai@mit.edu>
+- Henwei Huang <henwei@mit.edu>
+- Canchen Li <canchenl@mit.edu>
+- Giovanni Traverso <cgt20@mit.edu>
+
+Also see:
+- [Multiperson tracking and vitals](https://github.com/Frost-Lee/thermal_monitoring)
+
 # Dependencies
 
 ```
@@ -8,7 +20,7 @@ pip install mxnet-mkl insightface numpy scipy
 
 On Ubuntu 18.04:
 ```
-sudo apt install -y ros-melodic-desktop-full libunwind-dev
+sudo apt install -y ros-melodic-desktop-full ros-melodic-driver-base libunwind-dev libudev-dev
 ```
 
 Make sure you run the system once with internet access, so that the insightface model
