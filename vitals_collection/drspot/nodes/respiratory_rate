@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEBUG_PLOT = True
+DEBUG_PLOT = False
 DEBUG_IMAGE = False
 if DEBUG_PLOT:
     import matplotlib.pyplot as plt

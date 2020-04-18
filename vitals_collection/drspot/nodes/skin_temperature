@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEBUG_IMAGE = True
+DEBUG_IMAGE = False
 if DEBUG_IMAGE:
     import cv2
 
