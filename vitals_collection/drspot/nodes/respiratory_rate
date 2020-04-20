@@ -15,31 +15,37 @@
 # limitations under the License.
 
 DEBUG_PLOT = False
+DEBUG_IMAGE = False
 if DEBUG_PLOT:
     import matplotlib.pyplot as plt
+if DEBUG_IMAGE:
     import cv2
 
 import numpy as np
+import threading
 
 import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped
-from std_msgs.msg import Float32MultiArray, Float32
+from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
 IMAGE_TOPIC = 'temperature_image'
+FRAME_MSMT_TOPIC_SUFFIX = '_frame_msmt'
 FULL_TOPIC = 'full_resp_rate'
 REPEAT_TOPIC = 'repeated_resp_rate'
 FULL_DATA_TOPIC = 'full_data_resp_rate'
 REPEAT_DATA_TOPIC = 'repeated_data_resp_rate'
 REGION_TOPIC = 'mask_roi'
+TRACKING_STATUS_TOPIC = 'tracking_status'
+HELPER_TIMER_PERIOD_SEC = 1
 REPEAT_MSMT_PERIOD_SEC = 10
-FULL_MSMT_PERIOD_SEC = 30
+FULL_MSMT_PERIOD_SEC = 20
 NOMINAL_RATE_HZ = 27
 NOMINAL_REPEAT_SAMPLES = REPEAT_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 OK_FRAC_MSMT = 0.7
-MAX_DROPOUT_BEFORE_RESET_SEC = 0.2
+MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
 # Minimum of 6 breaths per minute.
 MIN_RESP_HZ = 6.0 / 60.0
@@ -51,176 +57,225 @@ ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 class RespiratoryRate(object):
     def image_callback(self, data):
         t = data.header.stamp.to_sec()
-        if self.tlast is None:
+
+        with self.lock:
+            if self.tlast is None:
+                self.tlast = t
+                return
+
+            # Detect backward jumps in time in replay.
+            if self.tlast > t:
+                self.clear_msmt_state()
+                self.tlast = t
+                rospy.logwarn_throttle(1, '{}: Backward jump in time'.format(self.name))
+                return
+
+            # Detect skips in data.
+            if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
+                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
+                self.clear_msmt_state()
+                self.tlast = t
+                return
+
+            if self.delta is None:
+                self.delta = t - self.tlast
+                return
+
+            self.delta = self.delta_alpha * (t - self.tlast) + (1 - self.delta_alpha) * self.delta
             self.tlast = t
-            return
 
-        # Detect backward jumps in time in replay.
-        if self.tlast > t:
-            self.clear_msmt_state()
-            self.tlast = t
-            rospy.logwarn_throttle(1, 'Backward jump in time; resetting.')
-            return
+            if not self.roiset:
+                rospy.logwarn_throttle(1, '{}: No ROI received.'.format(self.name))
+                return
 
-        # Detect skips in data.
-        if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
-            self.clear_msmt_state()
-            self.tlast = t
-            rospy.logwarn_throttle(1, 'Dropped samples; resetting.')
-            return
-
-        if self.delta is None:
-            self.delta = t - self.tlast
-            return
-
-        self.delta = self.delta_alpha * (t - self.tlast) + (1 - self.delta_alpha) * self.delta
-        self.tlast = t
-
-        if not self.roiset:
-            rospy.logwarn_throttle(1, 'No ROI received.')
-            return
+            xmin = self.xmin
+            ymin = self.ymin
+            xmax = self.xmax
+            ymax = self.ymax
+        # End locked region.
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         (rows, cols) = cv_image.shape
 
-        if self.xmin < 0: self.xmin = 0
-        if self.ymin < 0: self.ymin = 0
-        if self.xmax >= cols: self.xmin = cols-1
-        if self.ymax >= rows: self.ymin = rows-1
+        if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
+            with self.lock:
+                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+                self.clear_msmt_state()
+                return
 
-        if DEBUG_PLOT:
+        if DEBUG_IMAGE:
             imin = np.amin(cv_image)
             imax = np.amax(cv_image)
             irange = imax - imin
             if irange != 0:
                 cv_image_dbg = cv2.convertScaleAbs((cv_image - imin) * 255 / irange)
-                cv2.rectangle(cv_image_dbg, (self.xmin, self.ymin), (self.xmax, self.ymax), (0,0,0), 2)
+                cv2.rectangle(cv_image_dbg, (xmin, ymin), (xmax, ymax), (0,0,0), 2)
                 cv2.imshow('respiratory rate ROI', cv_image_dbg)
                 cv2.waitKey(1)
 
-        val = np.mean(cv_image[self.xmin:self.xmax, self.ymin:self.ymax])
+        if cv_image[xmin:xmax, ymin:ymax].size == 0:
+            with self.lock:
+                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(self.name, t, data.header.seq))
+                self.clear_msmt_state()
+                return
 
-        if (self.repeat_msmt_n >= self.repeat_msmt_buffer.size):
-            self.repeat_msmt_buffer.resize((2 * self.repeat_msmt_buffer.size), refcheck=False)
-        self.repeat_msmt_buffer[self.repeat_msmt_n] = val
-        if self.repeat_msmt_n == 0: self.r_ti = t
-        self.repeat_msmt_n += 1
-        self.r_tf = t
+        val = np.mean(cv_image[xmin:xmax, ymin:ymax])
 
-        if (self.full_msmt_n >= self.full_msmt_buffer.size):
-            self.full_msmt_buffer.resize((2 * self.full_msmt_buffer.size), refcheck=False)
-        self.full_msmt_buffer[self.full_msmt_n] = val
-        if self.full_msmt_n == 0: self.f_ti = t
-        self.full_msmt_n += 1
-        self.f_tf = t
+        if np.isnan(val):
+            with self.lock:
+                rospy.logwarn_throttle(1, '{}: NaN at {}, seq {}'.format(self.name, t, data.header.seq))
+                self.clear_msmt_state()
+                return
+
+        msg = Float32()
+        msg.data = val
+        self.debug_msmt_pub.publish(msg)
+
+        with self.lock:
+            if (self.repeat_msmt_n >= self.repeat_msmt_buffer.size):
+                self.repeat_msmt_buffer.resize((2 * self.repeat_msmt_buffer.size))
+            self.repeat_msmt_buffer[self.repeat_msmt_n] = val
+            if self.repeat_msmt_n == 0: self.r_ti = t
+            self.repeat_msmt_n += 1
+            self.r_tf = t
+
+            if (self.full_msmt_n >= self.full_msmt_buffer.size):
+                self.full_msmt_buffer.resize((2 * self.full_msmt_buffer.size))
+            self.full_msmt_buffer[self.full_msmt_n] = val
+            if self.full_msmt_n == 0: self.f_ti = t
+            self.full_msmt_n += 1
+            self.f_tf = t
+        # End locked region.
 
     def region_callback(self, data):
         if len(data.polygon.points) != 2:
             return
 
-        self.xmin = int(data.polygon.points[0].x)
-        self.ymin = int(data.polygon.points[0].y)
-        self.xmax = int(data.polygon.points[1].x)
-        self.ymax = int(data.polygon.points[1].y)
-        if (self.xmax - self.xmin) > 0 and (self.ymax - self.ymin) > 0:
+        with self.lock:
+            self.xmin = int(data.polygon.points[0].x)
+            self.ymin = int(data.polygon.points[0].y)
+            self.xmax = int(data.polygon.points[1].x)
+            self.ymax = int(data.polygon.points[1].y)
+            if self.xmin < 0 or self.ymin < 0:
+                return
+            if (self.xmax - self.xmin) <= 0 or (self.ymax - self.ymin) <= 0:
+                return
+
             self.roiset = True
+
+    def tracking_status_callback(self, data):
+        with self.lock:
+            if not self.roi_valid or not data:
+                # Clear the measurement buffer unless we are valid, staying valid.
+                self.clear_msmt_state()
+            self.roi_valid = data
+
+    def msmt_helper_callback(self, event):
+        with self.lock:
+            if not self.roi_valid or not self.roiset:
+                rospy.logwarn_throttle(1, '{}: No valid ROI received.'.format(self.name))
+                self.clear_msmt_state()
+                return
+
+            delta = self.delta
+
+            r_ti = self.r_ti
+            r_tf = self.r_tf
+            r_msmt_n = self.repeat_msmt_n
+            r_data = np.copy(self.repeat_msmt_buffer[0:self.repeat_msmt_n])
+            r_do_it = r_ti is not None and r_tf is not None and r_tf - r_ti >= REPEAT_MSMT_PERIOD_SEC
+            if r_do_it:
+                self.repeat_msmt_n = 0
+            f_ti = self.f_ti
+            f_tf = self.f_tf
+            f_msmt_n = self.full_msmt_n
+            f_data = np.copy(self.full_msmt_buffer[0:self.full_msmt_n])
+            f_do_it = f_ti is not None and f_tf is not None and f_tf - f_ti >= FULL_MSMT_PERIOD_SEC
+            if f_do_it:
+                self.full_msmt_n = 0
+        # End locked region.
+
+        if r_do_it:
+            self.msmt_callback(event, r_ti, r_tf, r_msmt_n, r_data, delta, repeated=True)
+        if f_do_it:
+            self.msmt_callback(event, f_ti, f_tf, f_msmt_n, f_data, delta, repeated=False)
+
+    def msmt_callback(self, event, ti, tf, msmt_n, data, delta, repeated=True):
+        if repeated:
+            txt = 'repeat'
+            period = REPEAT_MSMT_PERIOD_SEC
+            data_pub = self.repeat_data_pub
+            msmt_pub = self.repeat_msmt_pub
+            if DEBUG_PLOT:
+                data_ax = self.repeat_data_ax
+                amp_ax = self.repeat_amp_ax
         else:
-            return
+            txt = 'full'
+            period = FULL_MSMT_PERIOD_SEC
+            data_pub = self.full_data_pub
+            msmt_pub = self.full_msmt_pub
+            if DEBUG_PLOT:
+                data_ax = self.full_data_ax
+                amp_ax = self.full_amp_ax
 
-        if self.full_msmt_timer is None:
-            self.restart_full_measurement()
-
-    def repeat_msmt_callback(self, event):
-        data = self.repeat_msmt_buffer[0:self.repeat_msmt_n]
-        if self.delta is None or self.delta < 1e-3 or data.shape[0] < OK_FRAC_MSMT * REPEAT_MSMT_PERIOD_SEC / self.delta:
-            rospy.loginfo_throttle(1, 'repeated callback; not enough samples: {}'.format(data.shape[0]))
-            self.repeat_msmt_n = 0
+        if delta is None or delta < 1e-3 or msmt_n < OK_FRAC_MSMT * period / delta:
+            rospy.loginfo_throttle(1, '{} {}: not enough samples {}'.format(self.name, txt, msmt_n))
             return
 
         msg = Float32MultiArray()
         msg.data = data
-        self.repeat_data_pub.publish(msg)
+        data_pub.publish(msg)
 
         sp = np.fft.fft(data)
-        freq = np.fft.fftfreq(sp.shape[-1], d=self.delta)
+        freq = np.fft.fftfreq(sp.shape[-1], d=delta)
         # Find the range of real frequency bins that we are interested in.
         nreal = data.shape[0]
-        fminind = int(MIN_RESP_HZ * nreal * self.delta) + 1
-        fmaxind = int(MAX_RESP_HZ * nreal * self.delta)
+        fminind = int(MIN_RESP_HZ * nreal * delta) + 1
+        fmaxind = int(MAX_RESP_HZ * nreal * delta)
 
         amp = np.abs(sp)[fminind:fmaxind]
         if DEBUG_PLOT:
-            self.repeat_data_ax.cla()
-            self.repeat_data_ax.plot(data)
-            self.repeat_amp_ax.cla()
-            self.repeat_amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
+            data_ax.cla()
+            data_ax.plot(data)
+            amp_ax.cla()
+            amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
         try:
             breaths = freq[amp.argmax() + fminind] * 60.0
         except ValueError as e:
-            rospy.logwarn('repeated: ' + str(e))
+            rospy.logwarn('{} {}: {}'.format(self.name, txt, str(e)))
             breaths = -1.0
         else:
             msg = Float32()
             msg.data = breaths
-            self.repeat_msmt_pub.publish(msg)
+            msmt_pub.publish(msg)
 
-        rospy.loginfo('repeated: {:.1f} breaths / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(breaths, nreal, self.r_ti, self.r_tf, (self.r_tf - self.r_ti) / nreal))
-        self.repeat_msmt_n = 0
-
-    def full_msmt_callback(self, event):
-        data = self.full_msmt_buffer[0:self.full_msmt_n]
-        if self.delta is None or self.delta < 1e-3 or data.shape[0] < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / self.delta:
-            rospy.loginfo_throttle(1, 'full callback; not enough samples: {}'.format(data.shape[0]))
-            return
-
-        msg = Float32MultiArray()
-        msg.data = data
-        self.full_data_pub.publish(msg)
-
-        sp = np.fft.fft(data)
-        freq = np.fft.fftfreq(sp.shape[-1], d=self.delta)
-        # Find the range of real frequency bins that we are interested in.
-        nreal = data.shape[0]
-        fminind = int(MIN_RESP_HZ * nreal * self.delta) + 1
-        fmaxind = int(MAX_RESP_HZ * nreal * self.delta)
-
-        amp = np.abs(sp)[fminind:fmaxind]
-        if DEBUG_PLOT:
-            self.full_data_ax.cla()
-            self.full_data_ax.plot(data)
-            self.full_amp_ax.cla()
-            self.full_amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
-        try:
-            breaths = freq[amp.argmax() + fminind] * 60.0
-        except ValueError as e:
-            rospy.logwarn('full: ' + str(e))
-            breaths = -1.0
-        else:
-            msg = Float32()
-            msg.data = breaths
-            self.full_msmt_pub.publish(msg)
-
-        rospy.loginfo('full: {:.1f} breaths / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(breaths, nreal, self.f_ti, self.f_tf, (self.f_tf - self.f_ti) / nreal))
-        self.full_msmt_timer = None
+        rospy.loginfo('{} {}: {:.1f} breaths / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, breaths, nreal, ti, tf, (tf - ti) / nreal))
 
     def clear_msmt_state(self):
+        rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
+
+        # Region of Interest
+        self.roi_valid = False
+        self.roiset = False
+        self.xmin = 0
+        self.xmax = 0
+        self.ymin = 0
+        self.ymax = 0
+
         self.r_ti = None
         self.r_tf = None
         self.repeat_msmt_n = 0
         self.f_ti = None
         self.f_tf = None
         self.full_msmt_n = 0
-        self.full_msmt_timer = None
 
         self.tlast = None
         self.delta = None
 
-    def restart_full_measurement(self):
-        self.full_msmt_timer = rospy.Timer(rospy.Duration(FULL_MSMT_PERIOD_SEC), self.full_msmt_callback, oneshot=True)
-        self.full_msmt_n = 0
-
     def __init__(self, name):
         self.name = name
+
+        self.lock = threading.Lock()
 
         # Measurement buffers
         self.repeat_msmt_buffer = np.zeros(NOMINAL_REPEAT_SAMPLES)
@@ -228,16 +283,7 @@ class RespiratoryRate(object):
 
         self.clear_msmt_state()
 
-        # Region of Interest
-        self.roiset = False
-        self.xmin = 0
-        self.xmax = 0
-        self.ymin = 0
-        self.ymax = 0
-
         # Software time delta calculation
-        self.tlast = None
-        self.delta = None
         self.delta_alpha = 0.8
 
         self.bridge = CvBridge()
@@ -249,6 +295,8 @@ class RespiratoryRate(object):
             self.repeat_data_ax = self.fig.add_subplot(2, 3, 4)
             self.repeat_amp_ax = self.fig.add_subplot(2, 3, 5)
 
+        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32, queue_size=10)
+
         self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
         self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
         self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
@@ -256,7 +304,9 @@ class RespiratoryRate(object):
 
         self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
         self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback, queue_size=1)
-        self.repeat_msmt_timer = rospy.Timer(rospy.Duration(REPEAT_MSMT_PERIOD_SEC), self.repeat_msmt_callback)
+        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool, self.tracking_status_callback, queue_size=1)
+
+        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC), self.msmt_helper_callback)
 
 if __name__ == '__main__':
     rospy.init_node('respiratory_rate')

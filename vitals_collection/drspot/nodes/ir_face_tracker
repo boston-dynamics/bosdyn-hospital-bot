@@ -30,23 +30,24 @@ DEBUG_IMAGE_TOPIC = 'debug_thermal_tracking'
 EYE_REGION_TOPIC = 'skin_temp_roi'
 MASK_REGION_TOPIC = 'mask_roi'
 TRACKING_STATUS_TOPIC = 'tracking_status'
-MAX_DROPOUT_BEFORE_RESET_SEC = 0.2
+MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
+MAX_TIME_SINCE_DETECTION_SEC = 2.5
 
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.5
 MIN_FACE_DIM_PIXELS = 10
-FACE_DETECTION_SCALE = 1.5
-CV_TRACKER_TYPE = 'CSRT'
+FACE_DETECTION_SCALE = 0.7
+CV_TRACKER_TYPE = 'CSRT' #'KCF'
 
 FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
-EYE_HALF_HEIGHT_FRAC_OF_FACE = 1.0 / 5.0
+EYE_HALF_HEIGHT_FRAC_OF_FACE = 1.0 / 4.0
 EYE_HALF_WIDTH_FRAC_OF_FACE = 0.45
 
 # Shift the mask ROI down from the detected landmarks.
 MASK_HEIGHT_FRAC_OF_FACE_DOWN = 0.05
-MASK_HALF_HEIGHT_FRAC_OF_FACE = 0.25
-MASK_HALF_WIDTH_FRAC_OF_FACE = 0.25
+MASK_HALF_HEIGHT_FRAC_OF_FACE = 0.35
+MASK_HALF_WIDTH_FRAC_OF_FACE = 0.35
 
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
@@ -95,12 +96,39 @@ class ROITracker(object):
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
+        det_msg = Bool()
+        det_msg.data = False
+        t = data.header.stamp.to_sec()
+        if self.tlast is None:
+            self.tlast = t
+            self.tracking_status_pub.publish(det_msg)
+            return
+
+        # Detect backward jumps in time in replay.
+        if self.tlast > t:
+            self.clear_msmt_state()
+            self.tlast = t
+            rospy.logwarn_throttle(1, '{}: Backward jump in time'.format(self.name))
+            self.tracking_status_pub.publish(det_msg)
+            return
+
+        # Detect skips in data.
+        if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
+            rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
+            self.clear_msmt_state()
+            self.tlast = t
+            self.tracking_status_pub.publish(det_msg)
+            return
+
+        self.tlast = t
+
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         imin = np.amin(cv_image)
         imax = np.amax(cv_image)
         irange = imax - imin
         if irange == 0:
-            rospy.logwarn_throttle(1, 'Blank IR image')
+            rospy.logwarn_throttle(1, '{}: Blank IR image'.format(self.name))
+            self.tracking_status_pub.publish(det_msg)
             return
         cv_image = ((cv_image - imin) * FACE_DETECTION_INTENSITY_RANGE / irange
                     + FACE_DETECTION_INTENSITY_OFFSET).astype('uint8')
@@ -113,16 +141,14 @@ class FaceDetectorTracker(object):
         # If tracking is OK, track. Else, detect and configure tracker.
         bboxes = np.array([])
         landmarks = np.array([])
-        det_msg = Bool()
-        det_msg.data = False
         fidx = 0
         self.eye_tracker.update(chan3image)
         self.mouth_tracker.update(chan3image)
-        if self.eye_tracker.ok and self.mouth_tracker.ok:
+        if self.eye_tracker.ok and self.mouth_tracker.ok and self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC:
             eye = self.eye_tracker.bbox.reshape((2, 2))
             mouth = self.mouth_tracker.bbox.reshape((2, 2))
         else:
-            rospy.loginfo_throttle(1, 'Lost tracking; running face detector')
+            rospy.loginfo_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
             self.mouth_tracker = ROITracker(CV_TRACKER_TYPE)
             self.eye_tracker = ROITracker(CV_TRACKER_TYPE)
             bboxes, landmarks = self.detector.detect(chan3image,
@@ -131,26 +157,25 @@ class FaceDetectorTracker(object):
 
             if len(bboxes) == 0:
                 self.tracking_status_pub.publish(det_msg)
-                rospy.logwarn_throttle(1, 'no faces detected')
-                self.eye_tracker.ok = False
-                self.mouth_tracker.ok = False
+                rospy.logwarn_throttle(1, '{}: no faces detected'.format(self.name))
+                self.clear_msmt_state()
                 return
 
             # TODO - If we select a specific face, re-order so that face is first (index 0).
             if len(bboxes) > 1:
-                rospy.logwarn_throttle(1, '{} faces detected; picking the first'.format(len(bboxes)))
+                rospy.logwarn_throttle(1, '{}: {} faces detected; picking the first'.format(self.name, len(bboxes)))
 
             wface = bboxes[fidx][2] - bboxes[fidx][0]
             hface = bboxes[fidx][3] - bboxes[fidx][1]
             if (wface < MIN_FACE_DIM_PIXELS) or (hface < MIN_FACE_DIM_PIXELS):
                 self.tracking_status_pub.publish(det_msg)
-                rospy.logwarn_throttle(1, 'face too small')
-                self.eye_tracker.ok = False
-                self.mouth_tracker.ok = False
+                rospy.logwarn_throttle(1, '{}: face too small'.format(self.name))
+                self.clear_msmt_state()
                 return
 
             det_msg.data = True
             self.tracking_status_pub.publish(det_msg)
+            self.tlast_detection = t
 
             leye = landmarks[fidx][0]
             reye = landmarks[fidx][1]
@@ -197,6 +222,13 @@ class FaceDetectorTracker(object):
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
         self.debug_image_pub.publish(msg)
 
+    def clear_msmt_state(self):
+        rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
+        self.eye_tracker.ok = False
+        self.mouth_tracker.ok = False
+        self.tlast = None
+        self.tlast_detection = None
+
     def __init__(self, name):
         self.name = name
 
@@ -207,6 +239,8 @@ class FaceDetectorTracker(object):
 
         self.mouth_tracker = ROITracker(CV_TRACKER_TYPE)
         self.eye_tracker = ROITracker(CV_TRACKER_TYPE)
+
+        self.clear_msmt_state()
 
         self.eye_region_pub = rospy.Publisher(EYE_REGION_TOPIC, PolygonStamped, queue_size=10)
         self.mask_region_pub = rospy.Publisher(MASK_REGION_TOPIC, PolygonStamped, queue_size=10)

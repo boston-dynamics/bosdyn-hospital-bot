@@ -6,4 +6,4 @@
 /home/spot/.local/bin/stop_drspot_logging.bash
 
 cd /log
-rosbag record -o auto --split --size=500 -a -x "(.*)/compressed(.*)"
+rosbag record -o auto --split --size=500 -a -x "(.*)/compressed(.*)|(.*)/theora|(.*)/theora/(.*)"

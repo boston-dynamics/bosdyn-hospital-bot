@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
   <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
+  <arg name="launch_drivers" default="true" />
 
   <group if="$(eval thermal_ns == 'optris')">
-    <include file="$(find optris_drivers)/launch/optris_drivers.launch" />
+    <group if="$(arg launch_drivers)">
+      <include file="$(find optris_drivers)/launch/optris_drivers.launch" />
+    </group>
   </group>
 
   <group if="$(eval thermal_ns == 'flir_camera')">
-    <include file="$(find maskor_gige_cam)/launch/a325sc_driver.launch" />
+    <group if="$(arg launch_drivers)">
+      <include file="$(find maskor_gige_cam)/launch/a325sc_driver.launch" />
+    </group>
   </group>
 
   <group>
