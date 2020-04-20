@@ -11,9 +11,13 @@ Boston Dynamics has been working with healthcare organizations to model and test
 
 ## Resources
 
-Whitepaper: [*Healthcare Applications of Mobile Robotics during the COVID-19 Pandemic Response*](https://github.com/bdgitadmin/bosdyn-hospital-bot/blob/master/Applications%20of%20Mobile%20Robotics%20during%20COVID-19.pdf)
+*  Whitepaper: [*Healthcare Applications of Mobile Robotics during the COVID-19 Pandemic Response*](Applications%20of%20Mobile%20Robotics%20during%20COVID-19.pdf)
+*  [Source, dependencies, and supported hardware](vitals_collection/drspot)
+*  [ROS drivers for Optris thermal imagers](vitals_collection/optris_drivers)
 
-Engineering design files:
 
-*  [02-049412-001-A00 DECON GUARD](02-049412-001-A00%20DECON%20GUARD)
-*  [02-049531-001-A00 UTM ASSEMBLY](/02-049531-001-A00%20UTM%20ASSEMBLY)
+## Documentation
+
+*  [Generic Interface for Cameras (GenICam) - (PDF)](vitals_collection/maskor_gige_cam/documentation/GenICam%20Standard.pdf)
+*  [FLIR IR camera for GenICam data transfer: GenICAm ICD FLIR IR Camera - (PDF)](vitals_collection/maskor_gige_cam/documentation/GenICam%20ICD%20FLIR%20IR%20Camera%20-%20PC.pdf)  
+*  [GenICam ICD FLIR AX5 Camera - (PDF)](vitals_collection/maskor_gige_cam/documentation/ICD%20GenICam%20ICD%20FLIR%20Ax5%20Camera%20-%20PC%20(en-US).pdf)
