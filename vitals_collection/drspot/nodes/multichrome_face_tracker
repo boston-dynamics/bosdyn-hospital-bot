@@ -43,8 +43,8 @@ FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
 # Shift the mask ROI down from the detected landmarks.
-CAROTID_HEIGHT_FRAC_OF_FACE_DOWN = 0.5
-CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.25
+CAROTID_HEIGHT_FRAC_OF_FACE_DOWN = 0.6
+CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.15
 CAROTID_HALF_WIDTH_FRAC_OF_FACE = 0.25
 
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
@@ -131,11 +131,11 @@ class FaceDetectorTracker(object):
         imax = np.amax(cv_image)
         irange = imax - imin
         if irange == 0:
-            rospy.logwarn_throttle(1, '{}: Blank IR image'.format(self.name))
+            rospy.logwarn_throttle(1, '{}: Blank mono image'.format(self.name))
             self.tracking_status_pub.publish(det_msg)
             return
-        cv_image = ((cv_image - imin) * FACE_DETECTION_INTENSITY_RANGE / irange
-                    + FACE_DETECTION_INTENSITY_OFFSET).astype('uint8')
+        #cv_image = ((cv_image - imin) * FACE_DETECTION_INTENSITY_RANGE / irange
+        #            + FACE_DETECTION_INTENSITY_OFFSET).astype('uint8')
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
         self.scaled_image_pub.publish(msg)

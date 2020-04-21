@@ -628,6 +628,8 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                 } else {
                     cams[i].setEnumValue("ExposureAuto", "Continuous");
                 }
+		cams[i].setEnumValue("GainAuto", "Off");
+		cams[i].setFloatValue("Gain", 0.0);
                 /*if (target_grey_value_ > 4.0) {
                     cams[i].setEnumValue("AutoExposureTargetGreyValueAuto", "Off");
                     cams[i].setFloatValue("AutoExposureTargetGreyValue", target_grey_value_);
