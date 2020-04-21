@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>spinnaker_sdk_camera_driver</name>
+  <version>0.0.0</version>
+  <description>Point Grey (FLIR) Spinnaker based camera driver (Blackfly S etc.)</description>
+
+  <maintainer email="vikrantshah+ros@gmail.com">Vikrant Shah</maintainer>
+
+  <author>Abhishek Bajpayee</author>
+  <author>Pushyami Kaveti</author>
+  <author>Vikrant Shah</author>
+  
+  <license>MIT</license>
+
+  <url type="website">http://wiki.ros.org/spinnaker_sdk_camera_driver</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>libunwind-dev</build_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nodelet</depend>
+
+  <export>
+    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
+  </export>
+
+  <exec_depend>message_runtime</exec_depend>
+</package>

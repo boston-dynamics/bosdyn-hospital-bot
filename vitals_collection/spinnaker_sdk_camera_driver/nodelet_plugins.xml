@@ -1,0 +1,12 @@
+<library path="lib/libcapture_nodelet">
+  <class name="acquisition/capture_nodelet" type="acquisition::capture_nodelet" base_class_type="nodelet::Nodelet">
+  <description>
+  Nodelet for image acquisition using spinnaker sdk
+  </description>
+  </class>
+  <class name="acquisition/subscriber_nodelet" type="acquisition::subscriber_nodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      Example Subscriber nodelet demonstrates subscribing to acquisition/capture_nodelet and display delay time w.r.t imagemsg.header.stamp
+    </description>
+  </class>
+</library>
