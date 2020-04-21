@@ -637,13 +637,15 @@ void acquisition::Capture::init_cameras(bool soft = false) {
 
                 // cams[i].setIntValue("DecimationHorizontal", decimation_);
                 // cams[i].setIntValue("DecimationVertical", decimation_);
-                // cams[i].setFloatValue("AcquisitionFrameRate", 5.0);
+		//cams[i].setBoolValue("AcquisitionFrameRateEnable", true);
+                //cams[i].setFloatValue("AcquisitionFrameRate", 35.0);
 
                 if (color_)
                     cams[i].setEnumValue("PixelFormat", "BGR8");
                     else
                         cams[i].setEnumValue("PixelFormat", "Mono8");
                 cams[i].setEnumValue("AcquisitionMode", "Continuous");
+		cams[i].setEnumValue("TriggerMode", "Off");
                 
                 // set only master to be software triggered
                 if (cams[i].is_master()) { 
@@ -653,16 +655,16 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                       cams[i].setBoolValue("AcquisitionFrameRateEnable", false);
                       //cams[i].setFloatValue("AcquisitionFrameRate", 170);
                     }else{
-                      cams[i].setEnumValue("TriggerMode", "On");
+                      /*cams[i].setEnumValue("TriggerMode", "On");
                       cams[i].setEnumValue("LineSelector", "Line2");
                       cams[i].setEnumValue("LineMode", "Output");
-                      cams[i].setEnumValue("TriggerSource", "Software");
+                      cams[i].setEnumValue("TriggerSource", "Software");*/
                     }
                     //cams[i].setEnumValue("LineSource", "ExposureActive");
 
 
                 } else {
-                    cams[i].setEnumValue("TriggerMode", "On");
+		  /*cams[i].setEnumValue("TriggerMode", "On");
                     cams[i].setEnumValue("LineSelector", "Line3");
                     cams[i].setEnumValue("TriggerSource", "Line3");
                     cams[i].setEnumValue("TriggerSelector", "FrameStart");
@@ -670,7 +672,7 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                     
 //                    cams[i].setFloatValue("TriggerDelay", 40.0);
                     cams[i].setEnumValue("TriggerOverlap", "ReadOut");//"Off"
-                    cams[i].setEnumValue("TriggerActivation", "RisingEdge");
+                    cams[i].setEnumValue("TriggerActivation", "RisingEdge");*/
                 }
             }
         }
@@ -891,7 +893,7 @@ void acquisition::Capture::run_soft_trig() {
 
     int count = 0;
     
-    cams[MASTER_CAM_].trigger();
+    //cams[MASTER_CAM_].trigger();
     get_mat_images();
     if (SAVE_) {
         count++;
@@ -931,7 +933,7 @@ void acquisition::Capture::run_soft_trig() {
                     if (CAM_>0)
                         CAM_--;
                 } else if( (key & 255)==84 && MANUAL_TRIGGER_) { // t
-                    cams[MASTER_CAM_].trigger();
+		  //cams[MASTER_CAM_].trigger();
                     get_mat_images();
                 } else if( (key & 255)==32 && !SAVE_) { // SPACE
                     ROS_INFO_STREAM("Saving frame...");
@@ -957,7 +959,7 @@ void acquisition::Capture::run_soft_trig() {
 
             // Call update functions
             if (!MANUAL_TRIGGER_) {
-                cams[MASTER_CAM_].trigger();
+	      //cams[MASTER_CAM_].trigger();
                 get_mat_images();
             }
 
@@ -996,7 +998,7 @@ void acquisition::Capture::run_soft_trig() {
             
             achieved_time_=ros::Time::now().toSec();
             
-            if (SOFT_FRAME_RATE_CTRL_) {ros_rate.sleep();}
+            //if (SOFT_FRAME_RATE_CTRL_) {ros_rate.sleep();}
 
         }
     }
