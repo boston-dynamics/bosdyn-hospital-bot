@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
   <arg name="launch_drivers" default="true" />
+
+  <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
+
+  <group if="$(eval multichrome_provider == 'spinnaker_sdk_camera_driver')">
+    <group if="$(arg launch_drivers)">
+      <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
+        <arg name="config_file" default="/etc/ros/params/spinnaker_sdk_camera_driver_params.yaml" />
+      </include>
+    </group>
+  </group>
+
+  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
 
   <group if="$(eval thermal_ns == 'optris')">
     <group if="$(arg launch_drivers)">
