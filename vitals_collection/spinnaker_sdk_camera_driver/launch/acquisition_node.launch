@@ -23,7 +23,7 @@
   <arg name="config_file"       default="$(find spinnaker_sdk_camera_driver)/params/test_params.yaml" doc="File specifying the parameters of the camera_array"/>
 
   <!-- load the acquisition node -->
-  <node pkg="spinnaker_sdk_camera_driver" type="acquisition_node" name="acquisition_node" output="$(arg output)" args="" respawn="false" >
+  <node pkg="spinnaker_sdk_camera_driver" type="acquisition_node" name="acquisition_node" output="$(arg output)" args="" respawn="true" respawn_delay="10">
 
     <!-- load the acquisition node parameters file.  Note any parameters provided in this file will 
    override what is in the yaml file.  Thus use it to set parameters camer_array configuration params -->

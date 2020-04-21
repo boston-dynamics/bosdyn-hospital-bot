@@ -24,30 +24,28 @@ from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
 from cv_bridge import CvBridge
 
-IMAGE_TOPIC = 'thermal_image_raw'
-SCALED_IMAGE_TOPIC = 'debug_thermal_tracking_rescale'
-DEBUG_IMAGE_TOPIC = 'debug_thermal_tracking'
-EYE_REGION_TOPIC = 'skin_temp_roi'
-MASK_REGION_TOPIC = 'mask_roi'
-TRACKING_STATUS_TOPIC = 'ir_tracking_status'
+IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
+SCALED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
+DEBUG_IMAGE_TOPIC = 'debug_mono_red_tracking'
+CAROTID_REGION_TOPIC = 'carotid_roi'
+TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
 
-FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.5
+DETECT_TRACK_SCALE_FACTOR = 0.25
+
+FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.7
 MIN_FACE_DIM_PIXELS = 10
-FACE_DETECTION_SCALE = 0.7
+FACE_DETECTION_SCALE = 0.5
 CV_TRACKER_TYPE = 'CSRT' #'KCF'
 
 FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
-EYE_HALF_HEIGHT_FRAC_OF_FACE = 1.0 / 4.0
-EYE_HALF_WIDTH_FRAC_OF_FACE = 0.45
-
 # Shift the mask ROI down from the detected landmarks.
-MASK_HEIGHT_FRAC_OF_FACE_DOWN = 0.05
-MASK_HALF_HEIGHT_FRAC_OF_FACE = 0.35
-MASK_HALF_WIDTH_FRAC_OF_FACE = 0.35
+CAROTID_HEIGHT_FRAC_OF_FACE_DOWN = 0.5
+CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.25
+CAROTID_HALF_WIDTH_FRAC_OF_FACE = 0.25
 
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
@@ -123,6 +121,12 @@ class FaceDetectorTracker(object):
         self.tlast = t
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+        (rows, cols) = cv_image.shape
+
+        r = int(rows * DETECT_TRACK_SCALE_FACTOR)
+        c = int(cols * DETECT_TRACK_SCALE_FACTOR)
+        cv_image = cv2.resize(cv_image, (c, r), interpolation=cv2.INTER_AREA)
+
         imin = np.amin(cv_image)
         imax = np.amax(cv_image)
         irange = imax - imin
@@ -142,15 +146,12 @@ class FaceDetectorTracker(object):
         bboxes = np.array([])
         landmarks = np.array([])
         fidx = 0
-        self.eye_tracker.update(chan3image)
-        self.mouth_tracker.update(chan3image)
-        if self.eye_tracker.ok and self.mouth_tracker.ok and self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC:
-            eye = self.eye_tracker.bbox.reshape((2, 2))
-            mouth = self.mouth_tracker.bbox.reshape((2, 2))
+        self.carotid_tracker.update(chan3image)
+        if self.carotid_tracker.ok and self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC:
+            carotid = self.carotid_tracker.bbox.reshape((2, 2))
         else:
             rospy.loginfo_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
-            self.mouth_tracker = ROITracker(CV_TRACKER_TYPE)
-            self.eye_tracker = ROITracker(CV_TRACKER_TYPE)
+            self.carotid_tracker = ROITracker(CV_TRACKER_TYPE)
             bboxes, landmarks = self.detector.detect(chan3image,
                                                      threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
                                                      scale=FACE_DETECTION_SCALE)
@@ -177,31 +178,23 @@ class FaceDetectorTracker(object):
             self.tracking_status_pub.publish(det_msg)
             self.tlast_detection = t
 
-            leye = landmarks[fidx][0]
-            reye = landmarks[fidx][1]
-            mideye = 0.5 * (np.array(leye) + np.array(reye))
-            half_weye = max(abs(leye[0] - mideye[0]), wface * EYE_HALF_WIDTH_FRAC_OF_FACE)
-            half_heye = max(abs(leye[1] - mideye[1]), hface * EYE_HALF_HEIGHT_FRAC_OF_FACE)
-            eye = mideye + np.array([[-half_weye, -half_heye], [half_weye, half_heye]])
-            self.eye_tracker.start_track(chan3image, eye.reshape((4)))
-
             lmouth = landmarks[fidx][3]
             rmouth = landmarks[fidx][4]
-            midmouth = 0.5 * (np.array(lmouth) + np.array(rmouth))
-            midmouth[1] += hface * MASK_HEIGHT_FRAC_OF_FACE_DOWN
-            half_wmouth = max(abs(lmouth[0] - midmouth[0]), wface * MASK_HALF_WIDTH_FRAC_OF_FACE)
-            half_hmouth = max(abs(lmouth[1] - midmouth[1]), hface * MASK_HALF_HEIGHT_FRAC_OF_FACE)
-            mouth = midmouth + np.array([[-half_wmouth, -half_hmouth], [half_wmouth, half_hmouth]])
-            self.mouth_tracker.start_track(chan3image, mouth.reshape((4)))
+            midcarotid = np.array([0.0, 0.0])
+            # Unlike the mask and eye region, this should move with the face bbox, not the landmarks.
+            midcarotid[0] = 0.5 * (bboxes[fidx][2] + bboxes[fidx][0])
+            midcarotid[1] = 0.5 * (lmouth[1] + rmouth[1]) + hface * CAROTID_HEIGHT_FRAC_OF_FACE_DOWN
+            half_wcarotid = wface * CAROTID_HALF_WIDTH_FRAC_OF_FACE
+            half_hcarotid = hface * CAROTID_HALF_HEIGHT_FRAC_OF_FACE
+            carotid = midcarotid + np.array([[-half_wcarotid, -half_hcarotid], [half_wcarotid, half_hcarotid]])
+            self.carotid_tracker.start_track(chan3image, carotid.reshape((4)))
 
         region = PolygonStamped()
         region.header = data.header
-        region.polygon.points = [Point32(x=eye[0][0], y=eye[0][1], z=0),
-                                 Point32(x=eye[1][0], y=eye[1][1], z=0)]
-        self.eye_region_pub.publish(region)
-        region.polygon.points = [Point32(x=mouth[0][0], y=mouth[0][1], z=0),
-                                 Point32(x=mouth[1][0], y=mouth[1][1], z=0)]
-        self.mask_region_pub.publish(region)
+        carotid_unscaled = carotid / DETECT_TRACK_SCALE_FACTOR
+        region.polygon.points = [Point32(x=carotid_unscaled[0][0], y=carotid_unscaled[0][1], z=0),
+                                 Point32(x=carotid_unscaled[1][0], y=carotid_unscaled[1][1], z=0)]
+        self.carotid_region_pub.publish(region)
 
         # All overlays have colors below in case we use an RGB image in the future.
         for box in bboxes.astype(int):
@@ -214,18 +207,15 @@ class FaceDetectorTracker(object):
                 # Draw a circle at each landmark.
                 cv2.circle(cv_image, (x, y), 5, (0,0,255), 1)
 
-        eye = eye.astype(int)
-        cv2.rectangle(cv_image, tuple(eye[0].tolist()), tuple(eye[1].tolist()), (255,0,0), 2)
-        mouth = mouth.astype(int)
-        cv2.rectangle(cv_image, tuple(mouth[0].tolist()), tuple(mouth[1].tolist()), (255,0,0), 2)
+        carotid = carotid.astype(int)
+        cv2.rectangle(cv_image, tuple(carotid[0].tolist()), tuple(carotid[1].tolist()), (255,0,0), 2)
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
         self.debug_image_pub.publish(msg)
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
-        self.eye_tracker.ok = False
-        self.mouth_tracker.ok = False
+        self.carotid_tracker.ok = False
         self.tlast = None
         self.tlast_detection = None
 
@@ -237,13 +227,11 @@ class FaceDetectorTracker(object):
         self.detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         self.detector.prepare(ctx_id=-1, nms=0.4)
 
-        self.mouth_tracker = ROITracker(CV_TRACKER_TYPE)
-        self.eye_tracker = ROITracker(CV_TRACKER_TYPE)
+        self.carotid_tracker = ROITracker(CV_TRACKER_TYPE)
 
         self.clear_msmt_state()
 
-        self.eye_region_pub = rospy.Publisher(EYE_REGION_TOPIC, PolygonStamped, queue_size=10)
-        self.mask_region_pub = rospy.Publisher(MASK_REGION_TOPIC, PolygonStamped, queue_size=10)
+        self.carotid_region_pub = rospy.Publisher(CAROTID_REGION_TOPIC, PolygonStamped, queue_size=10)
 
         self.debug_image_pub = rospy.Publisher(DEBUG_IMAGE_TOPIC, Image, queue_size=10)
         self.scaled_image_pub = rospy.Publisher(SCALED_IMAGE_TOPIC, Image, queue_size=10)

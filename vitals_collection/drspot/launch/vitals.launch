@@ -12,6 +12,13 @@
     </group>
   </group>
 
+  <node name="multichrome_face_tracker" pkg="drspot" type="multichrome_face_tracker"
+	output="screen" respawn="true">
+  </node>
+  <node name="heart_rate_spo2" pkg="drspot" type="heart_rate_spo2"
+	output="screen" respawn="true">
+  </node>
+
   <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
 
   <group if="$(eval thermal_ns == 'optris')">
