@@ -38,6 +38,12 @@
           <pointsize>40</pointsize>
          </font>
         </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -63,6 +69,12 @@
           <pointsize>40</pointsize>
          </font>
         </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -86,7 +98,15 @@
         <property name="font">
          <font>
           <pointsize>40</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
          </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
         </property>
        </widget>
       </item>
@@ -113,6 +133,12 @@
          <font>
           <pointsize>40</pointsize>
          </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
         </property>
        </widget>
       </item>
