@@ -155,10 +155,10 @@ class SkinTemperature(object):
 
     def tracking_status_callback(self, data):
         with self.lock:
-            if not self.roi_valid or not data:
+            if not self.roi_valid or not data.data:
                 # Clear the measurement buffer unless we are valid, staying valid.
                 self.clear_msmt_state()
-            self.roi_valid = data
+            self.roi_valid = data.data
 
     def msmt_helper_callback(self, event):
         with self.lock:
