@@ -9,7 +9,7 @@ from python_qt_binding import QtCore
 from python_qt_binding.QtGui import QPalette
 
 RESP_RATE_TOPIC = 'full_resp_rate'
-HEART_RATE_TOPIC = 'heart_resp_rate'
+HEART_RATE_TOPIC = 'full_heart_rate'
 SKIN_TEMP_TOPIC = 'full_skin_temp'
 
 VALID_DURATION_SEC = 5.0
