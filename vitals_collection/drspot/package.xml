@@ -8,6 +8,12 @@
 
   <buildtool_depend version_gte="0.5.78">catkin</buildtool_depend>
 
+  <exec_depend>python-rospkg</exec_depend>
+  <exec_depend>roslib</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend version_gte="0.2.12">rqt_gui</exec_depend>
+  <exec_depend>rqt_gui_py</exec_depend>
+
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
@@ -16,4 +22,8 @@
   <exec_depend>rospy</exec_depend>
   <exec_depend>message_runtime</exec_depend>
 
+  <export>
+    <architecture_independent/>
+    <rqt_gui plugin="${prefix}/rqt_vitals_readout_plugin.xml"/>
+  </export>
 </package>
