@@ -105,13 +105,13 @@ class SkinTemperature(object):
                 cv2.imshow('temperature ROI', cv_image_dbg)
                 cv2.waitKey(1)
 
-            cv_region[ymin:ymax, xmin:xmax]
+            cv_region = cv_image[ymin:ymax, xmin:xmax]
             imin = np.amin(cv_region)
             imax = np.amax(cv_region)
             irange = imax - imin
             if irange != 0:
                 cv_region = cv2.convertScaleAbs((cv_region - imin) * 255 / irange)
-                cv2.imshow('zoomed temperature ROI', cv_image_dbg)
+                cv2.imshow('zoomed temperature ROI', cv_region)
                 cv2.waitKey(1)
 
         if cv_image[ymin:ymax, xmin:xmax].size == 0:
