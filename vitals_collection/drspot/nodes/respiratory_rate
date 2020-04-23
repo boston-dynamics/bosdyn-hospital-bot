@@ -119,7 +119,7 @@ class RespiratoryRate(object):
             irange = imax - imin
             if irange != 0:
                 cv_region = cv2.convertScaleAbs((cv_region - imin) * 255 / irange)
-                cv2.imshow('zoomed temperature ROI', cv_region)
+                cv2.imshow('zoomed respiratory rate ROI', cv_region)
                 cv2.waitKey(1)
 
         if cv_image[ymin:ymax, xmin:xmax].size == 0:
