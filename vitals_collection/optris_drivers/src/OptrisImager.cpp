@@ -209,7 +209,7 @@ void OptrisImager::_temperatureImageProc(const sensor_msgs::Image& in, std_msgs:
 
 double OptrisImager::_pixel2temp(unsigned short pixelValue)
 {
-    return (float)(pixelValue / 100.0f) + 20.0f;
+    return (pixelValue - 1000.0) / 10.0;
 }
 
 }
