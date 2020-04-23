@@ -113,13 +113,13 @@ class RespiratoryRate(object):
                 cv2.imshow('respiratory rate ROI', cv_image_dbg)
                 cv2.waitKey(1)
 
-        if cv_image[xmin:xmax, ymin:ymax].size == 0:
+        if cv_image[ymin:ymax, xmin:xmax].size == 0:
             with self.lock:
                 rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(self.name, t, data.header.seq))
                 self.clear_msmt_state()
                 return
 
-        val = np.mean(cv_image[xmin:xmax, ymin:ymax])
+        val = np.mean(cv_image[ymin:ymax, xmin:xmax])
 
         if np.isnan(val):
             with self.lock:
