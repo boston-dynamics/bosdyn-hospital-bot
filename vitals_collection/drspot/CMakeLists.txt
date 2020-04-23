@@ -13,10 +13,15 @@ catkin_package(
 )
 catkin_python_setup()
 
+install(FILES rqt_vitals_readout_plugin.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 catkin_install_python(PROGRAMS
   nodes/ir_face_tracker
   nodes/respiratory_rate
   nodes/skin_temperature
+  scripts/rqt_vitals_readout
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 roslaunch_add_file_check(launch)
@@ -24,6 +29,11 @@ install(DIRECTORY launch
   DESTINATION  ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-install(DIRECTORY resource
+install(DIRECTORY resources
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(FILES
+  rqt_vitals_readout_plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

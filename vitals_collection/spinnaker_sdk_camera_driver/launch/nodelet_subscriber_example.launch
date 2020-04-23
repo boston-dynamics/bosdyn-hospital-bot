@@ -1,0 +1,62 @@
+<launch>
+  <!-- configure console output verbosity mode:debug_console.conf or std_console.conf -->
+  <env name="ROSCONSOLE_CONFIG_FILE" value="$(find spinnaker_sdk_camera_driver)/cfg/std_console.conf"/>
+
+  <!-- acquisition spinnaker params-->
+  <arg name="binning"           default="1" doc="Binning for cameras, when changing from 2 to 1 cameras need to be unplugged and replugged"/>
+  <arg name="color"             default="false" doc="Should color images be used (only works on models that support color images)"/>
+  <arg name="exposure_time"     default="0" doc="Exposure_time setting for cameras"/>
+  <arg name="target_grey_value"   default="0"   doc="AutoExposureTargetGreyValue min: 4 max: 99 if set below 4, AutoExposureTargetGreyValueAuto will be set to continuous(auto) also available as dynamic reconfigurable parameter" />
+  <arg name="frames"            default="3400"  doc="Numer of frames to save/view 0=ON"/>
+  <arg name="live"              default="false" doc="Show images on screen GUI"/>
+  <arg name="live_grid"         default="false" doc="Show images on screen GUI in a grid"/>
+  <arg name="output"            default="screen"    doc="display output to screen or log file"/>
+  <arg name="save"              default="false" doc="flag whether images should be saved or not"/>
+  <arg name="save_path"         default="~" doc="location to save the image data"/>
+  <arg name="save_type"         default="bmp"   doc="Type of file type to save to when saving images locally: binary, tiff, bmp, jpeg etc." />
+  <arg name="soft_framerate"    default="30"    doc="When hybrid software triggering is used, this controls the FPS, 0=as fast as possible"/>
+  <arg name="time"              default="false" doc="Show time/FPS on output"/>
+  <arg name="to_ros"            default="true"  doc="Flag whether images should be published to ROS" />
+  <arg name="utstamps"          default="false" doc="Flag whether each image should have Unique timestamps vs the master cams time stamp for all" />
+  <arg name="max_rate_save"     default="false" doc="Flag for max rate mode which is when the master triggerst the slaves and saves images at maximum rate possible" />
+  <arg name="config_file"       default="$(find spinnaker_sdk_camera_driver)/params/test_params.yaml" doc="File specifying the parameters of the camera_array"/>
+
+  <!-- nodelet params-->
+  <arg name="nodelet_manager_name" default="vision_nodelet_manager" doc="name of the nodelet manager, comes handy when launching multiple nodelets from different launch files" />
+  <arg name="start_nodelet_manager" default="false" doc="If set to True, creates a nodelet manager with $(arg nodelet_manager_name).
+  If False, the acquisition/capture_nodelet waits for the nodelet_manager name $(arg nodelet_manager_name)" />
+
+
+  <!-- start the nodelet manager -->
+
+  <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager_name)" args="manager" output="screen" />
+
+  <!-- load the acquisition nodelet -->
+  <node pkg="nodelet" type="nodelet" name="acquisition_node"
+          args="load acquisition/capture_nodelet $(arg nodelet_manager_name)" >
+    <!-- load the acquisition node parameters file.  Note any parameters provided in this file will 
+     override what is in the yaml file.  Thus use it to set parameters camer_array configuration params -->
+    <rosparam command="load"        file="$(arg config_file)" />
+
+    <!-- Load parameters onto server using argument or default values above -->
+    <param name="exposure_time"     value="$(arg exposure_time)" />
+    <param name="target_grey_value" value="$(arg target_grey_value)" />
+    <param name="binning"           value="$(arg binning)" />
+    <param name="color"             value="$(arg color)" />
+    <param name="frames"            value="$(arg frames)" />
+    <param name="live"              value="$(arg live)" />
+    <param name="live_grid"         value="$(arg live_grid)" />
+    <param name="save"              value="$(arg save)" />
+    <param name="save_type"         value="$(arg save_type)" />
+    <param name="save_path"         value="$(arg save_path)" />
+    <param name="soft_framerate"    value="$(arg soft_framerate)" />
+    <param name="time"              value="$(arg time)" />
+    <param name="utstamps"          value="$(arg utstamps)" />
+    <param name="to_ros"            value="$(arg to_ros)"/>
+    <param name="max_rate_save"     value="$(arg max_rate_save)"/>
+
+  </node>
+
+  <node pkg="nodelet" type="nodelet" name="subscriber_nodelet"
+          args="load acquisition/subscriber_nodelet $(arg nodelet_manager_name)"  output="screen" />  
+</launch>

@@ -1,0 +1,18 @@
+<library path="src">
+  <class name="VitalsReadout" type="drspot.rqt.vitals_readout.VitalsReadout"
+         base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin for displaying vital signs determined by DrSpot.
+    </description>
+    <qtgui>
+      <group>
+        <label>Visualization</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to visualization.</statustip>
+      </group>
+      <label>VitalsReadout</label>
+      <icon type="theme">applications-other</icon>
+      <statustip>A Python GUI plugin for displaying vital signs determined by DrSpot.</statustip>
+    </qtgui>
+  </class>
+</library>

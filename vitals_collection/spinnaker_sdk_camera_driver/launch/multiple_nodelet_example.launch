@@ -1,0 +1,20 @@
+<launch>    
+    <!-- args namespacing  -->
+    <arg name="robot_ns"                    default="$(env ROBOT_NAME)" />
+    <arg name="vision_nm" default="vision_nodelet_manager_uas" doc="name of the nodelet manager" />
+
+    <group ns="$(arg robot_ns)">    
+        <!-- launch nodelet manager -->
+        <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
+        <!-- launch camera nodelet -->
+        <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition.launch" >
+            <arg name="nodelet_manager_name" value="$(arg vision_nm)" />
+            <arg name="start_nodelet_manager" value="false" />
+        </include>
+        
+        <!-- launch apriltag_ros nodelet -->
+        <!-- include file="$(find apriltag_ros)/launch/continuous_detection_nodelet.launch" >
+            <arg name="nodelet_manager_name" value="$(arg vision_nm)" />
+        </include -->
+    </group>
+</launch>

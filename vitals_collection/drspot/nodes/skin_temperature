@@ -34,7 +34,7 @@ REPEAT_TOPIC = 'repeated_skin_temp'
 FULL_DATA_TOPIC = 'full_data_skin_temp'
 REPEAT_DATA_TOPIC = 'repeated_data_skin_temp'
 REGION_TOPIC = 'skin_temp_roi'
-TRACKING_STATUS_TOPIC = 'tracking_status'
+TRACKING_STATUS_TOPIC = 'ir_tracking_status'
 HELPER_TIMER_PERIOD_SEC = 1
 REPEAT_MSMT_PERIOD_SEC = 5
 FULL_MSMT_PERIOD_SEC = 10
@@ -155,10 +155,10 @@ class SkinTemperature(object):
 
     def tracking_status_callback(self, data):
         with self.lock:
-            if not self.roi_valid or not data:
+            if not self.roi_valid or not data.data:
                 # Clear the measurement buffer unless we are valid, staying valid.
                 self.clear_msmt_state()
-            self.roi_valid = data
+            self.roi_valid = data.data
 
     def msmt_helper_callback(self, event):
         with self.lock:
@@ -208,14 +208,14 @@ class SkinTemperature(object):
 
         msg = Float32MultiArray()
         msg.data = data
-        self.repeat_data_pub.publish(msg)
+        data_pub.publish(msg)
 
         val = np.median(data)
         rospy.loginfo('{} {}: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
 
         msg = Float32()
         msg.data = val
-        self.repeat_msmt_pub.publish(msg)
+        msmt_pub.publish(msg)
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))

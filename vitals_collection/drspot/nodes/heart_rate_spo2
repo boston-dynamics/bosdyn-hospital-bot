@@ -30,14 +30,14 @@ from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
-IMAGE_TOPIC = 'temperature_image'
+IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
 FRAME_MSMT_TOPIC_SUFFIX = '_frame_msmt'
-FULL_TOPIC = 'full_resp_rate'
-REPEAT_TOPIC = 'repeated_resp_rate'
-FULL_DATA_TOPIC = 'full_data_resp_rate'
-REPEAT_DATA_TOPIC = 'repeated_data_resp_rate'
-REGION_TOPIC = 'mask_roi'
-TRACKING_STATUS_TOPIC = 'ir_tracking_status'
+FULL_TOPIC = 'full_heart_rate'
+REPEAT_TOPIC = 'repeated_heart_rate'
+FULL_DATA_TOPIC = 'full_data_heart_rate'
+REPEAT_DATA_TOPIC = 'repeated_data_heart_rate'
+REGION_TOPIC = 'carotid_roi'
+TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 HELPER_TIMER_PERIOD_SEC = 1
 REPEAT_MSMT_PERIOD_SEC = 10
 FULL_MSMT_PERIOD_SEC = 20
@@ -47,14 +47,14 @@ NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
-# Minimum of 6 breaths per minute.
-MIN_RESP_HZ = 6.0 / 60.0
-# Maximum of 30 breaths per minute.
-MAX_RESP_HZ = 30.0 / 60.0
+# Minimum of 30 beats per minute.
+MIN_HEART_HZ = 30.0 / 60.0
+# Maximum of 120 beats per minute.
+MAX_HEART_HZ = 120.0 / 60.0
 
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
-class RespiratoryRate(object):
+class HeartRate(object):
     def image_callback(self, data):
         t = data.header.stamp.to_sec()
 
@@ -104,14 +104,14 @@ class RespiratoryRate(object):
                 return
 
         if DEBUG_IMAGE:
-            imin = np.amin(cv_image)
-            imax = np.amax(cv_image)
-            irange = imax - imin
-            if irange != 0:
-                cv_image_dbg = cv2.convertScaleAbs((cv_image - imin) * 255 / irange)
-                cv2.rectangle(cv_image_dbg, (xmin, ymin), (xmax, ymax), (0,0,0), 2)
-                cv2.imshow('respiratory rate ROI', cv_image_dbg)
-                cv2.waitKey(1)
+            f = 0.25
+            r = int(rows * f)
+            c = int(cols * f)
+            cv_image_dbg = cv2.resize(cv_image, (c, r), interpolation=cv2.INTER_AREA)
+            cv2.rectangle(cv_image_dbg, (int(f*xmin), int(f*ymin)), (int(f*xmax), int(f*ymax)),
+                          (255,0,0), 2)
+            cv2.imshow('heart rate ROI', cv_image_dbg)
+            cv2.waitKey(1)
 
         if cv_image[xmin:xmax, ymin:ymax].size == 0:
             with self.lock:
@@ -230,8 +230,8 @@ class RespiratoryRate(object):
         freq = np.fft.fftfreq(sp.shape[-1], d=delta)
         # Find the range of real frequency bins that we are interested in.
         nreal = data.shape[0]
-        fminind = int(MIN_RESP_HZ * nreal * delta) + 1
-        fmaxind = int(MAX_RESP_HZ * nreal * delta)
+        fminind = int(MIN_HEART_HZ * nreal * delta) + 1
+        fmaxind = int(MAX_HEART_HZ * nreal * delta)
 
         amp = np.abs(sp)[fminind:fmaxind]
         if DEBUG_PLOT:
@@ -240,16 +240,16 @@ class RespiratoryRate(object):
             amp_ax.cla()
             amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
         try:
-            breaths = freq[amp.argmax() + fminind] * 60.0
+            beats = freq[amp.argmax() + fminind] * 60.0
         except ValueError as e:
             rospy.logwarn('{} {}: {}'.format(self.name, txt, str(e)))
-            breaths = -1.0
+            beats = -1.0
         else:
             msg = Float32()
-            msg.data = breaths
+            msg.data = beats
             msmt_pub.publish(msg)
 
-        rospy.loginfo('{} {}: {:.1f} breaths / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, breaths, nreal, ti, tf, (tf - ti) / nreal))
+        rospy.loginfo('{} {}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, beats, nreal, ti, tf, (tf - ti) / nreal))
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
@@ -309,8 +309,8 @@ class RespiratoryRate(object):
         self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC), self.msmt_helper_callback)
 
 if __name__ == '__main__':
-    rospy.init_node('respiratory_rate')
-    resp = RespiratoryRate(rospy.get_name())
+    rospy.init_node('heart_rate')
+    resp = HeartRate(rospy.get_name())
     if DEBUG_PLOT:
         while not rospy.is_shutdown():
             plt.show(block=False)
