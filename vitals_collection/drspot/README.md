@@ -23,8 +23,8 @@ On Ubuntu 18.04:
 sudo apt install -y ros-melodic-desktop-full ros-melodic-driver-base libunwind-dev libudev-dev
 ```
 
-Make sure you run the system once with internet access, so that the insightface model
-gets downloaded and cached.
+**Make sure you run the system once with internet access, so that the insightface model
+gets downloaded and cached.**
 
 Or, run:
 ```
@@ -35,9 +35,9 @@ python -c "import insightface;  insightface.model_zoo.get_model('retinaface_r50_
 
 Thermal IR camera options:
 1. FLIR A325sc over ethernet
-  1. Requires eBUS SDK
+    1. Requires eBUS SDK
 2. Optris PI400 over USB
-  1. Requires libirimager
+    1. Requires libirimager
 
 # Operation
 
