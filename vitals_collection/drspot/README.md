@@ -23,8 +23,8 @@ On Ubuntu 18.04:
 sudo apt install -y ros-melodic-desktop-full ros-melodic-driver-base libunwind-dev libudev-dev
 ```
 
-Make sure you run the system once with internet access, so that the insightface model
-gets downloaded and cached.
+**Make sure you run the system once with internet access, so that the insightface model
+gets downloaded and cached.**
 
 Or, run:
 ```
@@ -35,9 +35,13 @@ python -c "import insightface;  insightface.model_zoo.get_model('retinaface_r50_
 
 Thermal IR camera options:
 1. FLIR A325sc over ethernet
-  1. Requires eBUS SDK
+    1. Requires eBUS SDK
 2. Optris PI400 over USB
-  1. Requires libirimager
+    1. Requires libirimager
+
+Monochrome camera options:
+1. FLIR Chameleon monochrome
+    1. Requires Spinnaker SDK
 
 # Operation
 
@@ -48,4 +52,42 @@ roslaunch drspot vitals.launch
 ```
 roscd drspot
 rosrun rqt_gui rqt_gui --perspective-file ./resources/live_drspot.perspective
+```
+
+# Manually specify ROI for temperature measurements
+
+## Skin temperature
+
+Make sure the `ir_face_tracker` node is **not** running, and that the desired thermal camera publishers **are** running.
+
+For Optris:
+```
+export DRSPOT_THERMAL_NS=optris
+```
+
+For FLIR:
+```
+export DRSPOT_THERMAL_NS=flir_camera
+```
+
+```
+rostopic pub -r 10 /ir_tracking_status std_msgs/Bool "data: true" &
+rosrun image_view2 image_view2 \
+       image:=/${DRSPOT_THERMAL_NS}/thermal_image_palette \
+       /${DRSPOT_THERMAL_NS}/thermal_image_palette/screenrectangle:=skin_temp_roi \
+       __name:=skin_temp_roi &
+roscd drspot && ./nodes/skin_temperature \
+      temperature_image:=/${DRSPOT_THERMAL_NS}/temperature_image \
+      thermal_image_raw:=/${DRSPOT_THERMAL_NS}/thermal_image_raw &
+rostopic echo /skin_temperature_frame_msmt
+```
+
+Select a ROI in the live feed.
+
+# Relevant rostopics
+
+## Optris
+
+```
+/optris/{temperature_image,thermal_image_raw,thermal_image_palette,internal_temperature,flag_state}
 ```

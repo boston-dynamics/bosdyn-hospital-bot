@@ -17,6 +17,10 @@ Boston Dynamics has been working with healthcare organizations to model and test
     *  Forked from: [https://github.com/evocortex/optris_drivers](https://github.com/evocortex/optris_drivers)
 *  [ROS drivers for FLIR A325sc thermal imagers](vitals_collection/maskor_gige_cam)
     *  Forked from: [https://github.com/MASKOR/maskor_gige_cam](https://github.com/MASKOR/maskor_gige_cam)
+*  [ROS drivers for FLIR Blackfly / Chameleon with Spinnaker SDK](vitals_collection/spinnaker_sdk_camera_driver)
+    *  Forked from: [https://github.com/neufieldrobotics/spinnaker_sdk_camera_driver](https://github.com/neufieldrobotics/spinnaker_sdk_camera_driver)
+*  [image_view2 utility for manually specifying ROIs for measurements](vitals_collection/image_view2)
+    *  Forked from: [https://github.com/jsk-ros-pkg/jsk_common](https://github.com/jsk-ros-pkg/jsk_common)
 
 
 ## Third-party Documentation
