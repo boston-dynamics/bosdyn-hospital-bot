@@ -45,6 +45,8 @@ Monochrome camera options:
 
 # Operation
 
+## Nominal live usage
+
 ```
 roslaunch drspot vitals.launch
 ```
@@ -54,11 +56,18 @@ roscd drspot
 rosrun rqt_gui rqt_gui --perspective-file ./resources/live_drspot.perspective
 ```
 
-# Manually specify ROI for temperature measurements
+## Nominal playback usage
 
-## Skin temperature
+```
+roslaunch drspot vitals.launch launch_drivers:=false
+```
 
-Make sure the `ir_face_tracker` node is **not** running, and that the desired thermal camera publishers **are** running.
+```
+roscd drspot
+rosrun rqt_gui rqt_gui --perspective-file ./resources/live_drspot.perspective
+```
+
+## Manually set the IR camera data source and namespace
 
 For Optris:
 ```
@@ -69,6 +78,23 @@ For FLIR:
 ```
 export DRSPOT_THERMAL_NS=flir_camera
 ```
+
+## Namespace the vitals measurement nodes to discard their measurements
+
+This is useful if you want to replay all topics from a bag, but also use e.g. the respiratory_rate node to plot the frequency-domain analysis.
+
+```
+roscd drspot
+ROS_NAMESPACE=/${DRSPOT_THERMAL_NS} ./nodes/skin_temperature \
+                                    /${DRSPOT_THERMAL_NS}/ir_tracking_status:=ir_tracking_status \
+                                    /${DRSPOT_THERMAL_NS}/skin_temp_roi:=/skin_temp_roi
+```
+
+## Manually specify ROI for temperature measurements
+
+### Skin temperature
+
+Make sure the `ir_face_tracker` node is **not** running, and that the desired thermal camera publishers **are** running.
 
 ```
 rostopic pub -r 10 /ir_tracking_status std_msgs/Bool "data: true" &
@@ -84,9 +110,9 @@ rostopic echo /skin_temperature_frame_msmt
 
 Select a ROI in the live feed.
 
-# Relevant rostopics
+## Relevant rostopics
 
-## Optris
+### Optris
 
 ```
 /optris/{temperature_image,thermal_image_raw,thermal_image_palette,internal_temperature,flag_state}
