@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo
+echo "**** pulling changes into main [bare's post-update hook]"
+echo
+
+cd $HOME/drspot_ws/src/bosdyn-hospital-bot || exit
+unset GIT_DIR
+git pull bare
+
+exec git-update-server-info
+
+echo
+echo "**** copying user-permissioned config updates [bare's post-update hook]"
+echo
+
+cd $HOME/drspot_ws/src/bosdyn-hospital-bot/vitals_collection/drspot/ || exit
+rsync -a --progress scripts/config/home/spot/ ~/
