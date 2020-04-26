@@ -15,6 +15,8 @@ Boston Dynamics has been working with healthcare organizations to model and test
 ![alt text](20200410-drspot-v1/20200410-drspot-v1-pitch.JPG "Assembled DrSpot")
 
 ### Remote vital inspection
+[Thermal IR dataset](https://www.dropbox.com/sh/rvsuyzxl506fee5/AABkRLp9vcmY6VffKUmGnoRra?dl=0)
+
 ![alt text](vitals_collection/drspot/docs/images/skin_temp_resp_rate_gui.gif "DrSpot GUI")
 
 ## Resources
