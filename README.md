@@ -9,6 +9,16 @@ Boston Dynamics has been working with healthcare organizations to model and test
 3.  Disinfecting hospital rooms
 4.  Internal delivery
 
+## Media
+
+### Telepresence, telemedicine, and internal delivery
+![alt text](20200410-drspot-v1/20200410-drspot-v1-pitch.JPG "Assembled DrSpot")
+
+### Remote vital inspection
+[Thermal IR dataset](https://www.dropbox.com/sh/rvsuyzxl506fee5/AABkRLp9vcmY6VffKUmGnoRra?dl=0)
+
+![alt text](vitals_collection/drspot/docs/images/skin_temp_resp_rate_gui.gif "DrSpot GUI")
+
 ## Resources
 
 *  Whitepaper: [*Healthcare Applications of Mobile Robotics during the COVID-19 Pandemic Response*](Applications%20of%20Mobile%20Robotics%20during%20COVID-19.pdf)
