@@ -30,13 +30,12 @@ from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
-IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
+IMAGE_TOPIC = 'mono_red_cropped'
 FRAME_MSMT_TOPIC_SUFFIX = '_frame_msmt'
 FULL_TOPIC = 'full_heart_rate'
 REPEAT_TOPIC = 'repeated_heart_rate'
 FULL_DATA_TOPIC = 'full_data_heart_rate'
 REPEAT_DATA_TOPIC = 'repeated_data_heart_rate'
-REGION_TOPIC = 'carotid_roi'
 TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 HELPER_TIMER_PERIOD_SEC = 1
 REPEAT_MSMT_PERIOD_SEC = 10
@@ -51,8 +50,6 @@ MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 MIN_HEART_HZ = 30.0 / 60.0
 # Maximum of 120 beats per minute.
 MAX_HEART_HZ = 120.0 / 60.0
-
-ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
 class HeartRate(object):
     def image_callback(self, data):
@@ -83,47 +80,15 @@ class HeartRate(object):
 
             self.delta = self.delta_alpha * (t - self.tlast) + (1 - self.delta_alpha) * self.delta
             self.tlast = t
-
-            if not self.roiset:
-                rospy.logwarn_throttle(1, '{}: No ROI received.'.format(self.name))
-                return
-
-            xmin = self.xmin
-            ymin = self.ymin
-            xmax = self.xmax
-            ymax = self.ymax
         # End locked region.
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         (rows, cols) = cv_image.shape
 
-        if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
-            with self.lock:
-                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
-                self.clear_msmt_state()
-                return
-
         if DEBUG_IMAGE:
-            f = 0.25
-            r = int(rows * f)
-            c = int(cols * f)
-            cv_image_dbg = cv2.resize(cv_image, (c, r), interpolation=cv2.INTER_AREA)
-            cv2.rectangle(cv_image_dbg, (int(f*xmin), int(f*ymin)), (int(f*xmax), int(f*ymax)),
-                          (255,0,0), 2)
-            cv2.imshow('heart rate ROI', cv_image_dbg)
-            cv2.waitKey(1)
+            pass
 
-            cv_region = cv_image[ymin:ymax, xmin:xmax]
-            cv2.imshow('zoomed heart rate ROI', cv_region)
-            cv2.waitKey(1)
-
-        if cv_image[ymin:ymax, xmin:xmax].size == 0:
-            with self.lock:
-                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(self.name, t, data.header.seq))
-                self.clear_msmt_state()
-                return
-
-        val = np.mean(cv_image[ymin:ymax, xmin:xmax])
+        val = np.mean(cv_image)
 
         if np.isnan(val):
             with self.lock:
@@ -151,22 +116,6 @@ class HeartRate(object):
             self.f_tf = t
         # End locked region.
 
-    def region_callback(self, data):
-        if len(data.polygon.points) != 2:
-            return
-
-        with self.lock:
-            self.xmin = int(data.polygon.points[0].x)
-            self.ymin = int(data.polygon.points[0].y)
-            self.xmax = int(data.polygon.points[1].x)
-            self.ymax = int(data.polygon.points[1].y)
-            if self.xmin < 0 or self.ymin < 0:
-                return
-            if (self.xmax - self.xmin) <= 0 or (self.ymax - self.ymin) <= 0:
-                return
-
-            self.roiset = True
-
     def tracking_status_callback(self, data):
         with self.lock:
             if not self.roi_valid or not data.data:
@@ -176,7 +125,7 @@ class HeartRate(object):
 
     def msmt_helper_callback(self, event):
         with self.lock:
-            if not self.roi_valid or not self.roiset:
+            if not self.roi_valid:
                 rospy.logwarn_throttle(1, '{}: No valid ROI received.'.format(self.name))
                 self.clear_msmt_state()
                 return
@@ -260,11 +209,6 @@ class HeartRate(object):
 
         # Region of Interest
         self.roi_valid = False
-        self.roiset = False
-        self.xmin = 0
-        self.xmax = 0
-        self.ymin = 0
-        self.ymax = 0
 
         self.r_ti = None
         self.r_tf = None
@@ -299,18 +243,20 @@ class HeartRate(object):
             self.repeat_data_ax = self.fig.add_subplot(2, 3, 4)
             self.repeat_amp_ax = self.fig.add_subplot(2, 3, 5)
 
-        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32, queue_size=10)
+        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32,
+                                              queue_size=10)
 
         self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
         self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
         self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
         self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC, Float32MultiArray, queue_size=10)
 
-        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
-        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback, queue_size=1)
-        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool, self.tracking_status_callback, queue_size=1)
+        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=10)
+        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
+                                                    self.tracking_status_callback, queue_size=1)
 
-        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC), self.msmt_helper_callback)
+        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),
+                                             self.msmt_helper_callback)
 
 if __name__ == '__main__':
     rospy.init_node('heart_rate')

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import threading
 import numpy as np
 import cv2
 import insightface
@@ -24,15 +25,24 @@ from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
 from cv_bridge import CvBridge
 
-IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
-SCALED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
-DEBUG_IMAGE_TOPIC = 'debug_mono_red_tracking'
-CAROTID_REGION_TOPIC = 'carotid_roi'
-TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
+SCALED_RED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
+DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
+
+RED_IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
+RED_TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
+RED_CROPPED_IMAGE_TOPIC = 'mono_red_cropped'
+RED_CAROTID_REGION_TOPIC = 'carotid_roi'
+
+CONSTANT_IMAGE_TOPIC = 'camera_array/mono_constant/image_raw'
+CONSTANT_TRACKING_STATUS_TOPIC = 'mono_constant_tracking_status'
+
+NIR_IMAGE_TOPIC = 'camera_array/mono_nir/image_raw'
+NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
+
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
 
-DETECT_TRACK_SCALE_FACTOR = 0.25
+DETECT_TRACK_SCALE_FACTOR = 0.125
 
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.7
 MIN_FACE_DIM_PIXELS = 10
@@ -44,10 +54,10 @@ FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
 # Shift the mask ROI down from the detected landmarks.
 CAROTID_HEIGHT_FRAC_OF_FACE_DOWN = 0.6
-CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.15
-CAROTID_HALF_WIDTH_FRAC_OF_FACE = 0.25
 
-ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
+# Overbound the region
+CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.5
+CAROTID_HALF_WIDTH_FRAC_OF_FACE = 1.0
 
 class ROITracker(object):
     def __init__(self, tracker_type):
@@ -123,6 +133,47 @@ class FaceDetectorTracker(object):
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         (rows, cols) = cv_image.shape
 
+        with self.lock:
+            carotid_unscaled = self.carotid
+
+        do_detect_track = self.detect_track_thread is None or self.detect_track_thread is not None and not self.detect_track_thread.is_alive()
+        if do_detect_track:
+            # Spawn a thread to do the detection and tracking.
+            self.detect_track_thread = threading.Thread(target=self.detect_track,
+                                                        name='detect_track' + self.name,
+                                                        args=(cv_image, t, data.header))
+            self.detect_track_thread.start()
+            # Maybe eventually keep the thread around all the time, but make it block
+            # on popping from a size 1 queue. And use a nonblocking push (fail if full).
+
+        if carotid_unscaled is not None:
+            xmin = int(carotid_unscaled[0][0])
+            ymin = int(carotid_unscaled[0][1])
+            xmax = int(carotid_unscaled[1][0])
+            ymax = int(carotid_unscaled[1][1])
+
+            if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
+                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
+                    self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+                self.clear_msmt_state()
+                return
+
+            if cv_image[ymin:ymax, xmin:xmax].size == 0:
+                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
+                    self.name, t, data.header.seq))
+                self.clear_msmt_state()
+                return
+
+            cv_roi = cv_image[ymin:ymax, xmin:xmax]
+            msg = self.bridge.cv2_to_imgmsg(cv_roi, encoding='passthrough')
+            msg.header = data.header
+            self.cropped_image_pub.publish(msg)
+
+    def detect_track(self, cv_image, t, header):
+        det_msg = Bool()
+        det_msg.data = False
+
+        (rows, cols) = cv_image.shape
         r = int(rows * DETECT_TRACK_SCALE_FACTOR)
         c = int(cols * DETECT_TRACK_SCALE_FACTOR)
         cv_image = cv2.resize(cv_image, (c, r), interpolation=cv2.INTER_AREA)
@@ -147,10 +198,14 @@ class FaceDetectorTracker(object):
         landmarks = np.array([])
         fidx = 0
         self.carotid_tracker.update(chan3image)
-        if self.carotid_tracker.ok and self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC:
+        last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
+        if self.carotid_tracker.ok and last_detection_ok:
             carotid = self.carotid_tracker.bbox.reshape((2, 2))
         else:
-            rospy.loginfo_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
+            if not self.carotid_tracker.ok:
+                rospy.logwarn_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
+            else:
+                rospy.loginfo_throttle(1, '{}: Time-triggered face detection'.format(self.name))
             self.carotid_tracker = ROITracker(CV_TRACKER_TYPE)
             bboxes, landmarks = self.detector.detect(chan3image,
                                                      threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
@@ -164,7 +219,8 @@ class FaceDetectorTracker(object):
 
             # TODO - If we select a specific face, re-order so that face is first (index 0).
             if len(bboxes) > 1:
-                rospy.logwarn_throttle(1, '{}: {} faces detected; picking the first'.format(self.name, len(bboxes)))
+                rospy.logwarn_throttle(1, '{}: {} faces detected; picking the first'.format(
+                    self.name, len(bboxes)))
 
             wface = bboxes[fidx][2] - bboxes[fidx][0]
             hface = bboxes[fidx][3] - bboxes[fidx][1]
@@ -186,12 +242,16 @@ class FaceDetectorTracker(object):
             midcarotid[1] = 0.5 * (lmouth[1] + rmouth[1]) + hface * CAROTID_HEIGHT_FRAC_OF_FACE_DOWN
             half_wcarotid = wface * CAROTID_HALF_WIDTH_FRAC_OF_FACE
             half_hcarotid = hface * CAROTID_HALF_HEIGHT_FRAC_OF_FACE
-            carotid = midcarotid + np.array([[-half_wcarotid, -half_hcarotid], [half_wcarotid, half_hcarotid]])
+            carotid = midcarotid + np.array([[-half_wcarotid, -half_hcarotid],
+                                             [half_wcarotid, half_hcarotid]])
             self.carotid_tracker.start_track(chan3image, carotid.reshape((4)))
 
-        region = PolygonStamped()
-        region.header = data.header
         carotid_unscaled = carotid / DETECT_TRACK_SCALE_FACTOR
+        with self.lock:
+            self.carotid = carotid_unscaled
+
+        region = PolygonStamped()
+        region.header = header
         region.polygon.points = [Point32(x=carotid_unscaled[0][0], y=carotid_unscaled[0][1], z=0),
                                  Point32(x=carotid_unscaled[1][0], y=carotid_unscaled[1][1], z=0)]
         self.carotid_region_pub.publish(region)
@@ -215,12 +275,18 @@ class FaceDetectorTracker(object):
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
-        self.carotid_tracker.ok = False
-        self.tlast = None
-        self.tlast_detection = None
+        with self.lock:
+            self.carotid_tracker.ok = False
+            self.tlast = None
+            self.tlast_detection = None
+            # Share bounding box between detection/tracking thread and ROI grab.
+            self.carotid = None
 
     def __init__(self, name):
         self.name = name
+
+        self.lock = threading.Lock()
+        self.detect_track_thread = None
 
         self.bridge = CvBridge()
 
@@ -231,14 +297,17 @@ class FaceDetectorTracker(object):
 
         self.clear_msmt_state()
 
-        self.carotid_region_pub = rospy.Publisher(CAROTID_REGION_TOPIC, PolygonStamped, queue_size=10)
+        self.cropped_image_pub = rospy.Publisher(RED_CROPPED_IMAGE_TOPIC, Image, queue_size=10)
+        self.carotid_region_pub = rospy.Publisher(RED_CAROTID_REGION_TOPIC, PolygonStamped,
+                                                  queue_size=10)
 
-        self.debug_image_pub = rospy.Publisher(DEBUG_IMAGE_TOPIC, Image, queue_size=10)
-        self.scaled_image_pub = rospy.Publisher(SCALED_IMAGE_TOPIC, Image, queue_size=10)
+        self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
+        self.scaled_image_pub = rospy.Publisher(SCALED_RED_IMAGE_TOPIC, Image, queue_size=10)
 
-        self.tracking_status_pub = rospy.Publisher(TRACKING_STATUS_TOPIC, Bool, queue_size=10)
+        self.tracking_status_pub = rospy.Publisher(RED_TRACKING_STATUS_TOPIC, Bool, queue_size=10)
 
-        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
+        self.image_sub = rospy.Subscriber(RED_IMAGE_TOPIC, Image, self.image_callback,
+                                          queue_size=10)
 
 if __name__ == '__main__':
     rospy.init_node('ir_face_tracker')

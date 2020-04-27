@@ -144,11 +144,15 @@ class FaceDetectorTracker(object):
         fidx = 0
         self.eye_tracker.update(chan3image)
         self.mouth_tracker.update(chan3image)
-        if self.eye_tracker.ok and self.mouth_tracker.ok and self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC:
+        last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
+        if self.eye_tracker.ok and self.mouth_tracker.ok and last_detection_ok:
             eye = self.eye_tracker.bbox.reshape((2, 2))
             mouth = self.mouth_tracker.bbox.reshape((2, 2))
         else:
-            rospy.loginfo_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
+            if not self.eye_tracker.ok or not self.mouth_tracker.ok:
+                rospy.logwarn_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
+            else:
+                rospy.loginfo_throttle(1, '{}: Time-triggered face detection'.format(self.name))
             self.mouth_tracker = ROITracker(CV_TRACKER_TYPE)
             self.eye_tracker = ROITracker(CV_TRACKER_TYPE)
             bboxes, landmarks = self.detector.detect(chan3image,
