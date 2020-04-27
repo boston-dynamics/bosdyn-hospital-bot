@@ -140,7 +140,7 @@ class FaceDetectorTracker(object):
         if do_detect_track:
             # Spawn a thread to do the detection and tracking.
             self.detect_track_thread = threading.Thread(target=self.detect_track,
-                                                        name='detect_track' + self.name,
+                                                        name='detect_track_' + self.name,
                                                         args=(cv_image, t, data.header))
             self.detect_track_thread.start()
             # Maybe eventually keep the thread around all the time, but make it block

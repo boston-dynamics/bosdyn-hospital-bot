@@ -38,7 +38,7 @@ FULL_DATA_TOPIC = 'full_data_heart_rate'
 REPEAT_DATA_TOPIC = 'repeated_data_heart_rate'
 TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 HELPER_TIMER_PERIOD_SEC = 1
-REPEAT_MSMT_PERIOD_SEC = 10
+REPEAT_MSMT_PERIOD_SEC = 3
 FULL_MSMT_PERIOD_SEC = 20
 NOMINAL_RATE_HZ = 27
 NOMINAL_REPEAT_SAMPLES = REPEAT_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
@@ -46,13 +46,13 @@ NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
-ALIGNMENT_ITERATIONS = 5000
+ALIGNMENT_ITERATIONS = 10000
 # Specify the stopping threshold as a change in the correlation coefficient.
 ALIGNMENT_TERMINATION = 1e-10
-DETECT_TRACK_SCALE_FACTOR = 0.125
+DETECT_TRACK_SCALE_FACTOR = 1/16.0
 
-# Minimum of 30 beats per minute.
-MIN_HEART_HZ = 30.0 / 60.0
+# Minimum of 40 beats per minute.
+MIN_HEART_HZ = 40.0 / 60.0
 # Maximum of 120 beats per minute.
 MAX_HEART_HZ = 120.0 / 60.0
 
@@ -130,9 +130,17 @@ class HeartRate(object):
         # End locked region.
 
         if r_do_it:
-            self.msmt_callback(event, r_ti, r_tf, r_data, delta, repeated=True)
+            # Spawn a thread to do the measurement.
+            t = threading.Thread(target=self.msmt_callback, name='repeated_' + self.name,
+                                 args=(event, r_ti, r_tf, r_data, delta, True))
+            t.start()
+            #self.msmt_callback(event, r_ti, r_tf, r_data, delta, repeated=True)
         if f_do_it:
-            self.msmt_callback(event, f_ti, f_tf, f_data, delta, repeated=False)
+            # Spawn a thread to do the measurement.
+            t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
+                                 args=(event, f_ti, f_tf, f_data, delta, False))
+            t.start()
+            #self.msmt_callback(event, f_ti, f_tf, f_data, delta, repeated=False)
 
     def msmt_callback(self, event, ti, tf, data, delta, repeated=True):
         msmt_n = len(data)
@@ -212,10 +220,17 @@ class HeartRate(object):
             # Keep the indexing consistent even if alignment failed.
             warp_matrices.append(warp_matrix)
 
+        w = xmax - xmin
+        h = ymax - ymin
+        xmin = int(xmin + 0.3 * w)
+        xmax = int(xmax - 0.3 * w)
+        ymin = int(ymin + 0.3 * h)
+        ymax = int(ymax - 0.3 * h)
+
         if DEBUG_IMAGE:
             cv_debug = data[0]
-            cv2.rectangle(cv_debug, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
-            cv2.imshow("First image " + txt, cv_debug)
+            #cv2.rectangle(cv_debug, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
+            cv2.imshow("First image " + txt, cv_debug[ymin:ymax, xmin:xmax])
             cv2.waitKey(1)
 
         frame_data[0] = np.mean(data[0][ymin:ymax, xmin:xmax])
@@ -231,8 +246,8 @@ class HeartRate(object):
             frame_data[i] = np.mean(im_aligned[ymin:ymax, xmin:xmax])
 
             if DEBUG_IMAGE:
-                cv2.rectangle(im_aligned, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
-                cv2.imshow("Aligned Image 2 " + txt, im_aligned)
+                #cv2.rectangle(im_aligned, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
+                cv2.imshow("Aligned Image 2 " + txt, im_aligned[ymin:ymax, xmin:xmax])
                 cv2.waitKey(1)
 
         msg = Float32MultiArray()
