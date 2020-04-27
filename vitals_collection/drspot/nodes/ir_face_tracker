@@ -258,5 +258,5 @@ class FaceDetectorTracker(object):
 
 if __name__ == '__main__':
     rospy.init_node('ir_face_tracker')
-    resp = FaceDetectorTracker(rospy.get_name())
+    fdt = FaceDetectorTracker(rospy.get_name())
     rospy.spin()

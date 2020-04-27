@@ -331,7 +331,7 @@ class HeartRate(object):
 
 if __name__ == '__main__':
     rospy.init_node('heart_rate')
-    resp = HeartRate(rospy.get_name())
+    hr = HeartRate(rospy.get_name())
     if DEBUG_PLOT:
         while not rospy.is_shutdown():
             plt.show(block=False)

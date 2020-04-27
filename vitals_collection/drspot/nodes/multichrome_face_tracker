@@ -31,13 +31,15 @@ DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
 RED_IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
 RED_TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 RED_CROPPED_IMAGE_TOPIC = 'mono_red_cropped'
-RED_CAROTID_REGION_TOPIC = 'carotid_roi'
+RED_CAROTID_REGION_TOPIC = 'mono_red_carotid_roi'
 
 CONSTANT_IMAGE_TOPIC = 'camera_array/mono_constant/image_raw'
 CONSTANT_TRACKING_STATUS_TOPIC = 'mono_constant_tracking_status'
+CONSTANT_CROPPED_IMAGE_TOPIC = 'mono_constant_cropped'
 
 NIR_IMAGE_TOPIC = 'camera_array/mono_nir/image_raw'
 NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
+NIR_CROPPED_IMAGE_TOPIC = 'mono_nir_cropped'
 
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
@@ -133,8 +135,8 @@ class FaceDetectorTracker(object):
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         (rows, cols) = cv_image.shape
 
-        with self.lock:
-            carotid_unscaled = self.carotid
+        # Use our member function to make sure behavior is consistent.
+        carotid_unscaled = self.get_roi()
 
         do_detect_track = self.detect_track_thread is None or self.detect_track_thread is not None and not self.detect_track_thread.is_alive()
         if do_detect_track:
@@ -282,6 +284,10 @@ class FaceDetectorTracker(object):
             # Share bounding box between detection/tracking thread and ROI grab.
             self.carotid = None
 
+    def get_roi(self):
+        with self.lock:
+            return self.carotid
+
     def __init__(self, name):
         self.name = name
 
@@ -309,7 +315,80 @@ class FaceDetectorTracker(object):
         self.image_sub = rospy.Subscriber(RED_IMAGE_TOPIC, Image, self.image_callback,
                                           queue_size=10)
 
+class CalibratedCameraTrack(object):
+    def image_callback(self, data):
+        det_msg = Bool()
+        det_msg.data = False
+        t = data.header.stamp.to_sec()
+        if self.tlast is None:
+            self.tlast = t
+            self.tracking_status_pub.publish(det_msg)
+            return
+
+        # Detect backward jumps in time in replay.
+        if self.tlast > t:
+            self.clear_msmt_state()
+            self.tlast = t
+            rospy.logwarn_throttle(1, '{}: Backward jump in time'.format(self.name))
+            self.tracking_status_pub.publish(det_msg)
+            return
+
+        # Detect skips in data.
+        if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
+            rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
+            self.clear_msmt_state()
+            self.tlast = t
+            self.tracking_status_pub.publish(det_msg)
+            return
+
+        self.tlast = t
+
+        cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+        (rows, cols) = cv_image.shape
+
+        carotid_unscaled = self.face_tracker.get_roi()
+
+        if carotid_unscaled is not None:
+            xmin = int(carotid_unscaled[0][0])
+            ymin = int(carotid_unscaled[0][1])
+            xmax = int(carotid_unscaled[1][0])
+            ymax = int(carotid_unscaled[1][1])
+
+            if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
+                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
+                    self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+                self.clear_msmt_state()
+                return
+
+            if cv_image[ymin:ymax, xmin:xmax].size == 0:
+                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
+                    self.name, t, data.header.seq))
+                self.clear_msmt_state()
+                return
+
+            cv_roi = cv_image[ymin:ymax, xmin:xmax]
+            msg = self.bridge.cv2_to_imgmsg(cv_roi, encoding='passthrough')
+            msg.header = data.header
+            self.cropped_image_pub.publish(msg)
+
+    def __init__(self, name, face_tracker, image_topic, tracking_status_topic, cropped_image_topic):
+        self.face_tracker = face_tracker
+
+        self.cropped_image_pub = rospy.Publisher(cropped_image_topic, Image, queue_size=10)
+        self.tracking_status_pub = rospy.Publisher(tracking_status_topic, Bool, queue_size=10)
+
+        self.image_sub = rospy.Subscriber(image_topic, Image, self.image_callback,
+                                          queue_size=10)
+
 if __name__ == '__main__':
-    rospy.init_node('ir_face_tracker')
-    resp = FaceDetectorTracker(rospy.get_name())
+    rospy.init_node('multichrome_face_tracker')
+    fdt = FaceDetectorTracker(rospy.get_name())
+    constant_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
+                                         CONSTANT_IMAGE_TOPIC,
+                                         CONSTANT_TRACKING_STATUS_TOPIC,
+                                         CONSTANT_CROPPED_IMAGE_TOPIC)
+    nir_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
+                                    NIR_IMAGE_TOPIC,
+                                    NIR_TRACKING_STATUS_TOPIC,
+                                    NIR_CROPPED_IMAGE_TOPIC)
     rospy.spin()
