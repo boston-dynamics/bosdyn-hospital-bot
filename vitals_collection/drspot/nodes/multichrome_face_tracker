@@ -61,6 +61,12 @@ CAROTID_HEIGHT_FRAC_OF_FACE_DOWN = 0.6
 CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.5
 CAROTID_HALF_WIDTH_FRAC_OF_FACE = 1.0
 
+# The ROI height is related to the face height, and is better-preserved
+# by the tracker than the ROI width is.
+# Therefore, we use it as a proxy for the depth-dependent ROI offset
+# we need to apply because the camera centers are offset.
+MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT = 0.4
+
 class ROITracker(object):
     def __init__(self, tracker_type):
         self.ok = False
@@ -157,8 +163,6 @@ class FaceDetectorTracker(object):
             if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
                 rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
                     self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
-                self.clear_msmt_state()
-                return
 
             if cv_image[ymin:ymax, xmin:xmax].size == 0:
                 rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
@@ -355,16 +359,17 @@ class CalibratedCameraTrack(object):
             self.tracking_status_pub.publish(det_msg)
             return
 
-        xmin = int(carotid_unscaled[0][0])
-        ymin = int(carotid_unscaled[0][1])
-        xmax = int(carotid_unscaled[1][0])
-        ymax = int(carotid_unscaled[1][1])
+        hroi = carotid_unscaled[1][1] - carotid_unscaled[0][1]
+        xoff = self.x_pix_offset * hroi
+        yoff = self.y_pix_offset * hroi
+        xmin = int(carotid_unscaled[0][0] + xoff)
+        ymin = int(carotid_unscaled[0][1] + yoff)
+        xmax = int(carotid_unscaled[1][0] + xoff)
+        ymax = int(carotid_unscaled[1][1] + yoff)
 
         if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
             rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
                 self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
-            self.clear_msmt_state()
-            return
 
         if cv_image[ymin:ymax, xmin:xmax].size == 0:
             rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
@@ -384,10 +389,17 @@ class CalibratedCameraTrack(object):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
         self.tlast = None
 
-    def __init__(self, name, face_tracker, image_topic, tracking_status_topic, cropped_image_topic):
+    def __init__(self, name, face_tracker,
+                 image_topic, tracking_status_topic, cropped_image_topic,
+                 # Moving the ROI down and right is positive.
+                 # Expressed as a fraction of the ROI height.
+                 x_pix_offset, y_pix_offset):
         self.name = name
 
         self.face_tracker = face_tracker
+
+        self.x_pix_offset = x_pix_offset
+        self.y_pix_offset = y_pix_offset
 
         self.bridge = CvBridge()
 
@@ -405,9 +417,13 @@ if __name__ == '__main__':
     constant_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
                                          CONSTANT_IMAGE_TOPIC,
                                          CONSTANT_TRACKING_STATUS_TOPIC,
-                                         CONSTANT_CROPPED_IMAGE_TOPIC)
+                                         CONSTANT_CROPPED_IMAGE_TOPIC,
+                                         0,
+                                         -1.0 * MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT)
     nir_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
                                     NIR_IMAGE_TOPIC,
                                     NIR_TRACKING_STATUS_TOPIC,
-                                    NIR_CROPPED_IMAGE_TOPIC)
+                                    NIR_CROPPED_IMAGE_TOPIC,
+                                    -1.0 * MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT,
+                                    -1.0 * MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT)
     rospy.spin()

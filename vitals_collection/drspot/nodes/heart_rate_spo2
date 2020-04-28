@@ -26,23 +26,20 @@ import threading
 import cv2
 
 import rospy
+import message_filters
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
-IMAGE_TOPIC = 'mono_red_cropped'
-FULL_TOPIC = 'full_heart_rate'
-REPEAT_TOPIC = 'repeated_heart_rate'
-FULL_DATA_TOPIC = 'full_data_heart_rate'
-REPEAT_DATA_TOPIC = 'repeated_data_heart_rate'
+RED_IMAGE_TOPIC = 'mono_red_cropped'
+CONSTANT_IMAGE_TOPIC = 'mono_constant_cropped'
+
+MSMT_TOPIC = 'full_heart_rate'
+DATA_TOPIC = 'full_data_heart_rate'
 TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 HELPER_TIMER_PERIOD_SEC = 1
-REPEAT_MSMT_PERIOD_SEC = 3
-FULL_MSMT_PERIOD_SEC = 20
-NOMINAL_RATE_HZ = 27
-NOMINAL_REPEAT_SAMPLES = REPEAT_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
-NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
+FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
@@ -57,8 +54,8 @@ MIN_HEART_HZ = 40.0 / 60.0
 MAX_HEART_HZ = 120.0 / 60.0
 
 class HeartRate(object):
-    def image_callback(self, data):
-        t = data.header.stamp.to_sec()
+    def image_callback(self, red_image_data, constant_image_data):
+        t = red_image_data.header.stamp.to_sec()
 
         with self.lock:
             if self.tlast is None:
@@ -87,16 +84,16 @@ class HeartRate(object):
             self.tlast = t
         # End locked region.
 
-        cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
+        red_image = self.bridge.imgmsg_to_cv2(red_image_data,
+                                              desired_encoding='passthrough')
+        constant_image = self.bridge.imgmsg_to_cv2(constant_image_data,
+                                                   desired_encoding='passthrough')
 
         with self.lock:
-            if len(self.repeat_msmt_buffer) == 0: self.r_ti = t
-            self.repeat_msmt_buffer.append(cv_image)
-            self.r_tf = t
-
-            if len(self.full_msmt_buffer) == 0: self.f_ti = t
-            self.full_msmt_buffer.append(cv_image)
-            self.f_tf = t
+            if len(self.red_msmt_buffer) == 0: self.ti = t
+            self.red_msmt_buffer.append(red_image)
+            self.constant_msmt_buffer.append(constant_image)
+            self.tf = t
         # End locked region.
 
     def tracking_status_callback(self, data):
@@ -115,170 +112,151 @@ class HeartRate(object):
 
             delta = self.delta
 
-            r_ti = self.r_ti
-            r_tf = self.r_tf
-            r_data = self.repeat_msmt_buffer
-            r_do_it = r_ti is not None and r_tf is not None and r_tf - r_ti >= REPEAT_MSMT_PERIOD_SEC
-            if r_do_it:
-                self.repeat_msmt_buffer = []
-            f_ti = self.f_ti
-            f_tf = self.f_tf
-            f_data = self.full_msmt_buffer
-            f_do_it = f_ti is not None and f_tf is not None and f_tf - f_ti >= FULL_MSMT_PERIOD_SEC
-            if f_do_it:
-                self.full_msmt_buffer = []
+            ti = self.ti
+            tf = self.tf
+            red_data = self.red_msmt_buffer
+            constant_data = self.constant_msmt_buffer
+            do_it = ti is not None and tf is not None and tf - ti >= FULL_MSMT_PERIOD_SEC
+            if do_it:
+                self.red_msmt_buffer = []
+                self.constant_msmt_buffer = []
         # End locked region.
 
-        if r_do_it:
+        if do_it:
             # Spawn a thread to do the measurement.
-            t = threading.Thread(target=self.msmt_callback, name='repeated_' + self.name,
-                                 args=(event, r_ti, r_tf, r_data, delta, True))
-            t.start()
-            #self.msmt_callback(event, r_ti, r_tf, r_data, delta, repeated=True)
-        if f_do_it:
-            # Spawn a thread to do the measurement.
-            t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
-                                 args=(event, f_ti, f_tf, f_data, delta, False))
-            t.start()
-            #self.msmt_callback(event, f_ti, f_tf, f_data, delta, repeated=False)
+            #t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
+            #                     args=(event, ti, tf, red_data, constant_data, delta))
+            #t.start()
+            self.msmt_callback(event, ti, tf, red_data, constant_data, delta)
 
-    def msmt_callback(self, event, ti, tf, data, delta, repeated=True):
-        msmt_n = len(data)
+            with self.lock:
+                self.red_msmt_buffer = []
+                self.constant_msmt_buffer = []
 
-        if repeated:
-            txt = 'repeat'
-            period = REPEAT_MSMT_PERIOD_SEC
-            data_pub = self.repeat_data_pub
-            msmt_pub = self.repeat_msmt_pub
-            if DEBUG_PLOT:
-                data_ax = self.repeat_data_ax
-                amp_ax = self.repeat_amp_ax
-        else:
-            txt = 'full'
-            period = FULL_MSMT_PERIOD_SEC
-            data_pub = self.full_data_pub
-            msmt_pub = self.full_msmt_pub
-            if DEBUG_PLOT:
-                data_ax = self.full_data_ax
-                amp_ax = self.full_amp_ax
+    def msmt_callback(self, event, ti, tf, red_data, constant_data, delta):
+        data_all = ((red_data, self.red_data_ax, self.red_amp_ax),
+                    (constant_data, self.constant_data_ax, self.constant_amp_ax))
 
-        if delta is None or delta < 1e-3 or msmt_n < OK_FRAC_MSMT * period / delta:
-            rospy.loginfo_throttle(1, '{} {}: not enough samples {}'.format(self.name, txt, msmt_n))
-            return
+        for data, data_ax, amp_ax in data_all:
+            msmt_n = len(data)
 
-        frame_data = np.zeros(len(data))
-        warp_matrices = []
+            if delta is None or delta < 1e-3 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
+                rospy.loginfo_throttle(1, '{}: not enough samples {}'.format(self.name, msmt_n))
+                return
 
-        (rows, cols) = data[0].shape
-        r = int(rows * DETECT_TRACK_SCALE_FACTOR)
-        c = int(cols * DETECT_TRACK_SCALE_FACTOR)
-        im0 = cv2.resize(data[0], (c, r), interpolation=cv2.INTER_AREA)
+            frame_data = np.zeros(msmt_n)
+            warp_matrices = []
 
-        # xmin, ymin, xmax, ymax in unscaled image
-        xmin = 0; ymin = 0; xmax = cols-1; ymax = rows-1
-
-        for i in range(1, len(data)):
-            (rows, cols) = data[i].shape
+            (rows, cols) = data[0].shape
             r = int(rows * DETECT_TRACK_SCALE_FACTOR)
             c = int(cols * DETECT_TRACK_SCALE_FACTOR)
-            im = cv2.resize(data[i], (c, r), interpolation=cv2.INTER_AREA)
+            im0 = cv2.resize(data[0], (c, r), interpolation=cv2.INTER_AREA)
 
-            warp_matrix = np.eye(2, 3, dtype=np.float32)
-            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, ALIGNMENT_ITERATIONS,
-                        ALIGNMENT_TERMINATION)
-            try:
-                (cc, warp_matrix) = cv2.findTransformECC(im0, im, warp_matrix,
-                                                         cv2.MOTION_TRANSLATION,
-                                                         criteria, None, 1)
-            except:
-                rospy.logwarn_throttle(1, '{}: failed patch alignment in {}:{}, idx {}'.format(
-                    self.name, ti, tf, i))
-            else:
-                # Convert the corners of the ith image to equivalent locations in the 0th image.
-                # top left
-                # top right
-                # bottom left
-                # bottom right
-                # (x, y, 1)
-                tl = np.dot(warp_matrix, np.array([0,      0,      1.0]))
-                tr = np.dot(warp_matrix, np.array([cols-1, 0,      1.0]))
-                bl = np.dot(warp_matrix, np.array([0,      rows-1, 1.0]))
-                br = np.dot(warp_matrix, np.array([cols-1, rows-1, 1.0]))
-                # left x bound
-                if tl[0] > xmin:
-                    xmin = int(tl[0])
-                # right x bound
-                if tr[0] < xmax:
-                    xmax = int(tr[0])
-                # top y bound
-                if tl[1] > ymin:
-                    ymin = int(tl[1])
-                # bottom y bound
-                if br[1] < ymax:
-                    ymax = int(br[1])
+            # xmin, ymin, xmax, ymax in unscaled image
+            xmin = 0; ymin = 0; xmax = cols-1; ymax = rows-1
 
-            # Keep the indexing consistent even if alignment failed.
-            warp_matrices.append(warp_matrix)
+            for i in range(1, msmt_n):
+                (rows, cols) = data[i].shape
+                r = int(rows * DETECT_TRACK_SCALE_FACTOR)
+                c = int(cols * DETECT_TRACK_SCALE_FACTOR)
+                im = cv2.resize(data[i], (c, r), interpolation=cv2.INTER_AREA)
 
-        w = xmax - xmin
-        h = ymax - ymin
-        xmin = int(xmin + 0.3 * w)
-        xmax = int(xmax - 0.3 * w)
-        ymin = int(ymin + 0.3 * h)
-        ymax = int(ymax - 0.3 * h)
+                warp_matrix = np.eye(2, 3, dtype=np.float32)
+                criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, ALIGNMENT_ITERATIONS,
+                            ALIGNMENT_TERMINATION)
+                try:
+                    (cc, warp_matrix) = cv2.findTransformECC(im0, im, warp_matrix,
+                                                             cv2.MOTION_TRANSLATION,
+                                                             criteria, None, 1)
+                except:
+                    rospy.logwarn_throttle(1, '{}: failed patch alignment in {}:{}, idx {}'.format(
+                        self.name, ti, tf, i))
+                else:
+                    # Convert the corners of the ith image to equivalent locations in the 0th image.
+                    # top left
+                    # top right
+                    # bottom left
+                    # bottom right
+                    # (x, y, 1)
+                    tl = np.dot(warp_matrix, np.array([0,      0,      1.0]))
+                    tr = np.dot(warp_matrix, np.array([cols-1, 0,      1.0]))
+                    bl = np.dot(warp_matrix, np.array([0,      rows-1, 1.0]))
+                    br = np.dot(warp_matrix, np.array([cols-1, rows-1, 1.0]))
+                    # left x bound
+                    if tl[0] > xmin:
+                        xmin = int(tl[0])
+                    # right x bound
+                    if tr[0] < xmax:
+                        xmax = int(tr[0])
+                    # top y bound
+                    if tl[1] > ymin:
+                        ymin = int(tl[1])
+                    # bottom y bound
+                    if br[1] < ymax:
+                        ymax = int(br[1])
 
-        if DEBUG_IMAGE:
-            cv_debug = data[0]
-            #cv2.rectangle(cv_debug, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
-            cv2.imshow("First image " + txt, cv_debug[ymin:ymax, xmin:xmax])
-            cv2.waitKey(1)
+                # Keep the indexing consistent even if alignment failed.
+                warp_matrices.append(warp_matrix)
 
-        frame_data[0] = np.mean(data[0][ymin:ymax, xmin:xmax])
-        for i in range(1, len(data)):
-            # Use warpAffine for Translation, Euclidean and Affine
-            sz = data[0].shape
-            # The function warpAffine transforms the source image using the specified matrix:
-            # dst(x,y) = src(M_11 x + M_12 y + M_13, M_21 x + M_22 y + M_23)
-            # when the flag WARP_INVERSE_MAP is set
-            im_aligned = cv2.warpAffine(data[i], warp_matrices[i-1], (sz[1], sz[0]),
-                                        flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
-
-            frame_data[i] = np.mean(im_aligned[ymin:ymax, xmin:xmax])
+            w = xmax - xmin
+            h = ymax - ymin
+            xmin = int(xmin + 0.3 * w)
+            xmax = int(xmax - 0.3 * w)
+            ymin = int(ymin + 0.3 * h)
+            ymax = int(ymax - 0.3 * h)
 
             if DEBUG_IMAGE:
-                #cv2.rectangle(im_aligned, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
-                cv2.imshow("Aligned Image 2 " + txt, im_aligned[ymin:ymax, xmin:xmax])
+                cv_debug = data[0]
+                #cv2.rectangle(cv_debug, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
+                cv2.imshow("First image", cv_debug[ymin:ymax, xmin:xmax])
                 cv2.waitKey(1)
 
-        msg = Float32MultiArray()
-        msg.data = frame_data
-        data_pub.publish(msg)
+            frame_data[0] = np.mean(data[0][ymin:ymax, xmin:xmax])
+            for i in range(1, msmt_n):
+                # Use warpAffine for Translation, Euclidean and Affine
+                sz = data[0].shape
+                # The function warpAffine transforms the source image using the specified matrix:
+                # dst(x,y) = src(M_11 x + M_12 y + M_13, M_21 x + M_22 y + M_23)
+                # when the flag WARP_INVERSE_MAP is set
+                im_aligned = cv2.warpAffine(data[i], warp_matrices[i-1], (sz[1], sz[0]),
+                                            flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
 
-        sp = np.fft.fft(frame_data)
-        freq = np.fft.fftfreq(sp.shape[-1], d=delta)
-        # Find the range of real frequency bins that we are interested in.
-        nreal = frame_data.shape[0]
-        fminind = int(MIN_HEART_HZ * nreal * delta) + 1
-        fmaxind = int(MAX_HEART_HZ * nreal * delta)
+                frame_data[i] = np.mean(im_aligned[ymin:ymax, xmin:xmax])
 
-        amp = np.abs(sp)[fminind:fmaxind]
-        if DEBUG_PLOT:
-            data_ax.cla()
-            data_ax.plot(frame_data)
-            amp_ax.cla()
-            amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
-        try:
-            beats = freq[amp.argmax() + fminind] * 60.0
-        except ValueError as e:
-            rospy.logwarn('{} {}: {}'.format(self.name, txt, str(e)))
-            beats = -1.0
-        else:
-            msg = Float32()
-            msg.data = beats
-            msmt_pub.publish(msg)
+                if DEBUG_IMAGE:
+                    #cv2.rectangle(im_aligned, (xmin, ymin), (xmax, ymax), (255,255,255), 2)
+                    cv2.imshow("Aligned Image 2", im_aligned[ymin:ymax, xmin:xmax])
+                    cv2.waitKey(1)
 
-        rospy.loginfo('{} {}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
-            self.name, txt, beats, nreal, ti, tf, (tf - ti) / nreal))
+            msg = Float32MultiArray()
+            msg.data = frame_data
+            self.data_pub.publish(msg)
+
+            sp = np.fft.fft(frame_data)
+            freq = np.fft.fftfreq(sp.shape[-1], d=delta)
+            # Find the range of real frequency bins that we are interested in.
+            nreal = frame_data.shape[0]
+            fminind = int(MIN_HEART_HZ * nreal * delta) + 1
+            fmaxind = int(MAX_HEART_HZ * nreal * delta)
+
+            amp = np.abs(sp)[fminind:fmaxind]
+            if DEBUG_PLOT:
+                data_ax.cla()
+                data_ax.plot(frame_data)
+                amp_ax.cla()
+                amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
+            try:
+                beats = freq[amp.argmax() + fminind] * 60.0
+            except ValueError as e:
+                rospy.logwarn('{}: {}'.format(self.name, str(e)))
+                beats = -1.0
+            else:
+                msg = Float32()
+                msg.data = beats
+                self.msmt_pub.publish(msg)
+
+            rospy.loginfo('{}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
+                self.name, beats, nreal, ti, tf, (tf - ti) / nreal))
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
@@ -286,10 +264,8 @@ class HeartRate(object):
         # Region of Interest
         self.roi_valid = False
 
-        self.r_ti = None
-        self.r_tf = None
-        self.f_ti = None
-        self.f_tf = None
+        self.ti = None
+        self.tf = None
 
         self.tlast = None
         self.delta = None
@@ -300,8 +276,8 @@ class HeartRate(object):
         self.lock = threading.Lock()
 
         # Measurement buffers
-        self.repeat_msmt_buffer = []
-        self.full_msmt_buffer = []
+        self.red_msmt_buffer = []
+        self.constant_msmt_buffer = []
 
         self.clear_msmt_state()
 
@@ -310,19 +286,28 @@ class HeartRate(object):
 
         self.bridge = CvBridge()
 
+        self.red_data_ax = None
+        self.red_amp_ax = None
+        self.constant_data_ax = None
+        self.constant_amp_ax = None
         if DEBUG_PLOT:
             self.fig = plt.figure()
-            self.full_data_ax = self.fig.add_subplot(2, 3, 1)
-            self.full_amp_ax = self.fig.add_subplot(2, 3, 2)
-            self.repeat_data_ax = self.fig.add_subplot(2, 3, 4)
-            self.repeat_amp_ax = self.fig.add_subplot(2, 3, 5)
+            self.red_data_ax = self.fig.add_subplot(2, 3, 1)
+            self.red_amp_ax = self.fig.add_subplot(2, 3, 2)
+            self.constant_data_ax = self.fig.add_subplot(2, 3, 4)
+            self.constant_amp_ax = self.fig.add_subplot(2, 3, 5)
 
-        self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
-        self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
-        self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
-        self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC, Float32MultiArray, queue_size=10)
+        self.msmt_pub = rospy.Publisher(MSMT_TOPIC, Float32, queue_size=10)
+        self.data_pub = rospy.Publisher(DATA_TOPIC, Float32MultiArray, queue_size=10)
 
-        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=10)
+        self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image)
+        self.constant_image_sub = message_filters.Subscriber(CONSTANT_IMAGE_TOPIC, Image)
+
+        self.approx_image_sync = message_filters.ApproximateTimeSynchronizer([self.red_image_sub,
+                                                                              self.constant_image_sub],
+                                                                             10, 0.1)
+        self.approx_image_sync.registerCallback(self.image_callback)
+
         self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
                                                     self.tracking_status_callback, queue_size=1)
 
