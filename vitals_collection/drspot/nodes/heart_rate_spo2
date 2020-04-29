@@ -46,6 +46,9 @@ HELPER_TIMER_PERIOD_SEC = 1
 FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
+# Buffer about 3 seconds of cropped frames.
+IMG_QUEUE_SIZE = 3 * 35
+IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
 # Minimum of 30 beats per minute.
 MIN_HEART_HZ = 30.0 / 60.0
@@ -54,33 +57,40 @@ MAX_HEART_HZ = 120.0 / 60.0
 
 class HeartRate(object):
     def image_callback(self, red_image_data, nir_image_data, blue_image_data):
-        t = red_image_data.header.stamp.to_sec()
-
         with self.lock:
-            if self.tlast is None:
-                self.tlast = t
-                return
+            chans = ((self.red_tlast, self.red_delta, red_image_data, 'red'),
+                     (self.nir_tlast, self.nir_delta, nir_image_data, 'nir'),
+                     (self.blue_tlast, self.blue_delta, blue_image_data, 'blue'))
 
-            # Detect backward jumps in time in replay.
-            if self.tlast > t:
-                self.clear_msmt_state()
-                self.tlast = t
-                rospy.logwarn_throttle(1, '{}: Backward jump in time'.format(self.name))
-                return
+            for tlast, delta, image_data, txt in chans:
+                t = image_data.header.stamp.to_sec()
 
-            # Detect skips in data.
-            if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
-                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
-                self.clear_msmt_state()
-                self.tlast = t
-                return
+                if tlast is None:
+                    tlast = t
+                    return
 
-            if self.delta is None:
-                self.delta = t - self.tlast
-                return
+                # Detect backward jumps in time in replay.
+                if tlast > t:
+                    clear_msmt_state()
+                    tlast = t
+                    rospy.logwarn('{} {}: Backward jump in time {:0.6f} vs {:0.6f}'.format(
+                        self.name, txt, tlast, t))
+                    return
 
-            self.delta = self.delta_alpha * (t - self.tlast) + (1 - self.delta_alpha) * self.delta
-            self.tlast = t
+                # Detect skips in data.
+                if t - tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
+                    rospy.logwarn_throttle(1, '{} {}: Dropped samples for {} sec'.format(
+                        self.name, txt, t - tlast))
+                    self.clear_msmt_state()
+                    tlast = t
+                    return
+
+                if delta is None:
+                    delta = t - tlast
+                    return
+
+                delta = self.delta_alpha * (t - tlast) + (1 - self.delta_alpha) * delta
+                tlast = t
         # End locked region.
 
         red_image = self.bridge.imgmsg_to_cv2(red_image_data,
@@ -90,6 +100,7 @@ class HeartRate(object):
         blue_image = self.bridge.imgmsg_to_cv2(blue_image_data,
                                                desired_encoding='passthrough')
 
+        t = red_image_data.header.stamp.to_sec()
         with self.lock:
             if len(self.red_msmt_buffer) == 0: self.ti = t
             self.red_msmt_buffer.append(red_image)
@@ -112,7 +123,7 @@ class HeartRate(object):
                 self.clear_msmt_state()
                 return
 
-            delta = self.delta
+            delta = self.red_delta
 
             ti = self.ti
             tf = self.tf
@@ -170,8 +181,14 @@ class HeartRate(object):
         self.ti = None
         self.tf = None
 
-        self.tlast = None
-        self.delta = None
+        self.red_tlast = None
+        self.red_delta = None
+
+        self.nir_tlast = None
+        self.nir_delta = None
+
+        self.blue_tlast = None
+        self.blue_delta = None
 
     def __init__(self, name):
         self.name = name
@@ -198,14 +215,20 @@ class HeartRate(object):
         self.msmt_pub = rospy.Publisher(MSMT_TOPIC, Float32, queue_size=10)
         self.data_pub = rospy.Publisher(DATA_TOPIC, Float32MultiArray, queue_size=10)
 
-        self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image)
-        self.nir_image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image)
-        self.blue_image_sub = message_filters.Subscriber(BLUE_IMAGE_TOPIC, Image)
+        self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
+                                                        queue_size=IMG_QUEUE_SIZE,
+                                                        buff_size=IMG_BUF_SIZE)
+        self.nir_image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image,
+                                                        queue_size=IMG_QUEUE_SIZE,
+                                                        buff_size=IMG_BUF_SIZE)
+        self.blue_image_sub = message_filters.Subscriber(BLUE_IMAGE_TOPIC, Image,
+                                                         queue_size=IMG_QUEUE_SIZE,
+                                                         buff_size=IMG_BUF_SIZE)
 
         self.approx_image_sync = message_filters.ApproximateTimeSynchronizer([self.red_image_sub,
                                                                               self.nir_image_sub,
                                                                               self.blue_image_sub],
-                                                                             30, 0.1)
+                                                                             200, 0.1)
         self.approx_image_sync.registerCallback(self.image_callback)
 
         self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,

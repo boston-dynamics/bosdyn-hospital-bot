@@ -41,6 +41,10 @@ BLUE_IMAGE_TOPIC = 'camera_array/mono_blue/image_raw'
 BLUE_TRACKING_STATUS_TOPIC = 'mono_blue_tracking_status'
 BLUE_CROPPED_IMAGE_TOPIC = 'mono_blue_cropped'
 
+# Buffer about 1 second of full-size frames.
+IMG_QUEUE_SIZE = 35
+IMG_BUF_SIZE = IMG_QUEUE_SIZE * 2448 * 2048
+
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
 
@@ -56,15 +60,16 @@ FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
 # Shift the mask ROI down from the detected landmarks.
 ROI_HEIGHT_FRAC_OF_FACE_DOWN = 0.0
-
 # Overbound the region
-ROI_HALF_HEIGHT_FRAC_OF_FACE = 1.0
-ROI_HALF_WIDTH_FRAC_OF_FACE = 1.0
+ROI_HALF_HEIGHT_FRAC_OF_FACE = 1.25
+ROI_HALF_WIDTH_FRAC_OF_FACE = 1.25
 
 # The face height is better related to scene depth than the width is.
 # Therefore, we use it as a proxy for the depth-dependent ROI offset
 # we need to apply because the camera centers are offset.
-MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT = 0.35
+NIR_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
+BLUE_X_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
+BLUE_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
 
 class ROITracker(object):
     def __init__(self, tracker_type):
@@ -205,7 +210,7 @@ class FaceDetectorTracker(object):
         self.roi_tracker.update(chan3image)
         last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
         if self.roi_tracker.ok and last_detection_ok:
-            roi = self.roi_tracker.bbox.reshape((2, 2))
+            bboxes = np.array([self.roi_tracker.bbox])
         else:
             if not self.roi_tracker.ok:
                 rospy.logwarn_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
@@ -227,29 +232,26 @@ class FaceDetectorTracker(object):
                 rospy.logwarn_throttle(1, '{}: {} faces detected; picking the first'.format(
                     self.name, len(bboxes)))
 
-            wface = bboxes[fidx][2] - bboxes[fidx][0]
-            hface = bboxes[fidx][3] - bboxes[fidx][1]
-            if (wface < MIN_FACE_DIM_PIXELS) or (hface < MIN_FACE_DIM_PIXELS):
-                self.tracking_status_pub.publish(det_msg)
-                rospy.logwarn_throttle(1, '{}: face too small'.format(self.name))
-                self.clear_msmt_state()
-                return
-
-            det_msg.data = True
-            self.tracking_status_pub.publish(det_msg)
+            self.roi_tracker.start_track(chan3image, bboxes[fidx][0:4].reshape((4)))
             self.tlast_detection = t
 
-            lmouth = landmarks[fidx][3]
-            rmouth = landmarks[fidx][4]
-            midroi = np.array([0.0, 0.0])
-            # Unlike the mask and eye region, this should move with the face bbox, not the landmarks.
-            midroi[0] = 0.5 * (bboxes[fidx][2] + bboxes[fidx][0])
-            midroi[1] = 0.5 * (lmouth[1] + rmouth[1]) + hface * ROI_HEIGHT_FRAC_OF_FACE_DOWN
-            half_wroi = wface * ROI_HALF_WIDTH_FRAC_OF_FACE
-            half_hroi = hface * ROI_HALF_HEIGHT_FRAC_OF_FACE
-            roi = midroi + np.array([[-half_wroi, -half_hroi],
-                                             [half_wroi, half_hroi]])
-            self.roi_tracker.start_track(chan3image, roi.reshape((4)))
+        wface = bboxes[fidx][2] - bboxes[fidx][0]
+        hface = bboxes[fidx][3] - bboxes[fidx][1]
+        if (wface < MIN_FACE_DIM_PIXELS) or (hface < MIN_FACE_DIM_PIXELS):
+            self.tracking_status_pub.publish(det_msg)
+            rospy.logwarn_throttle(1, '{}: face too small'.format(self.name))
+            self.clear_msmt_state()
+            return
+
+        det_msg.data = True
+        self.tracking_status_pub.publish(det_msg)
+
+        midroi = self.roi_tracker.get_center()
+        offset = np.array([0.0, hface * ROI_HEIGHT_FRAC_OF_FACE_DOWN])
+        half_wroi = wface * ROI_HALF_WIDTH_FRAC_OF_FACE
+        half_hroi = hface * ROI_HALF_HEIGHT_FRAC_OF_FACE
+        roi = midroi + offset + np.array([[-half_wroi, -half_hroi],
+                                          [half_wroi, half_hroi]])
 
         roi_unscaled = roi / DETECT_TRACK_SCALE_FACTOR
         with self.lock:
@@ -265,15 +267,15 @@ class FaceDetectorTracker(object):
         for box in bboxes.astype(int):
             x, y, x2, y2 = box[0:4]
             # Draw a rectangle for each face bounding box.
-            cv2.rectangle(cv_image, (x, y), (x2, y2), (0,0,255), 1)
+            cv2.rectangle(cv_image, (x, y), (x2, y2), (255,255,255), 2)
         for face in landmarks.astype(int):
             for point in face:
                 x, y = point
                 # Draw a circle at each landmark.
-                cv2.circle(cv_image, (x, y), 5, (0,0,255), 1)
+                cv2.circle(cv_image, (x, y), 5, (255,255,255), 1)
 
         roi = roi.astype(int)
-        cv2.rectangle(cv_image, tuple(roi[0].tolist()), tuple(roi[1].tolist()), (255,0,0), 2)
+        cv2.rectangle(cv_image, tuple(roi[0].tolist()), tuple(roi[1].tolist()), (255,255,255), 2)
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
         self.debug_image_pub.publish(msg)
@@ -316,7 +318,8 @@ class FaceDetectorTracker(object):
         self.tracking_status_pub = rospy.Publisher(RED_TRACKING_STATUS_TOPIC, Bool, queue_size=10)
 
         self.image_sub = rospy.Subscriber(RED_IMAGE_TOPIC, Image, self.image_callback,
-                                          queue_size=10)
+                                          queue_size=IMG_QUEUE_SIZE,
+                                          buff_size=IMG_BUF_SIZE)
 
 class CalibratedCameraTrack(object):
     def image_callback(self, data):
@@ -373,6 +376,10 @@ class CalibratedCameraTrack(object):
         if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
             rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
                 self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+            if xmin < 0: xmin = 0
+            if ymin < 0: ymin = 0
+            if xmax >= cols: xmax = cols-1
+            if ymax >= cols: ymax = cols-1
 
         if cv_image[ymin:ymax, xmin:xmax].size == 0:
             rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
@@ -414,7 +421,8 @@ class CalibratedCameraTrack(object):
         self.tracking_status_pub = rospy.Publisher(tracking_status_topic, Bool, queue_size=10)
 
         self.image_sub = rospy.Subscriber(image_topic, Image, self.image_callback,
-                                          queue_size=10)
+                                          queue_size=IMG_QUEUE_SIZE,
+                                          buff_size=IMG_BUF_SIZE)
 
 if __name__ == '__main__':
     rospy.init_node('multichrome_face_tracker')
@@ -424,12 +432,12 @@ if __name__ == '__main__':
                                     NIR_TRACKING_STATUS_TOPIC,
                                     NIR_CROPPED_IMAGE_TOPIC,
                                     0,
-                                    -1.0 * MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT)
+                                    NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
     blue_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
                                      BLUE_IMAGE_TOPIC,
                                      BLUE_TRACKING_STATUS_TOPIC,
                                      BLUE_CROPPED_IMAGE_TOPIC,
-                                     -1.0 * MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                     -1.0 * MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT,
+                                     BLUE_X_OFFSET_FRAC_OF_FACE_HEIGHT,
+                                     BLUE_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
                                      rot180=True)
     rospy.spin()
