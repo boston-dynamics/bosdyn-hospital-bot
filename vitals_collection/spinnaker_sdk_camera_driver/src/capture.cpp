@@ -63,7 +63,7 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
-    exposure_time_ = 0 ; // default as 0 = auto exposure
+    exposure_time_ = 27800 ; // default as 0 = auto exposure
     soft_framerate_ = 20; //default soft framrate
     ext_ = ".bmp";
     SOFT_FRAME_RATE_CTRL_ = false;
@@ -142,7 +142,7 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
-    exposure_time_ = 0 ; // default as 0 = auto exposure
+    exposure_time_ = 27800 ; // default as 0 = auto exposure
     soft_framerate_ = 20; //default soft framrate
     ext_ = ".bmp";
     SOFT_FRAME_RATE_CTRL_ = false;

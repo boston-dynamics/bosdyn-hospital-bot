@@ -238,9 +238,8 @@ class RespiratoryRate(object):
         sp = np.fft.fft(data)
         freq = np.fft.fftfreq(sp.shape[-1], d=delta)
         # Find the range of real frequency bins that we are interested in.
-        nreal = data.shape[0]
-        fminind = int(MIN_RESP_HZ * nreal * delta) + 1
-        fmaxind = int(MAX_RESP_HZ * nreal * delta)
+        fminind = int(MIN_RESP_HZ * msmt_n * delta) + 1
+        fmaxind = int(MAX_RESP_HZ * msmt_n * delta)
 
         amp = np.abs(sp)[fminind:fmaxind]
         if DEBUG_PLOT:
@@ -258,7 +257,7 @@ class RespiratoryRate(object):
             msg.data = breaths
             msmt_pub.publish(msg)
 
-        rospy.loginfo('{} {}: {:.1f} breaths / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, breaths, nreal, ti, tf, (tf - ti) / nreal))
+        rospy.loginfo('{} {}: {:.1f} breaths / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, breaths, msmt_n, ti, tf, (tf - ti) / msmt_n))
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))

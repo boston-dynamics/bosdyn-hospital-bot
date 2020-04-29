@@ -10,6 +10,7 @@
     <group if="$(arg launch_drivers)">
       <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
         <arg name="config_file" default="/etc/ros/params/spinnaker_sdk_camera_driver_params.yaml" />
+        <arg name="exposure_time" default="27800" />
       </include>
     </group>
   </group>
@@ -17,6 +18,9 @@
   <group if="$(arg launch_multichrome_algos)">
     <node name="multichrome_face_tracker" pkg="drspot" type="multichrome_face_tracker"
           output="screen" respawn="true">
+      <remap from="camera_array/mono_red/image_raw" to="camera_array/mono_660/image_raw" />
+      <remap from="camera_array/mono_nir/image_raw" to="camera_array/mono_880/image_raw" />
+      <remap from="camera_array/mono_blue/image_raw" to="camera_array/mono_470/image_raw" />
     </node>
     <node name="heart_rate_spo2" pkg="drspot" type="heart_rate_spo2"
           output="screen" respawn="true">

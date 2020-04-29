@@ -31,15 +31,15 @@ DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
 RED_IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
 RED_TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 RED_CROPPED_IMAGE_TOPIC = 'mono_red_cropped'
-RED_CAROTID_REGION_TOPIC = 'mono_red_carotid_roi'
-
-CONSTANT_IMAGE_TOPIC = 'camera_array/mono_constant/image_raw'
-CONSTANT_TRACKING_STATUS_TOPIC = 'mono_constant_tracking_status'
-CONSTANT_CROPPED_IMAGE_TOPIC = 'mono_constant_cropped'
+RED_ROI_REGION_TOPIC = 'mono_red_roi'
 
 NIR_IMAGE_TOPIC = 'camera_array/mono_nir/image_raw'
 NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
 NIR_CROPPED_IMAGE_TOPIC = 'mono_nir_cropped'
+
+BLUE_IMAGE_TOPIC = 'camera_array/mono_blue/image_raw'
+BLUE_TRACKING_STATUS_TOPIC = 'mono_blue_tracking_status'
+BLUE_CROPPED_IMAGE_TOPIC = 'mono_blue_cropped'
 
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
@@ -55,17 +55,16 @@ FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
 # Shift the mask ROI down from the detected landmarks.
-CAROTID_HEIGHT_FRAC_OF_FACE_DOWN = 0.6
+ROI_HEIGHT_FRAC_OF_FACE_DOWN = 0.0
 
 # Overbound the region
-CAROTID_HALF_HEIGHT_FRAC_OF_FACE = 0.5
-CAROTID_HALF_WIDTH_FRAC_OF_FACE = 1.0
+ROI_HALF_HEIGHT_FRAC_OF_FACE = 1.0
+ROI_HALF_WIDTH_FRAC_OF_FACE = 1.0
 
-# The ROI height is related to the face height, and is better-preserved
-# by the tracker than the ROI width is.
+# The face height is better related to scene depth than the width is.
 # Therefore, we use it as a proxy for the depth-dependent ROI offset
 # we need to apply because the camera centers are offset.
-MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT = 0.4
+MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT = 0.35
 
 class ROITracker(object):
     def __init__(self, tracker_type):
@@ -142,7 +141,7 @@ class FaceDetectorTracker(object):
         (rows, cols) = cv_image.shape
 
         # Use our member function to make sure behavior is consistent.
-        carotid_unscaled = self.get_roi()
+        roi_unscaled = self.get_roi()
 
         do_detect_track = self.detect_track_thread is None or self.detect_track_thread is not None and not self.detect_track_thread.is_alive()
         if do_detect_track:
@@ -154,11 +153,11 @@ class FaceDetectorTracker(object):
             # Maybe eventually keep the thread around all the time, but make it block
             # on popping from a size 1 queue. And use a nonblocking push (fail if full).
 
-        if carotid_unscaled is not None:
-            xmin = int(carotid_unscaled[0][0])
-            ymin = int(carotid_unscaled[0][1])
-            xmax = int(carotid_unscaled[1][0])
-            ymax = int(carotid_unscaled[1][1])
+        if roi_unscaled is not None:
+            xmin = int(roi_unscaled[0][0])
+            ymin = int(roi_unscaled[0][1])
+            xmax = int(roi_unscaled[1][0])
+            ymax = int(roi_unscaled[1][1])
 
             if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
                 rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
@@ -203,16 +202,16 @@ class FaceDetectorTracker(object):
         bboxes = np.array([])
         landmarks = np.array([])
         fidx = 0
-        self.carotid_tracker.update(chan3image)
+        self.roi_tracker.update(chan3image)
         last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
-        if self.carotid_tracker.ok and last_detection_ok:
-            carotid = self.carotid_tracker.bbox.reshape((2, 2))
+        if self.roi_tracker.ok and last_detection_ok:
+            roi = self.roi_tracker.bbox.reshape((2, 2))
         else:
-            if not self.carotid_tracker.ok:
+            if not self.roi_tracker.ok:
                 rospy.logwarn_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
             else:
                 rospy.loginfo_throttle(1, '{}: Time-triggered face detection'.format(self.name))
-            self.carotid_tracker = ROITracker(CV_TRACKER_TYPE)
+            self.roi_tracker = ROITracker(CV_TRACKER_TYPE)
             bboxes, landmarks = self.detector.detect(chan3image,
                                                      threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
                                                      scale=FACE_DETECTION_SCALE)
@@ -242,25 +241,25 @@ class FaceDetectorTracker(object):
 
             lmouth = landmarks[fidx][3]
             rmouth = landmarks[fidx][4]
-            midcarotid = np.array([0.0, 0.0])
+            midroi = np.array([0.0, 0.0])
             # Unlike the mask and eye region, this should move with the face bbox, not the landmarks.
-            midcarotid[0] = 0.5 * (bboxes[fidx][2] + bboxes[fidx][0])
-            midcarotid[1] = 0.5 * (lmouth[1] + rmouth[1]) + hface * CAROTID_HEIGHT_FRAC_OF_FACE_DOWN
-            half_wcarotid = wface * CAROTID_HALF_WIDTH_FRAC_OF_FACE
-            half_hcarotid = hface * CAROTID_HALF_HEIGHT_FRAC_OF_FACE
-            carotid = midcarotid + np.array([[-half_wcarotid, -half_hcarotid],
-                                             [half_wcarotid, half_hcarotid]])
-            self.carotid_tracker.start_track(chan3image, carotid.reshape((4)))
+            midroi[0] = 0.5 * (bboxes[fidx][2] + bboxes[fidx][0])
+            midroi[1] = 0.5 * (lmouth[1] + rmouth[1]) + hface * ROI_HEIGHT_FRAC_OF_FACE_DOWN
+            half_wroi = wface * ROI_HALF_WIDTH_FRAC_OF_FACE
+            half_hroi = hface * ROI_HALF_HEIGHT_FRAC_OF_FACE
+            roi = midroi + np.array([[-half_wroi, -half_hroi],
+                                             [half_wroi, half_hroi]])
+            self.roi_tracker.start_track(chan3image, roi.reshape((4)))
 
-        carotid_unscaled = carotid / DETECT_TRACK_SCALE_FACTOR
+        roi_unscaled = roi / DETECT_TRACK_SCALE_FACTOR
         with self.lock:
-            self.carotid = carotid_unscaled
+            self.roi = roi_unscaled
 
         region = PolygonStamped()
         region.header = header
-        region.polygon.points = [Point32(x=carotid_unscaled[0][0], y=carotid_unscaled[0][1], z=0),
-                                 Point32(x=carotid_unscaled[1][0], y=carotid_unscaled[1][1], z=0)]
-        self.carotid_region_pub.publish(region)
+        region.polygon.points = [Point32(x=roi_unscaled[0][0], y=roi_unscaled[0][1], z=0),
+                                 Point32(x=roi_unscaled[1][0], y=roi_unscaled[1][1], z=0)]
+        self.roi_region_pub.publish(region)
 
         # All overlays have colors below in case we use an RGB image in the future.
         for box in bboxes.astype(int):
@@ -273,8 +272,8 @@ class FaceDetectorTracker(object):
                 # Draw a circle at each landmark.
                 cv2.circle(cv_image, (x, y), 5, (0,0,255), 1)
 
-        carotid = carotid.astype(int)
-        cv2.rectangle(cv_image, tuple(carotid[0].tolist()), tuple(carotid[1].tolist()), (255,0,0), 2)
+        roi = roi.astype(int)
+        cv2.rectangle(cv_image, tuple(roi[0].tolist()), tuple(roi[1].tolist()), (255,0,0), 2)
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
         self.debug_image_pub.publish(msg)
@@ -282,15 +281,15 @@ class FaceDetectorTracker(object):
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
         with self.lock:
-            self.carotid_tracker.ok = False
+            self.roi_tracker.ok = False
             self.tlast = None
             self.tlast_detection = None
             # Share bounding box between detection/tracking thread and ROI grab.
-            self.carotid = None
+            self.roi = None
 
     def get_roi(self):
         with self.lock:
-            return self.carotid
+            return self.roi
 
     def __init__(self, name):
         self.name = name
@@ -303,12 +302,12 @@ class FaceDetectorTracker(object):
         self.detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         self.detector.prepare(ctx_id=-1, nms=0.4)
 
-        self.carotid_tracker = ROITracker(CV_TRACKER_TYPE)
+        self.roi_tracker = ROITracker(CV_TRACKER_TYPE)
 
         self.clear_msmt_state()
 
         self.cropped_image_pub = rospy.Publisher(RED_CROPPED_IMAGE_TOPIC, Image, queue_size=10)
-        self.carotid_region_pub = rospy.Publisher(RED_CAROTID_REGION_TOPIC, PolygonStamped,
+        self.roi_region_pub = rospy.Publisher(RED_ROI_REGION_TOPIC, PolygonStamped,
                                                   queue_size=10)
 
         self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
@@ -350,22 +349,26 @@ class CalibratedCameraTrack(object):
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         (rows, cols) = cv_image.shape
 
-        carotid_unscaled = self.face_tracker.get_roi()
+        if self.rot180:
+            cv_image = cv2.rotate(cv_image, cv2.ROTATE_180)
 
-        if carotid_unscaled is None:
+        roi_unscaled = self.face_tracker.get_roi()
+
+        if roi_unscaled is None:
             rospy.logdebug_throttle(1, '{}: Not tracking'.format(self.name))
             self.clear_msmt_state()
             self.tlast = t
             self.tracking_status_pub.publish(det_msg)
             return
 
-        hroi = carotid_unscaled[1][1] - carotid_unscaled[0][1]
-        xoff = self.x_pix_offset * hroi
-        yoff = self.y_pix_offset * hroi
-        xmin = int(carotid_unscaled[0][0] + xoff)
-        ymin = int(carotid_unscaled[0][1] + yoff)
-        xmax = int(carotid_unscaled[1][0] + xoff)
-        ymax = int(carotid_unscaled[1][1] + yoff)
+        hroi = roi_unscaled[1][1] - roi_unscaled[0][1]
+        face_height = 0.5 * hroi / ROI_HALF_HEIGHT_FRAC_OF_FACE
+        xoff = self.x_pix_offset * face_height
+        yoff = self.y_pix_offset * face_height
+        xmin = int(roi_unscaled[0][0] + xoff)
+        ymin = int(roi_unscaled[0][1] + yoff)
+        xmax = int(roi_unscaled[1][0] + xoff)
+        ymax = int(roi_unscaled[1][1] + yoff)
 
         if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
             rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
@@ -393,13 +396,15 @@ class CalibratedCameraTrack(object):
                  image_topic, tracking_status_topic, cropped_image_topic,
                  # Moving the ROI down and right is positive.
                  # Expressed as a fraction of the ROI height.
-                 x_pix_offset, y_pix_offset):
+                 x_pix_offset, y_pix_offset,
+                 rot180=False):
         self.name = name
 
         self.face_tracker = face_tracker
 
         self.x_pix_offset = x_pix_offset
         self.y_pix_offset = y_pix_offset
+        self.rot180 = rot180
 
         self.bridge = CvBridge()
 
@@ -414,16 +419,17 @@ class CalibratedCameraTrack(object):
 if __name__ == '__main__':
     rospy.init_node('multichrome_face_tracker')
     fdt = FaceDetectorTracker(rospy.get_name())
-    constant_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
-                                         CONSTANT_IMAGE_TOPIC,
-                                         CONSTANT_TRACKING_STATUS_TOPIC,
-                                         CONSTANT_CROPPED_IMAGE_TOPIC,
-                                         0,
-                                         -1.0 * MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT)
     nir_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
                                     NIR_IMAGE_TOPIC,
                                     NIR_TRACKING_STATUS_TOPIC,
                                     NIR_CROPPED_IMAGE_TOPIC,
-                                    -1.0 * MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT,
-                                    -1.0 * MULTICHROME_OFFSET_FRAC_OF_ROI_HEIGHT)
+                                    0,
+                                    -1.0 * MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT)
+    blue_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
+                                     BLUE_IMAGE_TOPIC,
+                                     BLUE_TRACKING_STATUS_TOPIC,
+                                     BLUE_CROPPED_IMAGE_TOPIC,
+                                     -1.0 * MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT,
+                                     -1.0 * MULTICHROME_OFFSET_FRAC_OF_FACE_HEIGHT,
+                                     rot180=True)
     rospy.spin()
