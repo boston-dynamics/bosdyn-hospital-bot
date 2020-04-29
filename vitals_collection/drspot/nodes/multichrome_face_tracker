@@ -167,6 +167,10 @@ class FaceDetectorTracker(object):
             if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
                 rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
                     self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+                if xmin < 0: xmin = 0
+                if ymin < 0: ymin = 0
+                if xmax >= cols: xmax = cols-1
+                if ymax >= cols: ymax = cols-1
 
             if cv_image[ymin:ymax, xmin:xmax].size == 0:
                 rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
@@ -426,14 +430,14 @@ class CalibratedCameraTrack(object):
 
 if __name__ == '__main__':
     rospy.init_node('multichrome_face_tracker')
-    fdt = FaceDetectorTracker(rospy.get_name())
-    nir_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
+    fdt = FaceDetectorTracker('red_' + rospy.get_name())
+    nir_cct = CalibratedCameraTrack('nir_' + rospy.get_name(), fdt,
                                     NIR_IMAGE_TOPIC,
                                     NIR_TRACKING_STATUS_TOPIC,
                                     NIR_CROPPED_IMAGE_TOPIC,
                                     0,
                                     NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
-    blue_cct = CalibratedCameraTrack(rospy.get_name(), fdt,
+    blue_cct = CalibratedCameraTrack('blue_' + rospy.get_name(), fdt,
                                      BLUE_IMAGE_TOPIC,
                                      BLUE_TRACKING_STATUS_TOPIC,
                                      BLUE_CROPPED_IMAGE_TOPIC,
