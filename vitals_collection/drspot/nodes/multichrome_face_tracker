@@ -25,6 +25,8 @@ from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
 from cv_bridge import CvBridge
 
+from drspot.utils.tracking import ROITracker
+
 SCALED_RED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
 DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
 
@@ -71,50 +73,6 @@ ROI_HALF_WIDTH_FRAC_OF_FACE = 1.25
 NIR_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
 BLUE_X_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
 BLUE_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
-
-class ROITracker(object):
-    def __init__(self, tracker_type):
-        self.ok = False
-        self.bbox = np.array([0, 0, 0, 0])
-
-        try:
-            self.tracker = cv2.Tracker_create(tracker_type)
-        except AttributeError:
-            if tracker_type == 'BOOSTING':
-                self.tracker = cv2.TrackerBoosting_create()
-            if tracker_type == 'MIL':
-                self.tracker = cv2.TrackerMIL_create()
-            if tracker_type == 'KCF':
-                self.tracker = cv2.TrackerKCF_create()
-            if tracker_type == 'TLD':
-                self.tracker = cv2.TrackerTLD_create()
-            if tracker_type == 'MEDIANFLOW':
-                self.tracker = cv2.TrackerMedianFlow_create()
-            if tracker_type == 'GOTURN':
-                self.tracker = cv2.TrackerGOTURN_create()
-            if tracker_type == 'MOSSE':
-                self.tracker = cv2.TrackerMOSSE_create()
-            if tracker_type == 'CSRT':
-                self.tracker = cv2.TrackerCSRT_create()
-
-    def get_center(self):
-        return np.array([(self.bbox[0] + self.bbox[2]) * 0.5,
-                         (self.bbox[1] + self.bbox[3]) * 0.5])
-
-    def start_track(self, frame, bbox):
-        temp_bbox = (int(bbox[0]), int(bbox[1]), int(bbox[2] - bbox[0]), int(bbox[3] - bbox[1]))
-        self.tracker.init(frame, temp_bbox)
-        self.ok = True
-        self.bbox = np.array(bbox)
-
-    def update(self, frame):
-        return
-        if not self.ok:
-            return
-
-        self.ok, temp_bbox = self.tracker.update(frame)
-        self.bbox = np.array([temp_bbox[0], temp_bbox[1],
-                              temp_bbox[0] + temp_bbox[2], temp_bbox[1] + temp_bbox[3]])
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
@@ -215,7 +173,7 @@ class FaceDetectorTracker(object):
         landmarks = np.array([])
         fidx = 0
         self.roi_tracker.update(chan3image)
-        last_detection_ok = self.tlast_detection is not None #and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
+        last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
         if self.roi_tracker.ok and last_detection_ok:
             bboxes = np.array([self.roi_tracker.bbox])
         else:

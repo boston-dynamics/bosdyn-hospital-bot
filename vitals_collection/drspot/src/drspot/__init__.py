@@ -1,3 +1,4 @@
 from . import rqt
+from . import utils
 
-__all__ = ['rqt']
+__all__ = ['rqt', 'utils']
