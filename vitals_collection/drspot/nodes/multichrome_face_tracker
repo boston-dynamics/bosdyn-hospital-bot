@@ -59,7 +59,7 @@ FACE_DETECTION_SCALE = 0.5
 # Use a computationally cheap tracker and overbound the ROI. This tracking
 # needs to operate close to frame rate. The ROI tracking is refined in the
 # heart_rate_spo2 node.
-CV_TRACKER_TYPE = 'CSRT' #'KCF'
+CV_TRACKER_TYPE = 'CSRT'
 
 FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0

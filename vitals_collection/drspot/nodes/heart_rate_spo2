@@ -27,6 +27,7 @@ if DEBUG_SAVE_IMAGES or DEBUG_PLOT:
 import time
 
 import numpy as np
+from scipy import signal
 import threading
 import cv2
 import math
@@ -38,11 +39,15 @@ from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
+from drspot.utils.tracking import ROITracker
+
 RED_IMAGE_TOPIC = 'mono_red_cropped'
 NIR_IMAGE_TOPIC = 'mono_nir_cropped'
 BLUE_IMAGE_TOPIC = 'mono_blue_cropped'
 
 RED_FACE_IN_ROI_REGION_TOPIC = 'mono_red_roi'
+
+FOREHEAD_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
 
 MSMT_TOPIC = 'full_heart_rate'
 DATA_TOPIC = 'full_data_heart_rate'
@@ -54,6 +59,10 @@ MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
 IMG_QUEUE_SIZE = 3 * 35
 IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
+
+# Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
+# and/or run on every frame, at the expense of more computation time.
+CV_TRACKER_TYPE = 'CSRT'
 
 NUM_SUBREGIONS_X = 10
 NUM_SUBREGIONS_Y = 5
@@ -184,24 +193,35 @@ class HeartRate(object):
             output_img_dir = LOG_DIR + os.path.sep + str(int(ti)) + os.path.sep
             os.mkdir(output_img_dir)
 
-        ri = 0
+        ri = 0 # ROI index over time.
         patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, 3))
-        ii = 0
+        ii = 0 # Index into synchronized channels.
+        # Initialize a tracker on the forehead. Use a more accurate tracker than the one in
+        # the multichrome_face_tracker node at the expense of more computation time.
+        hroi = roi_data[ri][4] - roi_data[ri][2]
+        xmin = roi_data[ri][1]; ymin = roi_data[ri][2]
+        xmax = roi_data[ri][3]; ymax = ymin + int(FOREHEAD_HEIGHT_FRAC_OF_FACE_HEIGHT * hroi)
+        red_tracker = ROITracker(CV_TRACKER_TYPE)
+        nir_tracker = ROITracker(CV_TRACKER_TYPE)
+        blue_tracker = ROITracker(CV_TRACKER_TYPE)
         for red, nir, blue, t in zip(red_data, nir_data, blue_data, t_data):
             # Find the next ROI update from the detect / track routine.
-            while ri < len(roi_data) - 1 and t >= roi_data[ri][0]:
-                ri += 1
+            #while ri < len(roi_data) - 1 and t >= roi_data[ri][0]:
+            #    ri += 1
 
-            # TODO - if t > t_roi + EPS, track the ROI in this frame
+            for chan, tracker, cc, txt in ((red, red_tracker, 0, 'red'),
+                                           (nir, nir_tracker, 1, 'nir'),
+                                           (blue, blue_tracker, 2, 'blue')):
+                if ii == 0:
+                    tracker.start_track(chan, [xmin, ymin, xmax, ymax])
+                else:
+                    tracker.update(chan)
+                    xmin = int(tracker.bbox[0]); ymin = int(tracker.bbox[1])
+                    xmax = int(tracker.bbox[2]); ymax = int(tracker.bbox[3])
 
-            hroi = roi_data[ri][4] - roi_data[ri][2]
-            xmin = roi_data[ri][1]; ymin = roi_data[ri][2]
-            xmax = roi_data[ri][3]; ymax = ymin + int(0.25 * hroi)
+                xd = int(math.floor((xmax - xmin) / float(NUM_SUBREGIONS_X)))
+                yd = int(math.floor((ymax - ymin) / float(NUM_SUBREGIONS_Y)))
 
-            xd = int(math.floor((xmax - xmin) / float(NUM_SUBREGIONS_X)))
-            yd = int(math.floor((ymax - ymin) / float(NUM_SUBREGIONS_Y)))
-
-            for chan, cc, txt in ((red, 0, 'red'), (nir, 1, 'nir'), (blue, 2, 'blue')):
                 crop = chan[ymin:ymin + yd * NUM_SUBREGIONS_Y,
                             xmin:xmin + xd * NUM_SUBREGIONS_X]
                 if DEBUG_IMAGE and ii == 0:
@@ -209,11 +229,19 @@ class HeartRate(object):
                     cv2.waitKey(10)
 
                 if DEBUG_SAVE_IMAGES:
-                    cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), crop)
+                    try:
+                        cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), crop)
+                    except:
+                        pass
 
+                # Spatial average over each subregion at this point in time.
                 patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)), axis=(0,1))
 
             ii += 1
+
+        patch_avg /= np.mean(patch_avg, axis=0)
+        patch_avg -= 1.0
+        patch_avg = signal.detrend(patch_avg, axis=0)
 
         if DEBUG_PLOT:
             for cc, txt in ((0, 'red'), (1, 'nir'), (2, 'blue')):
