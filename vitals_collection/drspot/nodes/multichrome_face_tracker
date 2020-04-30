@@ -56,6 +56,9 @@ DETECT_TRACK_SCALE_FACTOR = 0.125
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.7
 MIN_FACE_DIM_PIXELS = 10
 FACE_DETECTION_SCALE = 0.5
+# Use a computationally cheap tracker and overbound the ROI. This tracking
+# needs to operate close to frame rate. The ROI tracking is refined in the
+# heart_rate_spo2 node.
 CV_TRACKER_TYPE = 'CSRT' #'KCF'
 
 FACE_DETECTION_INTENSITY_RANGE = 150.0
@@ -172,7 +175,7 @@ class FaceDetectorTracker(object):
         bboxes = np.array([])
         landmarks = np.array([])
         fidx = 0
-        self.roi_tracker.update(chan3image)
+        self.roi_tracker.update(cv_image)
         last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
         if self.roi_tracker.ok and last_detection_ok:
             bboxes = np.array([self.roi_tracker.bbox])
@@ -197,7 +200,7 @@ class FaceDetectorTracker(object):
                 rospy.logwarn_throttle(1, '{}: {} faces detected; picking the first'.format(
                     self.name, len(bboxes)))
 
-            self.roi_tracker.start_track(chan3image, bboxes[fidx][0:4].reshape((4)))
+            self.roi_tracker.start_track(cv_image, bboxes[fidx][0:4].reshape((4)))
             self.tlast_detection = t
 
         wface = bboxes[fidx][2] - bboxes[fidx][0]

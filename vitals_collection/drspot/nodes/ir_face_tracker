@@ -102,8 +102,8 @@ class FaceDetectorTracker(object):
         bboxes = np.array([])
         landmarks = np.array([])
         fidx = 0
-        self.eye_tracker.update(chan3image)
-        self.mouth_tracker.update(chan3image)
+        self.eye_tracker.update(cv_image)
+        self.mouth_tracker.update(cv_image)
         last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
         if self.eye_tracker.ok and self.mouth_tracker.ok and last_detection_ok:
             eye = self.eye_tracker.bbox.reshape((2, 2))
@@ -147,7 +147,7 @@ class FaceDetectorTracker(object):
             half_weye = max(abs(leye[0] - mideye[0]), wface * EYE_HALF_WIDTH_FRAC_OF_FACE)
             half_heye = max(abs(leye[1] - mideye[1]), hface * EYE_HALF_HEIGHT_FRAC_OF_FACE)
             eye = mideye + np.array([[-half_weye, -half_heye], [half_weye, half_heye]])
-            self.eye_tracker.start_track(chan3image, eye.reshape((4)))
+            self.eye_tracker.start_track(cv_image, eye.reshape((4)))
 
             lmouth = landmarks[fidx][3]
             rmouth = landmarks[fidx][4]
@@ -156,7 +156,7 @@ class FaceDetectorTracker(object):
             half_wmouth = max(abs(lmouth[0] - midmouth[0]), wface * MASK_HALF_WIDTH_FRAC_OF_FACE)
             half_hmouth = max(abs(lmouth[1] - midmouth[1]), hface * MASK_HALF_HEIGHT_FRAC_OF_FACE)
             mouth = midmouth + np.array([[-half_wmouth, -half_hmouth], [half_wmouth, half_hmouth]])
-            self.mouth_tracker.start_track(chan3image, mouth.reshape((4)))
+            self.mouth_tracker.start_track(cv_image, mouth.reshape((4)))
 
         region = PolygonStamped()
         region.header = data.header

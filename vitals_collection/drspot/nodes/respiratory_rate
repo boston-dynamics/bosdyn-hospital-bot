@@ -235,6 +235,8 @@ class RespiratoryRate(object):
         msg.data = data
         data_pub.publish(msg)
 
+        data /= np.mean(data)
+        data -= 1.0
         sp = np.fft.fft(data)
         freq = np.fft.fftfreq(sp.shape[-1], d=delta)
         # Find the range of real frequency bins that we are interested in.
