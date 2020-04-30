@@ -64,7 +64,8 @@ class SkinTemperature(object):
 
             # Detect skips in data.
             if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
-                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
+                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(
+                    self.name, t - self.tlast))
                 self.clear_msmt_state()
                 self.tlast = t
                 return
@@ -91,7 +92,8 @@ class SkinTemperature(object):
 
         if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
             with self.lock:
-                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
+                    self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
                 self.clear_msmt_state()
                 return
 
@@ -116,7 +118,8 @@ class SkinTemperature(object):
 
         if cv_image[ymin:ymax, xmin:xmax].size == 0:
             with self.lock:
-                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(self.name, t, data.header.seq))
+                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
+                    self.name, t, data.header.seq))
                 self.clear_msmt_state()
                 return
 
@@ -124,7 +127,8 @@ class SkinTemperature(object):
 
         if np.isnan(val):
             with self.lock:
-                rospy.logwarn_throttle(1, '{}: NaN at {}, seq {}'.format(self.name, t, data.header.seq))
+                rospy.logwarn_throttle(1, '{}: NaN at {}, seq {}'.format(
+                    self.name, t, data.header.seq))
                 self.clear_msmt_state()
                 return
 
@@ -220,7 +224,8 @@ class SkinTemperature(object):
         data_pub.publish(msg)
 
         val = np.median(data)
-        rospy.loginfo('{} {}: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
+        rospy.loginfo('{} {}: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
+            self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
 
         msg = Float32()
         msg.data = val
@@ -263,18 +268,23 @@ class SkinTemperature(object):
 
         self.bridge = CvBridge()
 
-        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32, queue_size=10)
+        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32,
+                                              queue_size=10)
 
         self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
         self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
         self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
         self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC, Float32MultiArray, queue_size=10)
 
-        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
-        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback, queue_size=1)
-        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool, self.tracking_status_callback, queue_size=1)
+        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback,
+                                          queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
+        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback,
+                                           queue_size=1)
+        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
+                                                    self.tracking_status_callback, queue_size=1)
 
-        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC), self.msmt_helper_callback)
+        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),
+                                             self.msmt_helper_callback)
 
 if __name__ == '__main__':
     rospy.init_node('skin_temperature')

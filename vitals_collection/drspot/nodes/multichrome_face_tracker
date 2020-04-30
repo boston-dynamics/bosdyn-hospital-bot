@@ -31,7 +31,8 @@ DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
 RED_IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
 RED_TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 RED_CROPPED_IMAGE_TOPIC = 'mono_red_cropped'
-RED_ROI_REGION_TOPIC = 'mono_red_roi'
+
+RED_FACE_IN_ROI_REGION_TOPIC = 'mono_red_roi'
 
 NIR_IMAGE_TOPIC = 'camera_array/mono_nir/image_raw'
 NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
@@ -107,6 +108,7 @@ class ROITracker(object):
         self.bbox = np.array(bbox)
 
     def update(self, frame):
+        return
         if not self.ok:
             return
 
@@ -203,6 +205,7 @@ class FaceDetectorTracker(object):
         #            + FACE_DETECTION_INTENSITY_OFFSET).astype('uint8')
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
+        msg.header = header
         self.scaled_image_pub.publish(msg)
 
         chan3image = cv2.cvtColor(cv_image, cv2.COLOR_GRAY2RGB)
@@ -212,7 +215,7 @@ class FaceDetectorTracker(object):
         landmarks = np.array([])
         fidx = 0
         self.roi_tracker.update(chan3image)
-        last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
+        last_detection_ok = self.tlast_detection is not None #and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
         if self.roi_tracker.ok and last_detection_ok:
             bboxes = np.array([self.roi_tracker.bbox])
         else:
@@ -263,9 +266,10 @@ class FaceDetectorTracker(object):
 
         region = PolygonStamped()
         region.header = header
-        region.polygon.points = [Point32(x=roi_unscaled[0][0], y=roi_unscaled[0][1], z=0),
-                                 Point32(x=roi_unscaled[1][0], y=roi_unscaled[1][1], z=0)]
-        self.roi_region_pub.publish(region)
+        track_in_roi = bboxes[fidx][0:4].reshape((2, 2)) / DETECT_TRACK_SCALE_FACTOR - np.tile(roi_unscaled[:][0], (2, 1))
+        region.polygon.points = [Point32(x=track_in_roi[0][0], y=track_in_roi[0][1], z=0),
+                                 Point32(x=track_in_roi[1][0], y=track_in_roi[1][1], z=0)]
+        self.face_in_roi_region_pub.publish(region)
 
         # All overlays have colors below in case we use an RGB image in the future.
         for box in bboxes.astype(int):
@@ -282,6 +286,7 @@ class FaceDetectorTracker(object):
         cv2.rectangle(cv_image, tuple(roi[0].tolist()), tuple(roi[1].tolist()), (255,255,255), 2)
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
+        msg.header = header
         self.debug_image_pub.publish(msg)
 
     def clear_msmt_state(self):
@@ -313,8 +318,8 @@ class FaceDetectorTracker(object):
         self.clear_msmt_state()
 
         self.cropped_image_pub = rospy.Publisher(RED_CROPPED_IMAGE_TOPIC, Image, queue_size=10)
-        self.roi_region_pub = rospy.Publisher(RED_ROI_REGION_TOPIC, PolygonStamped,
-                                                  queue_size=10)
+        self.face_in_roi_region_pub = rospy.Publisher(RED_FACE_IN_ROI_REGION_TOPIC, PolygonStamped,
+                                                      queue_size=10)
 
         self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
         self.scaled_image_pub = rospy.Publisher(SCALED_RED_IMAGE_TOPIC, Image, queue_size=10)

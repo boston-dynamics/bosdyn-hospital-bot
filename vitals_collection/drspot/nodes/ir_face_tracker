@@ -134,6 +134,7 @@ class FaceDetectorTracker(object):
                     + FACE_DETECTION_INTENSITY_OFFSET).astype('uint8')
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
+        msg.header = data.header
         self.scaled_image_pub.publish(msg)
 
         chan3image = cv2.cvtColor(cv_image, cv2.COLOR_GRAY2RGB)
@@ -224,6 +225,7 @@ class FaceDetectorTracker(object):
         cv2.rectangle(cv_image, tuple(mouth[0].tolist()), tuple(mouth[1].tolist()), (255,0,0), 2)
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
+        msg.header = data.header
         self.debug_image_pub.publish(msg)
 
     def clear_msmt_state(self):
