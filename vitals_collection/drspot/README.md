@@ -16,6 +16,7 @@ Also see:
 pip uninstall opencv-python
 pip install opencv-contrib-python
 pip install mxnet-mkl insightface numpy scipy
+pip install yoctopuce # for the thermal reference
 ```
 
 On Ubuntu 18.04:
@@ -38,6 +39,10 @@ Thermal IR camera options:
     1. Requires eBUS SDK
 2. Optris PI400 over USB
     1. Requires libirimager
+
+Thermal reference options:
+1. Yoctopuce PT-100
+    1. Requires yoctopuce Python module (python -m pip install yoctopuce)
 
 Monochrome camera options:
 1. FLIR Chameleon monochrome
