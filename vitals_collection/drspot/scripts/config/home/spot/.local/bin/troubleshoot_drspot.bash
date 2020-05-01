@@ -62,6 +62,9 @@ function exec_and_log() {
     echo "********************************************************************************" >&4
 }
 
+date >&3
+date >&4
+
 # Environment variables
 exec_and_log "echo ${DRSPOT_THERMAL_NS}"
 DRSPOT_THERMAL_NS=${DRSPOT_THERMAL_NS:-"optris"}
