@@ -36,8 +36,9 @@ function exec_and_log() {
     echo "--------------------------------------------------------------------------------" >&3
     echo "--------------------------------------------------------------------------------" >&4
     TIMEOUT=${TIMEOUT:-20}
+    SIGNAL=${SIGNAL:-"TERM"}
     set -x
-    timeout $TIMEOUT $@ >&3 2>&4
+    timeout -s $SIGNAL $TIMEOUT $@ >&3 2>&4
     set +x
     echo "********************************************************************************" >&3
     echo "********************************************************************************" >&4
@@ -53,7 +54,7 @@ exec_and_log "systemctl status roslaunch.service"
 exec_and_log "roswtf"
 
 # ROS nodes
-TIMEOUT=1
+TIMEOUT=2
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_image_raw"
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/temperature_image"
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_palette"
@@ -72,4 +73,8 @@ exec_and_log "cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq"
 
 # VNC
 exec_and_log "systemctl status vncserver@16001.service"
+TIMEOUT=2
+SIGNAL="KILL"
 exec_and_log "/home/spot/.local/bin/run_drspot_gui.bash"
+unset TIMEOUT
+unset SIGNAL
