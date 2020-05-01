@@ -59,5 +59,9 @@
     <node name="skin_temperature" pkg="drspot" type="skin_temperature" output="screen"
           respawn="true">
     </node>
+
+    <node name="thermal_reference" pkg="drspot" type="thermal_reference" output="screen"
+          respawn="true">
+    </node>
   </group>
 </launch>
