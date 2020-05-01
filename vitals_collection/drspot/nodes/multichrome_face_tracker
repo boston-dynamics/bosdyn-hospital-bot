@@ -64,10 +64,10 @@ CV_TRACKER_TYPE = 'CSRT'
 FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
 
-# Shift the mask ROI down from the detected landmarks.
-ROI_HEIGHT_FRAC_OF_FACE_DOWN = 0.0
+# Shift the ROI down from the detected landmarks.
+ROI_HEIGHT_FRAC_OF_FACE_DOWN = 0.1
 # Overbound the region
-ROI_HALF_HEIGHT_FRAC_OF_FACE = 1.25
+ROI_HALF_HEIGHT_FRAC_OF_FACE = 1.3
 ROI_HALF_WIDTH_FRAC_OF_FACE = 1.25
 
 # The face height is better related to scene depth than the width is.

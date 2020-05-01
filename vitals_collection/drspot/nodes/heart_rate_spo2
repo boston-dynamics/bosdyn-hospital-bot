@@ -17,11 +17,13 @@
 DEBUG_PLOT = False
 DEBUG_IMAGE = False
 DEBUG_SAVE_IMAGES = False
+DEBUG_SAVE_DATA = False
+DEBUG_MKDIR = DEBUG_SAVE_IMAGES or DEBUG_PLOT or DEBUG_SAVE_DATA
 if DEBUG_PLOT:
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-if DEBUG_SAVE_IMAGES or DEBUG_PLOT:
+if DEBUG_MKDIR:
     LOG_DIR = '/log'
     import os
 import time
@@ -31,6 +33,7 @@ from scipy import signal
 import threading
 import cv2
 import math
+from sklearn.decomposition import FastICA
 
 import rospy
 import message_filters
@@ -41,39 +44,64 @@ from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
 
+# Inputs.
 RED_IMAGE_TOPIC = 'mono_red_cropped'
 NIR_IMAGE_TOPIC = 'mono_nir_cropped'
 BLUE_IMAGE_TOPIC = 'mono_blue_cropped'
-
 RED_FACE_IN_ROI_REGION_TOPIC = 'mono_red_roi'
+TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 
-FOREHEAD_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
-
+# Outputs.
 MSMT_TOPIC = 'full_heart_rate'
 DATA_TOPIC = 'full_data_heart_rate'
-TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
+
+# Carotid
+#SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
+#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.15
+#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.5
+
+# Forehead
+SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
+
 HELPER_TIMER_PERIOD_SEC = 1
-FULL_MSMT_PERIOD_SEC = 10
+FULL_MSMT_PERIOD_SEC = 3
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
 IMG_QUEUE_SIZE = 3 * 35
 IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
+T_EPS = 1e-4
+
 # Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
 # and/or run on every frame, at the expense of more computation time.
-CV_TRACKER_TYPE = 'CSRT'
+CV_TRACKER_TYPE = 'CSRT' #'MEDIANFLOW'
 
 NUM_SUBREGIONS_X = 10
 NUM_SUBREGIONS_Y = 5
 
 NUM_PLOT_X = NUM_SUBREGIONS_X
 NUM_PLOT_Y = NUM_SUBREGIONS_Y
+NUM_FIG = 7
 
 # Minimum of 30 beats per minute.
 MIN_HEART_HZ = 30.0 / 60.0
 # Maximum of 120 beats per minute.
 MAX_HEART_HZ = 120.0 / 60.0
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = signal.butter(order, [low, high], btype='band')
+    return b, a
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = signal.lfilter(b, a, data, axis=axis)
+    return y
 
 class HeartRate(object):
     def image_callback(self, red_image_data, nir_image_data, blue_image_data):
@@ -90,12 +118,17 @@ class HeartRate(object):
                     return
 
                 # Detect backward jumps in time in replay.
-                if self.tlast[txt] > t:
+                if self.tlast[txt] > t + T_EPS:
                     self.clear_msmt_state()
                     self.tlast[txt] = t
-                    rospy.logwarn('{} {}: Backward jump in time {:0.6f} vs {:0.6f}'.format(
+                    rospy.logwarn_throttle(1, '{} {}: Backward jump in time {:0.6f} vs {:0.6f}'.format(
                         self.name, txt, self.tlast[txt], t))
                     return
+
+                # Detect duplicate timestamps due to message synchronization.
+                if self.tlast[txt] >= t:
+                    rospy.logwarn('{} {}: Duplicate timestamp {:0.6f} vs {:0.6f}'.format(
+                        self.name, txt, self.tlast[txt], t))
 
                 # Detect skips in data.
                 if t - self.tlast[txt] > MAX_DROPOUT_BEFORE_RESET_SEC:
@@ -189,22 +222,27 @@ class HeartRate(object):
                 self.name, len(roi_data), ti, tf))
             return
 
-        if DEBUG_SAVE_IMAGES or DEBUG_PLOT:
+        if DEBUG_MKDIR:
             output_img_dir = LOG_DIR + os.path.sep + str(int(ti)) + os.path.sep
             os.mkdir(output_img_dir)
 
         ri = 0 # ROI index over time.
         patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, 3))
         ii = 0 # Index into synchronized channels.
-        # Initialize a tracker on the forehead. Use a more accurate tracker than the one in
-        # the multichrome_face_tracker node at the expense of more computation time.
+        # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
+        # the multichrome_face_tracker node and/or track on every frame at the expense of more
+        # computation time.
+        wroi = roi_data[ri][3] - roi_data[ri][1]
         hroi = roi_data[ri][4] - roi_data[ri][2]
-        xmin = roi_data[ri][1]; ymin = roi_data[ri][2]
-        xmax = roi_data[ri][3]; ymax = ymin + int(FOREHEAD_HEIGHT_FRAC_OF_FACE_HEIGHT * hroi)
+        xmin = roi_data[ri][1] - int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)
+        ymin = roi_data[ri][2] + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hroi)
+        xmax = roi_data[ri][3] + int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)
+        ymax = ymin + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hroi)
         red_tracker = ROITracker(CV_TRACKER_TYPE)
         nir_tracker = ROITracker(CV_TRACKER_TYPE)
         blue_tracker = ROITracker(CV_TRACKER_TYPE)
         for red, nir, blue, t in zip(red_data, nir_data, blue_data, t_data):
+            # TODO - how to use this information?
             # Find the next ROI update from the detect / track routine.
             #while ri < len(roi_data) - 1 and t >= roi_data[ri][0]:
             #    ri += 1
@@ -213,6 +251,7 @@ class HeartRate(object):
                                            (nir, nir_tracker, 1, 'nir'),
                                            (blue, blue_tracker, 2, 'blue')):
                 if ii == 0:
+                    # TODO - Make sure ROIs match across channels.
                     tracker.start_track(chan, [xmin, ymin, xmax, ymax])
                 else:
                     tracker.update(chan)
@@ -236,37 +275,84 @@ class HeartRate(object):
 
                 # Spatial average over each subregion at this point in time.
                 patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)), axis=(0,1))
-
+            # End loop over colors.
             ii += 1
+        # End loop through data series.
 
         patch_avg /= np.mean(patch_avg, axis=0)
         patch_avg -= 1.0
-        patch_avg = signal.detrend(patch_avg, axis=0)
+        #patch_avg = signal.detrend(patch_avg, axis=0)
+
+        patch_ica = np.zeros(patch_avg.shape)
+
+        patch_filt = butter_bandpass_filter(patch_avg,
+                                            MIN_HEART_HZ, MAX_HEART_HZ,
+                                            1.0 / delta,
+                                            axis=0)
+
+        for rr in range(patch_ica.shape[1]):
+            ica = FastICA(n_components=3, max_iter=1000, tol=0.0001, algorithm='parallel')
+            patch_ica[:, rr, :] = ica.fit_transform(patch_filt[:, rr, :].reshape((-1, 3)))
+            mix = ica.mixing_
+
+            if DEBUG_SAVE_DATA:
+                np.savetxt(output_img_dir + 'raw_{:03d}.csv'.format(rr),
+                           patch_avg[:, rr, :].reshape((-1,3)),
+                           delimiter=',')
+                np.savetxt(output_img_dir + 'filt_{:03d}.csv'.format(rr),
+                           patch_filt[:, rr, :].reshape((-1,3)),
+                           delimiter=',')
+                np.savetxt(output_img_dir + 'ica_{:03d}.csv'.format(rr),
+                           patch_ica[:, rr, :].reshape((-1,3)),
+                           delimiter=',')
 
         if DEBUG_PLOT:
+            fig = [None]*NUM_FIG
+            data_axes = [None]*NUM_FIG
+            for ii in range(NUM_FIG):
+                fig[ii] = plt.figure(figsize=(30, 30))
+                data_axes[ii] = [fig[ii].add_subplot(NUM_PLOT_Y, NUM_PLOT_X, i) for i in range(1, NUM_PLOT_X * NUM_PLOT_Y + 1)]
             for cc, txt in ((0, 'red'), (1, 'nir'), (2, 'blue')):
-                for rr in range(len(self.data_axes[0])):
+                for rr in range(len(data_axes[0])):
                     if rr > patch_avg.shape[1] - 1:
                         break
 
-                    self.data_axes[2*cc][rr].cla()
-                    self.data_axes[2*cc][rr].plot(patch_avg[:, rr, cc])
+                    data_axes[6][rr].plot(patch_ica[:, rr, cc],
+                                          color=('orange' if txt == 'nir' else txt))
 
-                    sp = np.fft.fft(patch_avg[:, rr, cc])
+                    data_axes[2*cc][rr].plot(patch_filt[:, rr, cc])
+
+                    sp = np.fft.fft(patch_filt[:, rr, cc])
                     freq = np.fft.fftfreq(sp.shape[-1], d=delta)
                     # Find the range of real frequency bins that we are interested in.
                     fminind = int(MIN_HEART_HZ * msmt_n * delta) + 1
                     fmaxind = int(MAX_HEART_HZ * msmt_n * delta)
                     amp = np.abs(sp)[fminind:fmaxind]
 
-                    self.data_axes[2*cc+1][rr].cla()
-                    self.data_axes[2*cc+1][rr].plot(freq[fminind:fmaxind] * 60.0, amp)
+                    data_axes[2*cc+1][rr].plot(freq[fminind:fmaxind] * 60.0, amp)
                 # End loop over regions.
-                plt.figure(self.fig[2*cc].number)
-                plt.savefig(output_img_dir + txt + '_data.png')
-                plt.figure(self.fig[2*cc+1].number)
-                plt.savefig(output_img_dir + txt + '_amp.png')
+                plt.figure(fig[2*cc].number)
+                try:
+                    plt.savefig(output_img_dir + txt + '_data.png')
+                except:
+                    pass
+                finally:
+                    plt.close(fig[2*cc])
+                plt.figure(fig[2*cc+1].number)
+                try:
+                    plt.savefig(output_img_dir + txt + '_amp.png')
+                except:
+                    pass
+                finally:
+                    plt.close(fig[2*cc+1])
             # End loop over channels.
+            plt.figure(fig[6].number)
+            try:
+                plt.savefig(output_img_dir + 'ica.png')
+            except:
+                pass
+            finally:
+                plt.close(fig[6])
         # End if we are saving plots.
 
         beats = 0
@@ -322,13 +408,6 @@ class HeartRate(object):
         self.delta_alpha = 0.8
 
         self.bridge = CvBridge()
-
-        self.fig = [None]*6
-        self.data_axes = [None]*6
-        if DEBUG_PLOT:
-            for ii in range(6):
-                self.fig[ii] = plt.figure(figsize=(17, 11))
-                self.data_axes[ii] = [self.fig[ii].add_subplot(NUM_PLOT_Y, NUM_PLOT_X, i) for i in range(1, NUM_PLOT_X * NUM_PLOT_Y + 1)]
 
         self.msmt_pub = rospy.Publisher(MSMT_TOPIC, Float32, queue_size=10)
         self.data_pub = rospy.Publisher(DATA_TOPIC, Float32MultiArray, queue_size=10)

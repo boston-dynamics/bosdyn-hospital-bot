@@ -15,7 +15,7 @@ Also see:
 ```
 pip uninstall opencv-python
 pip install opencv-contrib-python
-pip install mxnet-mkl insightface numpy scipy
+pip install mxnet-mkl insightface numpy scipy scikit-learn
 ```
 
 On Ubuntu 18.04:
