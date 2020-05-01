@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Troubleshoot DrSpot
+Comment=
+Exec=/home/spot/.local/bin/troubleshoot_drspot.bash
+Icon=
+Path=
+Terminal=true
+StartupNotify=false
