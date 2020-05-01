@@ -33,7 +33,6 @@ from scipy import signal
 import threading
 import cv2
 import math
-from sklearn.decomposition import FastICA
 
 import rospy
 import message_filters
@@ -66,7 +65,7 @@ SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
 
 HELPER_TIMER_PERIOD_SEC = 1
-FULL_MSMT_PERIOD_SEC = 3
+FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
@@ -213,7 +212,7 @@ class HeartRate(object):
                                                                         len(t_data)))
             return
 
-        if delta is None or delta < 1e-3 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
+        if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
             rospy.loginfo_throttle(1, '{}: not enough samples {}'.format(self.name, msmt_n))
             return
 
@@ -283,27 +282,18 @@ class HeartRate(object):
         patch_avg -= 1.0
         #patch_avg = signal.detrend(patch_avg, axis=0)
 
-        patch_ica = np.zeros(patch_avg.shape)
-
         patch_filt = butter_bandpass_filter(patch_avg,
                                             MIN_HEART_HZ, MAX_HEART_HZ,
                                             1.0 / delta,
                                             axis=0)
 
-        for rr in range(patch_ica.shape[1]):
-            ica = FastICA(n_components=3, max_iter=1000, tol=0.0001, algorithm='parallel')
-            patch_ica[:, rr, :] = ica.fit_transform(patch_filt[:, rr, :].reshape((-1, 3)))
-            mix = ica.mixing_
-
+        for rr in range(patch_avg.shape[1]):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_img_dir + 'raw_{:03d}.csv'.format(rr),
                            patch_avg[:, rr, :].reshape((-1,3)),
                            delimiter=',')
                 np.savetxt(output_img_dir + 'filt_{:03d}.csv'.format(rr),
                            patch_filt[:, rr, :].reshape((-1,3)),
-                           delimiter=',')
-                np.savetxt(output_img_dir + 'ica_{:03d}.csv'.format(rr),
-                           patch_ica[:, rr, :].reshape((-1,3)),
                            delimiter=',')
 
         if DEBUG_PLOT:
@@ -316,9 +306,6 @@ class HeartRate(object):
                 for rr in range(len(data_axes[0])):
                     if rr > patch_avg.shape[1] - 1:
                         break
-
-                    data_axes[6][rr].plot(patch_ica[:, rr, cc],
-                                          color=('orange' if txt == 'nir' else txt))
 
                     data_axes[2*cc][rr].plot(patch_filt[:, rr, cc])
 
@@ -346,13 +333,6 @@ class HeartRate(object):
                 finally:
                     plt.close(fig[2*cc+1])
             # End loop over channels.
-            plt.figure(fig[6].number)
-            try:
-                plt.savefig(output_img_dir + 'ica.png')
-            except:
-                pass
-            finally:
-                plt.close(fig[6])
         # End if we are saving plots.
 
         beats = 0

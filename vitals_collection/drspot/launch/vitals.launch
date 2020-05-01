@@ -60,8 +60,10 @@
           respawn="true">
     </node>
 
-    <node name="thermal_reference" pkg="drspot" type="thermal_reference" output="screen"
-          respawn="true">
-    </node>
+    <group if="$(arg launch_drivers)">
+      <node name="thermal_reference" pkg="drspot" type="thermal_reference" output="screen"
+            respawn="true">
+      </node>
+    </group>
   </group>
 </launch>
