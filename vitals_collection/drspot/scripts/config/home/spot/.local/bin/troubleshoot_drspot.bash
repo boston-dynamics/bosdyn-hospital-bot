@@ -3,13 +3,12 @@
 . /etc/ros/env.sh
 . /home/spot/drspot_ws/devel/setup.bash
 
-OUTLOGFILENAME='/log/troubleshoot'
-ERRLOGFILENAME='/log/troubleshoot'
+BASENAME='/log/troubleshoot'
 
 n=
 set -o noclobber
 until
-  outfile=$OUTLOGFILENAME${n:+-$n}.out
+  outfile=$BASENAME${n:+-$n}.out
   { command exec 3> "$outfile"; } 2> /dev/null
 do
   ((n++))
@@ -18,13 +17,32 @@ done
 n=
 set -o noclobber
 until
-  errfile=$ERRLOGFILENAME${n:+-$n}.err
+  errfile=$BASENAME${n:+-$n}.err
   { command exec 4> "$errfile"; } 2> /dev/null
 do
   ((n++))
 done
 
-printf 'Please save "%s" and "%s" for troubleshooting.\n' "$outfile" "$errfile"
+n=
+set -o noclobber
+until
+  outfolder=$BASENAME${n:+-$n}
+  { mkdir "$outfolder"; } 2> /dev/null
+do
+  ((n++))
+done
+
+n=
+set -o noclobber
+until
+  tarfile=$BASENAME${n:+-$n}.tar.gz
+  { command exec 5> "$tarfile"; } 2> /dev/null
+do
+  ((n++))
+done
+
+printf 'Please save "%s", "%s", and "%s" for troubleshooting.\n' "$outfile" "$errfile" "$outfolder"
+printf 'Attempting to compress all outputs to "%s" - that file is sufficient.\n' "$tarfile"
 
 DISPLAY=:16001
 
@@ -57,7 +75,7 @@ exec_and_log "roswtf"
 TIMEOUT=2
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_image_raw"
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/temperature_image"
-exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_palette"
+exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_image_palette"
 unset TIMEOUT
 
 # Devices
@@ -74,7 +92,17 @@ exec_and_log "cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq"
 # VNC
 exec_and_log "systemctl status vncserver@16001.service"
 TIMEOUT=2
+exec_and_log "nc localhost 21901"
+TIMEOUT=10
 SIGNAL="KILL"
 exec_and_log "/home/spot/.local/bin/run_drspot_gui.bash"
 unset TIMEOUT
 unset SIGNAL
+
+# Other debug files
+exec_and_log "/home/spot/.local/bin/save_rosgraph.py ${outfolder}/rosgraph.dot"
+exec_and_log "cp /var/log/*.log ${outfolder}/"
+dmesg > ${outfolder}/dmesg.log
+
+# Last step - can't use the files anymore
+tar -cz -O $outfile $errfile $outfolder >&5
