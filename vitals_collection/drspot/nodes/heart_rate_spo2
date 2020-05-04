@@ -83,12 +83,22 @@ NUM_SUBREGIONS_Y = 5
 
 NUM_PLOT_X = NUM_SUBREGIONS_X
 NUM_PLOT_Y = NUM_SUBREGIONS_Y
-NUM_FIG = 7
 
 # Minimum of 30 beats per minute.
 MIN_HEART_HZ = 30.0 / 60.0
 # Maximum of 120 beats per minute.
 MAX_HEART_HZ = 120.0 / 60.0
+
+CHAN_IDX = (0, 1, 2)
+CHAN_TXT = ('red', 'nir', 'blue')
+CC = len(CHAN_IDX)
+
+PBV_STATIC = np.array([ 0.68,  1.0,    0.70])
+PBV_UPDATE = np.array([-0.014, 0.0024, 0.0013])
+
+PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
+
+NUM_FIG = len(CHAN_IDX) + 2 * len(PBV_TO_CHECK)
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -105,9 +115,8 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
 class HeartRate(object):
     def image_callback(self, red_image_data, nir_image_data, blue_image_data):
         with self.lock:
-            chans = ((red_image_data, 'red'),
-                     (nir_image_data, 'nir'),
-                     (blue_image_data, 'blue'))
+            chans = zip((red_image_data, nir_image_data, blue_image_data),
+                        CHAN_TXT)
 
             for image_data, txt in chans:
                 t = image_data.header.stamp.to_sec()
@@ -246,9 +255,11 @@ class HeartRate(object):
             #while ri < len(roi_data) - 1 and t >= roi_data[ri][0]:
             #    ri += 1
 
-            for chan, tracker, cc, txt in ((red, red_tracker, 0, 'red'),
-                                           (nir, nir_tracker, 1, 'nir'),
-                                           (blue, blue_tracker, 2, 'blue')):
+            for chan, tracker, cc, txt in zip((red, nir, blue),
+                                              (red_tracker,
+                                               nir_tracker,
+                                               blue_tracker),
+                                              CHAN_IDX, CHAN_TXT):
                 if ii == 0:
                     # TODO - Make sure ROIs match across channels.
                     tracker.start_track(chan, [xmin, ymin, xmax, ymax])
@@ -286,14 +297,27 @@ class HeartRate(object):
                                             MIN_HEART_HZ, MAX_HEART_HZ,
                                             1.0 / delta,
                                             axis=0)
+        patch_pulse = np.zeros((patch_avg.shape[0], patch_avg.shape[1], len(PBV_TO_CHECK)))
 
         for rr in range(patch_avg.shape[1]):
+            c_n = patch_filt[:, rr, :].reshape((-1,3)).T
+            q_inv = np.linalg.inv(np.matmul(c_n, c_n.T))
+            for ss in range(len(PBV_TO_CHECK)):
+                spo2 = PBV_TO_CHECK[ss]
+                w_pbv = np.matmul(PBV_STATIC + (100.0 - spo2) * PBV_UPDATE,
+                                  q_inv)
+                w_pbv /= np.linalg.norm(w_pbv)
+                patch_pulse[:, rr, ss] = np.matmul(w_pbv, c_n)
+
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_img_dir + 'raw_{:03d}.csv'.format(rr),
                            patch_avg[:, rr, :].reshape((-1,3)),
                            delimiter=',')
                 np.savetxt(output_img_dir + 'filt_{:03d}.csv'.format(rr),
                            patch_filt[:, rr, :].reshape((-1,3)),
+                           delimiter=',')
+                np.savetxt(output_img_dir + 'pulse_{:03d}.csv'.format(rr),
+                           patch_pulse[:, rr, :].reshape((-1, patch_pulse.shape[2])),
                            delimiter=',')
 
         if DEBUG_PLOT:
@@ -302,37 +326,51 @@ class HeartRate(object):
             for ii in range(NUM_FIG):
                 fig[ii] = plt.figure(figsize=(30, 30))
                 data_axes[ii] = [fig[ii].add_subplot(NUM_PLOT_Y, NUM_PLOT_X, i) for i in range(1, NUM_PLOT_X * NUM_PLOT_Y + 1)]
-            for cc, txt in ((0, 'red'), (1, 'nir'), (2, 'blue')):
-                for rr in range(len(data_axes[0])):
-                    if rr > patch_avg.shape[1] - 1:
-                        break
+            for rr in range(len(data_axes[0])):
+                if rr > patch_avg.shape[1] - 1:
+                    break
 
-                    data_axes[2*cc][rr].plot(patch_filt[:, rr, cc])
+                for ss in range(len(PBV_TO_CHECK)):
+                    spo2 = PBV_TO_CHECK[ss]
+                    data_axes[CC+2*ss][rr].plot(patch_pulse[:, rr, ss])
 
-                    sp = np.fft.fft(patch_filt[:, rr, cc])
+                    sp = np.fft.fft(patch_pulse[:, rr, ss])
                     freq = np.fft.fftfreq(sp.shape[-1], d=delta)
                     # Find the range of real frequency bins that we are interested in.
                     fminind = int(MIN_HEART_HZ * msmt_n * delta) + 1
                     fmaxind = int(MAX_HEART_HZ * msmt_n * delta)
                     amp = np.abs(sp)[fminind:fmaxind]
 
-                    data_axes[2*cc+1][rr].plot(freq[fminind:fmaxind] * 60.0, amp)
-                # End loop over regions.
-                plt.figure(fig[2*cc].number)
+                    data_axes[CC+2*ss+1][rr].plot(freq[fminind:fmaxind] * 60.0, amp)
+
+                for cc in CHAN_IDX:
+                    data_axes[cc][rr].plot(patch_filt[:, rr, cc])
+                # End loop over channels.
+            # End loop over regions.
+            for cc, txt in zip(CHAN_IDX, CHAN_TXT):
+                plt.figure(fig[cc].number)
                 try:
                     plt.savefig(output_img_dir + txt + '_data.png')
                 except:
                     pass
                 finally:
-                    plt.close(fig[2*cc])
-                plt.figure(fig[2*cc+1].number)
+                    plt.close(fig[cc])
+
+            for ss in range(len(PBV_TO_CHECK)):
+                plt.figure(fig[CC+2*ss].number)
+                try:
+                    plt.savefig(output_img_dir + 'pulse_spo2_{}.png'.format(PBV_TO_CHECK[ss]))
+                except:
+                    pass
+                finally:
+                    plt.close(fig[CC+2*ss])
+                plt.figure(fig[CC+2*ss+1].number)
                 try:
                     plt.savefig(output_img_dir + txt + '_amp.png')
                 except:
                     pass
                 finally:
-                    plt.close(fig[2*cc+1])
-            # End loop over channels.
+                    plt.close(fig[CC+2*ss+1])
         # End if we are saving plots.
 
         beats = 0
