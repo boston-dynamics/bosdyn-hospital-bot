@@ -81,8 +81,8 @@ T_EPS = 1e-4
 # and/or run on every frame, at the expense of more computation time.
 CV_TRACKER_TYPE = 'CSRT' #'MEDIANFLOW'
 
-NUM_SUBREGIONS_X = 20
-NUM_SUBREGIONS_Y = 10
+NUM_SUBREGIONS_X = 10
+NUM_SUBREGIONS_Y = 5
 
 NUM_PLOT_X = NUM_SUBREGIONS_X
 NUM_PLOT_Y = NUM_SUBREGIONS_Y
@@ -263,7 +263,8 @@ class HeartRate(object):
         blue_tracker = ROITracker(CV_TRACKER_TYPE)
 
         grad_red = grad(red_data[0][ymin[0]:ymax[0], xmin[0]:xmax[0]])
-        cv2.imwrite(output_img_dir + 'grad_red.png', grad_red)
+        if DEBUG_MKDIR:
+            cv2.imwrite(output_img_dir + 'grad_red.png', grad_red)
         for chan, cc, txt in zip((nir_data[0], blue_data[0]),
                                  CHAN_IDX[1:], CHAN_TXT[1:]):
             warp_matrix = np.eye(2, 3, dtype=np.float32)
@@ -275,7 +276,8 @@ class HeartRate(object):
                                                            warp_matrix,
                                                            cv2.MOTION_TRANSLATION,
                                                            criteria, None, 1)
-                cv2.imwrite(output_img_dir + 'grad_{}.png'.format(txt), grad_chan)
+                if DEBUG_MKDIR:
+                    cv2.imwrite(output_img_dir + 'grad_{}.png'.format(txt), grad_chan)
             except Exception as e:
                 rospy.logwarn_throttle(1, '{} {}: failed patch alignment in {}:{} = {}'.format(
                     self.name, txt, ti, tf, e))
