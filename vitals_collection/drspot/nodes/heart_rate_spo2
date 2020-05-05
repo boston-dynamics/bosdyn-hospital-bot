@@ -64,6 +64,9 @@ SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
 
+ALIGNMENT_ITERATIONS = 1000
+ALIGNMENT_TERMINATION = 1e-7
+
 HELPER_TIMER_PERIOD_SEC = 1
 FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
@@ -99,6 +102,15 @@ PBV_UPDATE = np.array([-0.014, 0.0024, 0.0013])
 PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
 
 NUM_FIG = len(CHAN_IDX) + 2 * len(PBV_TO_CHECK)
+
+def grad(im) :
+    # Calculate the x and y gradients using Sobel operator
+    grad_x = cv2.Sobel(im,cv2.CV_32F,1,0,ksize=3)
+    grad_y = cv2.Sobel(im,cv2.CV_32F,0,1,ksize=3)
+
+    # Combine the two gradients
+    grad = cv2.addWeighted(np.absolute(grad_x), 0.5, np.absolute(grad_y), 0.5, 0)
+    return grad
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -242,13 +254,53 @@ class HeartRate(object):
         # computation time.
         wroi = roi_data[ri][3] - roi_data[ri][1]
         hroi = roi_data[ri][4] - roi_data[ri][2]
-        xmin = roi_data[ri][1] - int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)
-        ymin = roi_data[ri][2] + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hroi)
-        xmax = roi_data[ri][3] + int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)
-        ymax = ymin + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hroi)
+        xmin = [roi_data[ri][1] - int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)]*3
+        ymin = [roi_data[ri][2] + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hroi)]*3
+        xmax = [roi_data[ri][3] + int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)]*3
+        ymax = [ymin[0] + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hroi)]*3
         red_tracker = ROITracker(CV_TRACKER_TYPE)
         nir_tracker = ROITracker(CV_TRACKER_TYPE)
         blue_tracker = ROITracker(CV_TRACKER_TYPE)
+
+        grad_red = grad(red_data[0][ymin[0]:ymax[0], xmin[0]:xmax[0]])
+        cv2.imwrite(output_img_dir + 'grad_red.png', grad_red)
+        for chan, cc, txt in zip((nir_data[0], blue_data[0]),
+                                 CHAN_IDX[1:], CHAN_TXT[1:]):
+            warp_matrix = np.eye(2, 3, dtype=np.float32)
+            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+                        ALIGNMENT_ITERATIONS, ALIGNMENT_TERMINATION)
+            try:
+                grad_chan = grad(chan)
+                (corr, warp_matrix) = cv2.findTransformECC(grad_red, grad_chan,
+                                                           warp_matrix,
+                                                           cv2.MOTION_TRANSLATION,
+                                                           criteria, None, 1)
+                cv2.imwrite(output_img_dir + 'grad_{}.png'.format(txt), grad_chan)
+            except Exception as e:
+                rospy.logwarn_throttle(1, '{} {}: failed patch alignment in {}:{} = {}'.format(
+                    self.name, txt, ti, tf, e))
+            else:
+                # Convert the corners of the red image ROI to equivalent locations in
+                # the nir and blue images.
+                # top left
+                # top right
+                # bottom left
+                # bottom right
+                # (x, y, 1)
+                warp_matrix = cv2.invertAffineTransform(warp_matrix)
+                tl = np.dot(warp_matrix, np.array([xmin[0], ymin[0], 1.0]))
+                tr = np.dot(warp_matrix, np.array([xmax[0], ymin[0], 1.0]))
+                bl = np.dot(warp_matrix, np.array([xmin[0], ymax[0], 1.0]))
+                br = np.dot(warp_matrix, np.array([xmax[0], ymax[0], 1.0]))
+                # left x bound
+                if tl[0] > xmin[cc]: xmin[cc] = int(tl[0])
+                # right x bound
+                if tr[0] < xmax[cc]: xmax[cc] = int(tr[0])
+                # top y bound
+                if tl[1] > ymin[cc]: ymin[cc] = int(tl[1])
+                # bottom y bound
+                if br[1] < ymax[cc]: ymax[cc] = int(br[1])
+
         for red, nir, blue, t in zip(red_data, nir_data, blue_data, t_data):
             # TODO - how to use this information?
             # Find the next ROI update from the detect / track routine.
@@ -262,17 +314,17 @@ class HeartRate(object):
                                               CHAN_IDX, CHAN_TXT):
                 if ii == 0:
                     # TODO - Make sure ROIs match across channels.
-                    tracker.start_track(chan, [xmin, ymin, xmax, ymax])
+                    tracker.start_track(chan, [xmin[cc], ymin[cc], xmax[cc], ymax[cc]])
                 else:
                     tracker.update(chan)
-                    xmin = int(tracker.bbox[0]); ymin = int(tracker.bbox[1])
-                    xmax = int(tracker.bbox[2]); ymax = int(tracker.bbox[3])
+                    xmin[cc] = int(tracker.bbox[0]); ymin[cc] = int(tracker.bbox[1])
+                    xmax[cc] = int(tracker.bbox[2]); ymax[cc] = int(tracker.bbox[3])
 
-                xd = int(math.floor((xmax - xmin) / float(NUM_SUBREGIONS_X)))
-                yd = int(math.floor((ymax - ymin) / float(NUM_SUBREGIONS_Y)))
+                xd = int(math.floor((xmax[cc] - xmin[cc]) / float(NUM_SUBREGIONS_X)))
+                yd = int(math.floor((ymax[cc] - ymin[cc]) / float(NUM_SUBREGIONS_Y)))
 
-                crop = chan[ymin:ymin + yd * NUM_SUBREGIONS_Y,
-                            xmin:xmin + xd * NUM_SUBREGIONS_X]
+                crop = chan[ymin[cc]:ymin[cc] + yd * NUM_SUBREGIONS_Y,
+                            xmin[cc]:xmin[cc] + xd * NUM_SUBREGIONS_X]
                 if DEBUG_IMAGE and ii == 0:
                     cv2.imshow(txt + ' ROI', crop)
                     cv2.waitKey(10)
