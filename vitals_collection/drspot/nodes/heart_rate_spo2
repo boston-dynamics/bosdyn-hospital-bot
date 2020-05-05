@@ -64,9 +64,6 @@ SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
 
-ALIGNMENT_ITERATIONS = 1000
-ALIGNMENT_TERMINATION = 1e-7
-
 HELPER_TIMER_PERIOD_SEC = 1
 FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
@@ -81,14 +78,14 @@ T_EPS = 1e-4
 # and/or run on every frame, at the expense of more computation time.
 CV_TRACKER_TYPE = 'CSRT' #'MEDIANFLOW'
 
-NUM_SUBREGIONS_X = 10
-NUM_SUBREGIONS_Y = 5
+NUM_SUBREGIONS_X = 6
+NUM_SUBREGIONS_Y = 3
 
 NUM_PLOT_X = NUM_SUBREGIONS_X
 NUM_PLOT_Y = NUM_SUBREGIONS_Y
 
-# Minimum of 30 beats per minute.
-MIN_HEART_HZ = 30.0 / 60.0
+# Minimum of 45 beats per minute.
+MIN_HEART_HZ = 45.0 / 60.0
 # Maximum of 300 beats per minute to look for the 2nd harmonic.
 MAX_HEART_HZ = 300.0 / 60.0
 
@@ -264,48 +261,6 @@ class HeartRate(object):
         red_tracker = ROITracker(CV_TRACKER_TYPE)
         nir_tracker = ROITracker(CV_TRACKER_TYPE)
         blue_tracker = ROITracker(CV_TRACKER_TYPE)
-
-        grad_red = grad(red_data[0][ymin[0]:ymax[0], xmin[0]:xmax[0]])
-        if DEBUG_MKDIR:
-            cv2.imwrite(output_dir + 'grad_red.png', grad_red)
-        for chan, cc, txt in zip((nir_data[0], blue_data[0]),
-                                 CHAN_IDX[1:], CHAN_TXT[1:]):
-            warp_matrix = np.eye(2, 3, dtype=np.float32)
-            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
-                        ALIGNMENT_ITERATIONS, ALIGNMENT_TERMINATION)
-            grad_chan = grad(chan)
-            if DEBUG_MKDIR:
-                cv2.imwrite(output_dir + 'grad_{}.png'.format(txt), grad_chan)
-            try:
-                (corr, warp_matrix) = cv2.findTransformECC(red_data[0][ymin[0]:ymax[0],
-                                                                       xmin[0]:xmax[0]],
-                                                           chan,
-                                                           #grad_red, grad_chan,
-                                                           warp_matrix,
-                                                           cv2.MOTION_TRANSLATION,
-                                                           criteria, None, 1)
-            except Exception as e:
-                rospy.logwarn_throttle(1, '{} {}: failed patch alignment in {}:{} = {}'.format(
-                    self.name, txt, ti, tf, e))
-            else:
-                # Convert the corners of the red image ROI to equivalent locations in
-                # the nir and blue images.
-                # top left
-                # top right
-                # bottom left
-                # bottom right
-                # (x, y, 1)
-                warp_matrix = cv2.invertAffineTransform(warp_matrix)
-                tl = np.dot(warp_matrix, np.array([xmin[0], ymin[0], 1.0]))
-                tr = np.dot(warp_matrix, np.array([xmax[0], ymin[0], 1.0]))
-                bl = np.dot(warp_matrix, np.array([xmin[0], ymax[0], 1.0]))
-                br = np.dot(warp_matrix, np.array([xmax[0], ymax[0], 1.0]))
-                (rows, cols) = chan.shape
-                xmin[cc] = int(tl[0]) # left x bound
-                xmax[cc] = min(int(tr[0]), cols-1) # right x bound
-                ymin[cc] = int(tl[1]) # top y bound
-                ymax[cc] = min(int(br[1]), rows-1) # bottom y bound
-
         for red, nir, blue, t in zip(red_data, nir_data, blue_data, t_data):
             # TODO - how to use this information?
             # Find the next ROI update from the detect / track routine.
@@ -319,7 +274,7 @@ class HeartRate(object):
                                               CHAN_IDX, CHAN_TXT):
                 if ii == 0:
                     try:
-                        tracker.start_track(chan, [xmin[cc], ymin[cc], xmax[cc], ymax[cc]])
+                        tracker.start_track(red, [xmin[0], ymin[0], xmax[0], ymax[0]])
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} {} {} {} = {}'.format(
                             self.name, txt, ti, tf, xmin[cc], ymin[cc], xmax[cc], ymax[cc], e))
@@ -404,7 +359,8 @@ class HeartRate(object):
             fig = [None]*NUM_FIG
             data_axes = [None]*NUM_FIG
             for ii in range(NUM_FIG):
-                fig[ii] = plt.figure(figsize=(30, 30))
+                fig[ii] = plt.figure(figsize=(NUM_PLOT_X * 10,
+                                              NUM_PLOT_Y * 10))
                 data_axes[ii] = [fig[ii].add_subplot(NUM_PLOT_Y, NUM_PLOT_X, i) for i in range(1, NUM_PLOT_X * NUM_PLOT_Y + 1)]
             for rr in range(len(data_axes[0])):
                 if rr > patch_avg.shape[1] - 1:
@@ -416,7 +372,7 @@ class HeartRate(object):
                     data_axes[CC+2*ss+1][rr].plot(freq * 60.0, patch_freq[:, rr, ss])
                     data_axes[CC+2*ss+1][rr].set_xticks(np.arange(freq[0] * 60.0,
                                                                   freq[-1] * 60.0,
-                                                                  10.0))
+                                                                  20.0))
 
                 for cc in CHAN_IDX:
                     data_axes[cc][rr].plot(patch_filt[:, rr, cc])
