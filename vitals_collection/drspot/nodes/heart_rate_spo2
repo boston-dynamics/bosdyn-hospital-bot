@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+DEBUG_RATE_CUT = False
+DEBUG_RATE_DIV = 2
 DEBUG_PLOT = False
 DEBUG_IMAGE = False
 DEBUG_SAVE_IMAGES = False
@@ -26,13 +28,13 @@ if DEBUG_PLOT:
 if DEBUG_MKDIR:
     LOG_DIR = '/log'
     import os
-import time
 
 import numpy as np
 from scipy import signal
 import threading
 import cv2
 import math
+import insightface
 
 import rospy
 import message_filters
@@ -74,6 +76,10 @@ IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
 T_EPS = 1e-4
 
+DETECT_TRACK_SCALE_FACTOR = 0.125
+
+FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.7
+FACE_DETECTION_SCALE = 1.0
 # Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
 # and/or run on every frame, at the expense of more computation time.
 CV_TRACKER_TYPE = 'CSRT' #'MEDIANFLOW'
@@ -121,8 +127,19 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
     y = signal.lfilter(b, a, data, axis=axis)
     return y
 
+if DEBUG_RATE_CUT:
+    _TMP_ = None
+
 class HeartRate(object):
     def image_callback(self, red_image_data, nir_image_data, blue_image_data):
+        if DEBUG_RATE_CUT:
+            global _TMP_
+            if _TMP_ is None: _TMP_ = 0
+            _TMP_ += 1
+            if _TMP_ == DEBUG_RATE_DIV:
+                _TMP_ = 0
+            else:
+                return
         with self.lock:
             chans = zip((red_image_data, nir_image_data, blue_image_data),
                         CHAN_TXT)
@@ -252,15 +269,11 @@ class HeartRate(object):
         # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
         # the multichrome_face_tracker node and/or track on every frame at the expense of more
         # computation time.
-        wroi = roi_data[ri][3] - roi_data[ri][1]
-        hroi = roi_data[ri][4] - roi_data[ri][2]
-        xmin = [roi_data[ri][1] - int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)]*3
-        ymin = [roi_data[ri][2] + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hroi)]*3
-        xmax = [roi_data[ri][3] + int(SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wroi)]*3
-        ymax = [ymin[0] + int(SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hroi)]*3
         red_tracker = ROITracker(CV_TRACKER_TYPE)
         nir_tracker = ROITracker(CV_TRACKER_TYPE)
         blue_tracker = ROITracker(CV_TRACKER_TYPE)
+        detector = insightface.model_zoo.get_model('retinaface_r50_v1')
+        detector.prepare(ctx_id=-1, nms=0.4)
         for red, nir, blue, t in zip(red_data, nir_data, blue_data, t_data):
             # TODO - how to use this information?
             # Find the next ROI update from the detect / track routine.
@@ -272,23 +285,54 @@ class HeartRate(object):
                                                nir_tracker,
                                                blue_tracker),
                                               CHAN_IDX, CHAN_TXT):
+                (rows, cols) = chan.shape
+                r = int(rows * DETECT_TRACK_SCALE_FACTOR)
+                c = int(cols * DETECT_TRACK_SCALE_FACTOR)
+                resize = cv2.resize(chan, (c, r), interpolation=cv2.INTER_AREA)
                 if ii == 0:
+                    chan3 = cv2.cvtColor(resize, cv2.COLOR_GRAY2RGB)
+                    bboxes, landmarks = detector.detect(chan3,
+                                                        threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
+                                                        scale=FACE_DETECTION_SCALE)
+                    if DEBUG_MKDIR:
+                        # All overlays have colors below in case we use an RGB image in the future.
+                        for box in bboxes.astype(int):
+                            x, y, x2, y2 = box[0:4]
+                            # Draw a rectangle for each face bounding box.
+                            cv2.rectangle(resize, (x, y), (x2, y2), (255,255,255), 2)
+                        for face in landmarks.astype(int):
+                            for point in face:
+                                x, y = point
+                                # Draw a circle at each landmark.
+                                cv2.circle(resize, (x, y), 5, (255,255,255), 1)
+                        cv2.imwrite(output_dir + txt + '_debug_det.png', resize)
+                    if len(bboxes) != 1:
+                        rospy.logwarn_throttle(1, '{} {}: {} faces detected in {}:{}; erroring'.format(
+                            self.name, txt, len(bboxes), ti, tf))
+                        return
+                    wface = bboxes[0][2] - bboxes[0][0]
+                    hface = bboxes[0][3] - bboxes[0][1]
+                    bboxes[0][0] -= SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
+                    bboxes[0][1] += SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hface
+                    bboxes[0][2] += SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
+                    bboxes[0][3] = bboxes[0][1] + SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hface
                     try:
-                        tracker.start_track(red, [xmin[0], ymin[0], xmax[0], ymax[0]])
+                        tracker.start_track(resize, bboxes[0])
                     except Exception as e:
-                        rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} {} {} {} = {}'.format(
-                            self.name, txt, ti, tf, xmin[cc], ymin[cc], xmax[cc], ymax[cc], e))
+                        rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
+                            self.name, txt, ti, tf, bboxes[0], e))
                         return
                 else:
-                    tracker.update(chan)
-                    xmin[cc] = int(tracker.bbox[0]); ymin[cc] = int(tracker.bbox[1])
-                    xmax[cc] = int(tracker.bbox[2]); ymax[cc] = int(tracker.bbox[3])
+                    tracker.update(resize)
+                    bboxes = np.array([tracker.bbox])
 
-                xd = int(math.floor((xmax[cc] - xmin[cc]) / float(NUM_SUBREGIONS_X)))
-                yd = int(math.floor((ymax[cc] - ymin[cc]) / float(NUM_SUBREGIONS_Y)))
+                xmin, ymin, xmax, ymax = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
 
-                crop = chan[ymin[cc]:ymin[cc] + yd * NUM_SUBREGIONS_Y,
-                            xmin[cc]:xmin[cc] + xd * NUM_SUBREGIONS_X]
+                xd = int(math.floor((xmax - xmin) / float(NUM_SUBREGIONS_X)))
+                yd = int(math.floor((ymax - ymin) / float(NUM_SUBREGIONS_Y)))
+
+                crop = chan[ymin:ymin + yd * NUM_SUBREGIONS_Y,
+                            xmin:xmin + xd * NUM_SUBREGIONS_X]
                 if DEBUG_IMAGE and ii == 0:
                     cv2.imshow(txt + ' ROI', crop)
                     cv2.waitKey(10)
