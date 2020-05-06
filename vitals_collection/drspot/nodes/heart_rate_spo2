@@ -57,14 +57,14 @@ MSMT_TOPIC = 'full_heart_rate'
 DATA_TOPIC = 'full_data_heart_rate'
 
 # Carotid
-#SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
-#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.15
-#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.5
+SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.15
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.3
 
 # Forehead
-SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
-SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
-SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
+#SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
+#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
+#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
 
 HELPER_TIMER_PERIOD_SEC = 1
 FULL_MSMT_PERIOD_SEC = 10
@@ -76,13 +76,13 @@ IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
 T_EPS = 1e-4
 
-DETECT_TRACK_SCALE_FACTOR = 0.125
+DETECT_TRACK_SCALE_FACTOR = 1.0
 
-FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.7
+FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.9
 FACE_DETECTION_SCALE = 1.0
 # Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
 # and/or run on every frame, at the expense of more computation time.
-CV_TRACKER_TYPE = 'CSRT' #'MEDIANFLOW'
+CV_TRACKER_TYPE = 'TM_CCORR_NORMED'
 
 NUM_SUBREGIONS_X = 6
 NUM_SUBREGIONS_Y = 3
@@ -92,8 +92,12 @@ NUM_PLOT_Y = NUM_SUBREGIONS_Y
 
 # Minimum of 45 beats per minute.
 MIN_HEART_HZ = 45.0 / 60.0
-# Maximum of 300 beats per minute to look for the 2nd harmonic.
-MAX_HEART_HZ = 300.0 / 60.0
+# Maximum of 220 beats per minute.
+MAX_HEART_HZ = 220.0 / 60.0
+# Minimum of 30 beats per minute in stored FFT.
+MIN_HZ = 30.0 / 60.0
+# Maximum of 440 beats per minute to look for the 2nd harmonic.
+MAX_HZ = 2 * MAX_HEART_HZ
 
 CHAN_IDX = (0, 1, 2)
 CHAN_TXT = ('red', 'nir', 'blue')
@@ -327,6 +331,10 @@ class HeartRate(object):
                     bboxes = np.array([tracker.bbox])
 
                 xmin, ymin, xmax, ymax = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
+                if xmin < 0: xmin = 0
+                if ymin < 0: ymin = 0
+                if xmax >= cols: xmax = cols-1
+                if ymax >= rows: ymax = rows-1
 
                 xd = int(math.floor((xmax - xmin) / float(NUM_SUBREGIONS_X)))
                 yd = int(math.floor((ymax - ymin) / float(NUM_SUBREGIONS_Y)))
@@ -339,12 +347,27 @@ class HeartRate(object):
 
                 if DEBUG_SAVE_IMAGES:
                     try:
-                        cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), crop)
-                    except:
+                        cv_image = crop.copy()
+                        # Draw vertical lines (constant x coordinate).
+                        for xline in range(0, crop.shape[1], xd):
+                            cv2.line(cv_image, (xline, 0), (xline, crop.shape[0]), (255,255,255), 1)
+                        # Draw vertical lines (constant y coordinate).
+                        for yline in range(0, crop.shape[0], yd):
+                            cv2.line(cv_image, (0, yline), (crop.shape[1], yline), (255,255,255), 1)
+                        cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), cv_image)
+                    except Exception as e:
+                        print(e)
                         pass
 
                 # Spatial average over each subregion at this point in time.
-                patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)), axis=(0,1))
+                try:
+                    patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)),
+                                                   axis=(0,1))
+                except Exception as e:
+                    rospy.logwarn_throttle(1, '{} {}: failed spatial average in '
+                                           + '{}:{} idx {}; {} {} {} {} {} {} {} {} = {}'.format(
+                        self.name, txt, ti, tf, ii, crop.shape, chan.shape, xd, yd, xmin, ymin, xmax, ymax, e))
+                    return
             # End loop over colors.
             ii += 1
         # End loop through data series.
@@ -353,15 +376,18 @@ class HeartRate(object):
         patch_avg -= 1.0
         #patch_avg = signal.detrend(patch_avg, axis=0)
 
-        patch_filt = butter_bandpass_filter(patch_avg,
-                                            MIN_HEART_HZ, MAX_HEART_HZ,
+        patch_filt = butter_bandpass_filter(patch_avg, MIN_HZ, MAX_HZ,
                                             1.0 / delta,
                                             axis=0)
         patch_pulse = np.zeros((patch_avg.shape[0], patch_avg.shape[1], len(PBV_TO_CHECK)))
 
         # Find the range of real frequency bins that we are interested in.
-        fminind = int(MIN_HEART_HZ * msmt_n * delta) + 1
-        fmaxind = int(MAX_HEART_HZ * msmt_n * delta)
+        fminind = int(MIN_HZ * msmt_n * delta)
+        fmaxind = int(MAX_HZ * msmt_n * delta)
+        hr_fminind = int(MIN_HEART_HZ * msmt_n * delta) - fminind
+        hr_fmaxind = int(MAX_HEART_HZ * msmt_n * delta) - fminind
+        fminind += 1
+        hr_fminind += 1
         patch_freq = np.zeros((fmaxind-fminind+1, patch_avg.shape[1], len(PBV_TO_CHECK)))
         peak_freq_count = np.zeros(patch_freq.shape[0])
         peak_freq = np.zeros((patch_avg.shape[1], len(PBV_TO_CHECK)))
@@ -381,7 +407,7 @@ class HeartRate(object):
                 if freq is None:
                     freq = np.fft.fftfreq(sp.shape[-1], d=delta)[fminind:fmaxind+1]
                 patch_freq[:, rr, ss] = np.abs(sp)[fminind:fmaxind+1]
-                freq_idx = patch_freq[:, rr, ss].argmax()
+                freq_idx = patch_freq[hr_fminind:hr_fmaxind, rr, ss].argmax() + hr_fminind
                 peak_freq[rr, ss] = freq[freq_idx]
                 peak_freq_count[freq_idx] += 1
 

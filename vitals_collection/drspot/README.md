@@ -84,6 +84,8 @@ For FLIR:
 export DRSPOT_THERMAL_NS=flir_camera
 ```
 
+Then restart any running ROS nodes. On the SpotCORE, run `sudo systemctl restart roslaunch.service`.
+
 ## Namespace the vitals measurement nodes to discard their measurements
 
 This is useful if you want to replay all topics from a bag, but also use e.g. the respiratory_rate node to plot the frequency-domain analysis.

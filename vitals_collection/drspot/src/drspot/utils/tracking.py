@@ -17,45 +17,59 @@
 import cv2
 import numpy as np
 
+CV2_SUPPORTED_TRACKERS = ['CSRT']
+CV2_SUPPORTED_TEMPLATE_DICT = dict(TM_CCORR_NORMED=cv2.TM_CCORR_NORMED)
+
 class ROITracker(object):
     def __init__(self, tracker_type):
         self.ok = False
         self.bbox = np.array([0, 0, 0, 0])
 
-        try:
-            self.tracker = cv2.Tracker_create(tracker_type)
-        except AttributeError:
-            if tracker_type == 'BOOSTING':
-                self.tracker = cv2.TrackerBoosting_create()
-            if tracker_type == 'MIL':
-                self.tracker = cv2.TrackerMIL_create()
-            if tracker_type == 'KCF':
-                self.tracker = cv2.TrackerKCF_create()
-            if tracker_type == 'TLD':
-                self.tracker = cv2.TrackerTLD_create()
-            if tracker_type == 'MEDIANFLOW':
-                self.tracker = cv2.TrackerMedianFlow_create()
-            if tracker_type == 'GOTURN':
-                self.tracker = cv2.TrackerGOTURN_create()
-            if tracker_type == 'MOSSE':
-                self.tracker = cv2.TrackerMOSSE_create()
-            if tracker_type == 'CSRT':
-                self.tracker = cv2.TrackerCSRT_create()
+        self.tracker_type = tracker_type
+
+        if tracker_type in CV2_SUPPORTED_TRACKERS:
+            try:
+                self.tracker = cv2.Tracker_create(tracker_type)
+            except AttributeError:
+                if tracker_type == 'CSRT':
+                    self.tracker = cv2.TrackerCSRT_create()
+        elif tracker_type in CV2_SUPPORTED_TEMPLATE_DICT.keys():
+            pass
 
     def get_center(self):
         return np.array([(self.bbox[0] + self.bbox[2]) * 0.5,
                          (self.bbox[1] + self.bbox[3]) * 0.5])
 
     def start_track(self, frame, bbox):
-        temp_bbox = (int(bbox[0]), int(bbox[1]), int(bbox[2] - bbox[0]), int(bbox[3] - bbox[1]))
-        self.tracker.init(frame, temp_bbox)
-        self.ok = True
         self.bbox = np.array(bbox)
+        if self.tracker_type in CV2_SUPPORTED_TRACKERS:
+            temp_bbox = (int(bbox[0]), int(bbox[1]),
+                         int(bbox[2] - bbox[0]), int(bbox[3] - bbox[1]))
+            self.tracker.init(frame, temp_bbox)
+        elif self.tracker_type in CV2_SUPPORTED_TEMPLATE_DICT.keys():
+            ibx = self.bbox.astype(int)
+            self.template = frame[ibx[1]:ibx[3], ibx[0]:ibx[2]]
+        self.ok = True
 
     def update(self, frame):
         if not self.ok:
             return
 
-        self.ok, temp_bbox = self.tracker.update(frame)
-        self.bbox = np.array([temp_bbox[0], temp_bbox[1],
-                              temp_bbox[0] + temp_bbox[2], temp_bbox[1] + temp_bbox[3]])
+        if self.tracker_type in CV2_SUPPORTED_TRACKERS:
+            self.ok, temp_bbox = self.tracker.update(frame)
+            self.bbox = np.array([temp_bbox[0], temp_bbox[1],
+                                  temp_bbox[0] + temp_bbox[2],
+                                  temp_bbox[1] + temp_bbox[3]])
+        elif self.tracker_type in CV2_SUPPORTED_TEMPLATE_DICT.keys():
+            # TODO - update the tracking status properly.
+            self.ok = True
+            res = cv2.matchTemplate(frame, self.template,
+                                    CV2_SUPPORTED_TEMPLATE_DICT[self.tracker_type])
+            valn, valx, locn, locx = cv2.minMaxLoc(res)
+            if self.tracker_type in ['TM_SQDIFF', 'TM_SQDIFF_NORMED']:
+                loc = locn # Minimum value is best.
+            else:
+                loc = locx # Maximum value is best.
+            self.bbox[0] = loc[0]; self.bbox[1] = loc[1]
+            self.bbox[2] = loc[0] + self.template.shape[1]
+            self.bbox[3] = loc[1] + self.template.shape[0]
