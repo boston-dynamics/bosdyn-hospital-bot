@@ -69,6 +69,7 @@ class ROITracker(object):
                 y, x = np.ogrid[0.0:res.shape[0], 0.0:res.shape[1]]
                 x -= expected_location[0]; y -= expected_location[1]
                 dist_sq_with_min = x**2 + y**2
+                # TODO - make the distance cost layer configurable.
                 dist_sq_with_min[dist_sq_with_min < 200] = 200
                 max_vals = np.array([dist_sq_with_min[0,0],
                                      dist_sq_with_min[0,-1],

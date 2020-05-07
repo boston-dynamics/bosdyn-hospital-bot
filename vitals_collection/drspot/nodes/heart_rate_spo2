@@ -74,7 +74,7 @@ NUM_SUBREGIONS_X = 10
 NUM_SUBREGIONS_Y = 5
 
 HELPER_TIMER_PERIOD_SEC = 1
-FULL_MSMT_PERIOD_SEC = 3
+FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
@@ -163,11 +163,11 @@ class HeartRate(object):
 
                 # Detect backward jumps in time in replay.
                 if self.tlast[txt] > t + T_EPS:
-                    #self.clear_msmt_state()
+                    self.clear_msmt_state()
                     self.tlast[txt] = t
                     rospy.logwarn_throttle(1, '{} {}: Backward jump in time {:0.6f} vs {:0.6f}'.format(
                         self.name, txt, self.tlast[txt], t))
-                    #return
+                    return
 
                 # Detect duplicate timestamps due to message synchronization.
                 if self.tlast[txt] >= t:
@@ -442,16 +442,17 @@ class HeartRate(object):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'raw_{:03d}.csv'.format(rr),
                            patch_avg[:, rr, :].reshape((-1,CC)),
-                           delimiter=',')
+                           delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'filt_{:03d}.csv'.format(rr),
                            patch_filt[:, rr, :].reshape((-1,CC)),
-                           delimiter=',')
+                           delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'pulse_{:03d}.csv'.format(rr),
                            patch_pulse[:, rr, :].reshape((-1, patch_pulse.shape[2])),
-                           delimiter=',')
+                           delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'freq_{:03d}.csv'.format(rr),
-                           patch_freq[:, rr, :].reshape((-1, patch_freq.shape[2])),
-                           delimiter=',')
+                           np.hstack((freq.reshape((-1, 1)) * 60.0,
+                                      patch_freq[:, rr, :].reshape((-1, patch_freq.shape[2])))),
+                           delimiter=',', fmt='%.3e')
 
         if DEBUG_PLOT:
             fig = [None]*NUM_FIG
@@ -470,7 +471,7 @@ class HeartRate(object):
                     data_axes[CC+2*ss+1][rr].plot(freq * 60.0, patch_freq[:, rr, ss])
                     data_axes[CC+2*ss+1][rr].set_xticks(np.arange(freq[0] * 60.0,
                                                                   freq[-1] * 60.0,
-                                                                  10.0))
+                                                                  20.0))
                     data_axes[CC+2*ss+1][rr].grid()
 
                 for cc in CHAN_IDX:
@@ -504,6 +505,9 @@ class HeartRate(object):
         # End if we are saving plots.
 
         beats = freq[peak_freq_count.argmax()] * 60.0
+        msg = Float32()
+        msg.data = beats
+        self.msmt_pub.publish(msg)
         rospy.loginfo('{}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
             self.name, beats, msmt_n, ti, tf, (tf - ti) / msmt_n))
 
@@ -546,7 +550,6 @@ class HeartRate(object):
         self.bridge = CvBridge()
 
         self.msmt_pub = rospy.Publisher(MSMT_TOPIC, Float32, queue_size=10)
-        self.data_pub = rospy.Publisher(DATA_TOPIC, Float32MultiArray, queue_size=10)
 
         self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
                                                         queue_size=IMG_QUEUE_SIZE,
