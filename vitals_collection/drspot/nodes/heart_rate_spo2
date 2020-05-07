@@ -16,15 +16,9 @@
 
 DEBUG_RATE_CUT = False
 DEBUG_RATE_DIV = 2
-DEBUG_PLOT = False
-DEBUG_IMAGE = False
 DEBUG_SAVE_IMAGES = False
 DEBUG_SAVE_DATA = False
-DEBUG_MKDIR = DEBUG_SAVE_IMAGES or DEBUG_PLOT or DEBUG_SAVE_DATA
-if DEBUG_PLOT:
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
+DEBUG_MKDIR = DEBUG_SAVE_IMAGES or DEBUG_SAVE_DATA
 if DEBUG_MKDIR:
     LOG_DIR = '/log'
     import os
@@ -80,6 +74,8 @@ MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
 IMG_QUEUE_SIZE = 3 * 35
 IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
+
+MAX_DELTA_T = 0.1 # seconds.
 
 T_EPS = 1e-4
 
@@ -185,11 +181,11 @@ class HeartRate(object):
                 # Detect region message header mismatch with image header.
                 region_t = region.header.stamp.to_sec()
                 if abs(t - region_t) > T_EPS:
-                    #self.clear_msmt_state()
+                    self.clear_msmt_state()
                     self.tlast[txt] = t
                     rospy.logwarn_throttle(1, '{} {}: Region out of sync with image {:0.6f} vs {:0.6f}'.format(
                         self.name, txt, region_t, t))
-                    #return
+                    return
 
                 if self.delta[txt] is None:
                     self.delta[txt] = t - self.tlast[txt]
@@ -272,7 +268,13 @@ class HeartRate(object):
         msmt_n = len(red_data)
 
         if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
-            rospy.loginfo_throttle(1, '{}: not enough samples {}'.format(self.name, msmt_n))
+            rospy.loginfo_throttle(1, '{}: not enough samples {} in {}:{}'.format(
+                                   self.name, msmt_n, ti, tf))
+            return
+
+        if delta > MAX_DELTA_T:
+            rospy.logwarn_throttle(1, '{}: Bad delta {} sec in {}:{}'.format(
+                self.name, delta, ti, tf))
             return
 
         if DEBUG_MKDIR:
@@ -323,7 +325,7 @@ class HeartRate(object):
                     bboxes, landmarks = detector.detect(chan3,
                                                         threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
                                                         scale=FACE_DETECTION_SCALE)
-                    if DEBUG_MKDIR:
+                    if DEBUG_SAVE_IMAGES:
                         # All overlays have colors below in case we use an RGB image in the future.
                         for box in bboxes.astype(int):
                             x, y, x2, y2 = box[0:4]
@@ -369,9 +371,6 @@ class HeartRate(object):
 
                 crop = chan[ymin:ymin + yd * NUM_SUBREGIONS_Y,
                             xmin:xmin + xd * NUM_SUBREGIONS_X]
-                if DEBUG_IMAGE and ii == 0:
-                    cv2.imshow(txt + ' ROI', crop)
-                    cv2.waitKey(10)
 
                 if DEBUG_SAVE_IMAGES:
                     try:
@@ -392,8 +391,8 @@ class HeartRate(object):
                     patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)),
                                                    axis=(0,1))
                 except Exception as e:
-                    rospy.logwarn_throttle(1, '{} {}: failed spatial average in '
-                                           + '{}:{} idx {}; {} {} {} {} {} {} {} {} = {}'.format(
+                    rospy.logwarn_throttle(1, ('{} {}: failed spatial average in '
+                                           + '{}:{} idx {}; {} {} {} {} {} {} {} {} = {}').format(
                         self.name, txt, ti, tf, ii, crop.shape, chan.shape, xd, yd, xmin, ymin, xmax, ymax, e))
                     return
             # End loop over colors.
@@ -407,6 +406,7 @@ class HeartRate(object):
         patch_filt = butter_bandpass_filter(patch_avg, MIN_HZ, MAX_HZ,
                                             1.0 / delta,
                                             axis=0)
+
         patch_pulse = np.zeros((patch_avg.shape[0], patch_avg.shape[1], len(PBV_TO_CHECK)))
 
         # Find the range of real frequency bins that we are interested in.
@@ -422,7 +422,7 @@ class HeartRate(object):
         freq = None
 
         for rr in range(patch_avg.shape[1]):
-            c_n = patch_filt[:, rr, :].reshape((-1,3)).T
+            c_n = patch_avg[:, rr, :].reshape((-1,3)).T
             q_inv = np.linalg.inv(np.matmul(c_n, c_n.T))
             for ss in range(len(PBV_TO_CHECK)):
                 spo2 = PBV_TO_CHECK[ss]
@@ -453,56 +453,10 @@ class HeartRate(object):
                            np.hstack((freq.reshape((-1, 1)) * 60.0,
                                       patch_freq[:, rr, :].reshape((-1, patch_freq.shape[2])))),
                            delimiter=',', fmt='%.3e')
-
-        if DEBUG_PLOT:
-            fig = [None]*NUM_FIG
-            data_axes = [None]*NUM_FIG
-            for ii in range(NUM_FIG):
-                fig[ii] = plt.figure(figsize=(NUM_PLOT_X * 20,
-                                              NUM_PLOT_Y * 20))
-                data_axes[ii] = [fig[ii].add_subplot(NUM_PLOT_Y, NUM_PLOT_X, i) for i in range(1, NUM_PLOT_X * NUM_PLOT_Y + 1)]
-            for rr in range(len(data_axes[0])):
-                if rr > patch_avg.shape[1] - 1:
-                    break
-
-                for ss in range(len(PBV_TO_CHECK)):
-                    data_axes[CC+2*ss][rr].plot(patch_pulse[:, rr, ss])
-
-                    data_axes[CC+2*ss+1][rr].plot(freq * 60.0, patch_freq[:, rr, ss])
-                    data_axes[CC+2*ss+1][rr].set_xticks(np.arange(freq[0] * 60.0,
-                                                                  freq[-1] * 60.0,
-                                                                  20.0))
-                    data_axes[CC+2*ss+1][rr].grid()
-
-                for cc in CHAN_IDX:
-                    data_axes[cc][rr].plot(patch_filt[:, rr, cc])
-                # End loop over channels.
-            # End loop over regions.
-            for cc, txt in zip(CHAN_IDX, CHAN_TXT):
-                plt.figure(fig[cc].number)
-                try:
-                    plt.savefig(output_dir + txt + '_data.png')
-                except:
-                    pass
-                finally:
-                    plt.close(fig[cc])
-
-            for ss in range(len(PBV_TO_CHECK)):
-                plt.figure(fig[CC+2*ss].number)
-                try:
-                    plt.savefig(output_dir + 'pulse_spo2_{}.png'.format(PBV_TO_CHECK[ss]))
-                except:
-                    pass
-                finally:
-                    plt.close(fig[CC+2*ss])
-                plt.figure(fig[CC+2*ss+1].number)
-                try:
-                    plt.savefig(output_dir + 'freq_spo2_{}.png'.format(PBV_TO_CHECK[ss]))
-                except:
-                    pass
-                finally:
-                    plt.close(fig[CC+2*ss+1])
-        # End if we are saving plots.
+        # End loop over regions.
+        if DEBUG_SAVE_DATA:
+            np.savetxt(output_dir + 'peak_freq.csv', peak_freq * 60.0,
+                       delimiter=',', fmt='%.1f')
 
         beats = freq[peak_freq_count.argmax()] * 60.0
         msg = Float32()
