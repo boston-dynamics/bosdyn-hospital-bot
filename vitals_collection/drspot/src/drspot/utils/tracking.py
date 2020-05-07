@@ -51,7 +51,7 @@ class ROITracker(object):
             self.template = frame[ibx[1]:ibx[3], ibx[0]:ibx[2]]
         self.ok = True
 
-    def update(self, frame):
+    def update(self, frame, expected_location=None):
         if not self.ok:
             return
 
@@ -65,6 +65,22 @@ class ROITracker(object):
             self.ok = True
             res = cv2.matchTemplate(frame, self.template,
                                     CV2_SUPPORTED_TEMPLATE_DICT[self.tracker_type])
+            if expected_location is not None:
+                y, x = np.ogrid[0.0:res.shape[0], 0.0:res.shape[1]]
+                x -= expected_location[0]; y -= expected_location[1]
+                dist_sq_with_min = x**2 + y**2
+                dist_sq_with_min[dist_sq_with_min < 200] = 200
+                max_vals = np.array([dist_sq_with_min[0,0],
+                                     dist_sq_with_min[0,-1],
+                                     dist_sq_with_min[-1,0],
+                                     dist_sq_with_min[-1,-1]])
+                dist_sq_with_min /= np.amax(max_vals) * 2.0
+                if self.tracker_type in ['TM_SQDIFF', 'TM_SQDIFF_NORMED']:
+                    # Minimum value is best, so add distance from expected location.
+                    res += dist_sq_with_min
+                else:
+                    # Maximum value is best, so subtract distance from expected location.
+                    res -= dist_sq_with_min
             valn, valx, locn, locx = cv2.minMaxLoc(res)
             if self.tracker_type in ['TM_SQDIFF', 'TM_SQDIFF_NORMED']:
                 loc = locn # Minimum value is best.

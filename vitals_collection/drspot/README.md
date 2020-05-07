@@ -117,6 +117,24 @@ rostopic echo /skin_temperature_frame_msmt
 
 Select a ROI in the live feed.
 
+### Add another ROI with some other name, in another terminal.
+
+```
+export ROI_NAME=some_other_roi
+export ROS_NAMESPACE=$ROI_NAME
+rostopic pub -r 10 ir_tracking_status std_msgs/Bool "data: true" &
+rosrun image_view2 image_view2 \
+       image:=/${DRSPOT_THERMAL_NS}/thermal_image_palette \
+       /${DRSPOT_THERMAL_NS}/thermal_image_palette/screenrectangle:=temp_roi \
+       __name:=${ROI_NAME} &
+roscd drspot && ./nodes/skin_temperature \
+      __name:=${ROI_NAME}_temperature \
+      skin_temp_roi:=temp_roi \
+      temperature_image:=/${DRSPOT_THERMAL_NS}/temperature_image \
+      thermal_image_raw:=/${DRSPOT_THERMAL_NS}/thermal_image_raw &
+rostopic echo ${ROI_NAME}_temperature_frame_msmt
+```
+
 ## Relevant rostopics
 
 ### Optris

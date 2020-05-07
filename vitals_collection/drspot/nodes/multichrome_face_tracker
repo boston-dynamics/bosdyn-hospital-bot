@@ -33,16 +33,19 @@ DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
 RED_IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
 RED_TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 RED_CROPPED_IMAGE_TOPIC = 'mono_red_cropped'
+RED_REGION_IN_IMAGE_TOPIC = 'mono_red_region'
 
-RED_FACE_IN_ROI_REGION_TOPIC = 'mono_red_roi'
+RED_FACE_IN_REGION_TOPIC = 'mono_red_roi'
 
 NIR_IMAGE_TOPIC = 'camera_array/mono_nir/image_raw'
 NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
 NIR_CROPPED_IMAGE_TOPIC = 'mono_nir_cropped'
+NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
 
 BLUE_IMAGE_TOPIC = 'camera_array/mono_blue/image_raw'
 BLUE_TRACKING_STATUS_TOPIC = 'mono_blue_tracking_status'
 BLUE_CROPPED_IMAGE_TOPIC = 'mono_blue_cropped'
+BLUE_REGION_IN_IMAGE_TOPIC = 'mono_blue_region'
 
 # Buffer about 1 second of full-size frames.
 IMG_QUEUE_SIZE = 35
@@ -146,6 +149,12 @@ class FaceDetectorTracker(object):
             msg.header = data.header
             self.cropped_image_pub.publish(msg)
 
+            region = PolygonStamped()
+            region.header = data.header
+            region.polygon.points = [Point32(x=xmin, y=ymin, z=0),
+                                     Point32(x=xmax, y=ymax, z=0)]
+            self.region_pub.publish(region)
+
     def detect_track(self, cv_image, t, header):
         det_msg = Bool()
         det_msg.data = False
@@ -227,10 +236,10 @@ class FaceDetectorTracker(object):
 
         region = PolygonStamped()
         region.header = header
-        track_in_roi = bboxes[fidx][0:4].reshape((2, 2)) / DETECT_TRACK_SCALE_FACTOR - np.tile(roi_unscaled[:][0], (2, 1))
-        region.polygon.points = [Point32(x=track_in_roi[0][0], y=track_in_roi[0][1], z=0),
-                                 Point32(x=track_in_roi[1][0], y=track_in_roi[1][1], z=0)]
-        self.face_in_roi_region_pub.publish(region)
+        face_in_region = bboxes[fidx][0:4].reshape((2, 2)) / DETECT_TRACK_SCALE_FACTOR - np.tile(roi_unscaled[:][0], (2, 1))
+        region.polygon.points = [Point32(x=face_in_region[0][0], y=face_in_region[0][1], z=0),
+                                 Point32(x=face_in_region[1][0], y=face_in_region[1][1], z=0)]
+        self.face_in_region_pub.publish(region)
 
         # All overlays have colors below in case we use an RGB image in the future.
         for box in bboxes.astype(int):
@@ -279,13 +288,15 @@ class FaceDetectorTracker(object):
         self.clear_msmt_state()
 
         self.cropped_image_pub = rospy.Publisher(RED_CROPPED_IMAGE_TOPIC, Image, queue_size=10)
-        self.face_in_roi_region_pub = rospy.Publisher(RED_FACE_IN_ROI_REGION_TOPIC, PolygonStamped,
-                                                      queue_size=10)
+        self.region_pub = rospy.Publisher(RED_REGION_IN_IMAGE_TOPIC, PolygonStamped,
+                                          queue_size=10)
+        self.tracking_status_pub = rospy.Publisher(RED_TRACKING_STATUS_TOPIC, Bool, queue_size=10)
+
+        self.face_in_region_pub = rospy.Publisher(RED_FACE_IN_REGION_TOPIC, PolygonStamped,
+                                                  queue_size=10)
 
         self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
         self.scaled_image_pub = rospy.Publisher(SCALED_RED_IMAGE_TOPIC, Image, queue_size=10)
-
-        self.tracking_status_pub = rospy.Publisher(RED_TRACKING_STATUS_TOPIC, Bool, queue_size=10)
 
         self.image_sub = rospy.Subscriber(RED_IMAGE_TOPIC, Image, self.image_callback,
                                           queue_size=IMG_QUEUE_SIZE,
@@ -365,12 +376,19 @@ class CalibratedCameraTrack(object):
         msg.header = data.header
         self.cropped_image_pub.publish(msg)
 
+        region = PolygonStamped()
+        region.header = data.header
+        region.polygon.points = [Point32(x=xmin, y=ymin, z=0),
+                                 Point32(x=xmax, y=ymax, z=0)]
+        self.region_pub.publish(region)
+
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
         self.tlast = None
 
     def __init__(self, name, face_tracker,
                  image_topic, tracking_status_topic, cropped_image_topic,
+                 region_in_image_topic,
                  # Moving the ROI down and right is positive.
                  # Expressed as a fraction of the ROI height.
                  x_pix_offset, y_pix_offset,
@@ -388,6 +406,7 @@ class CalibratedCameraTrack(object):
         self.clear_msmt_state()
 
         self.cropped_image_pub = rospy.Publisher(cropped_image_topic, Image, queue_size=10)
+        self.region_pub = rospy.Publisher(region_in_image_topic, PolygonStamped, queue_size=10)
         self.tracking_status_pub = rospy.Publisher(tracking_status_topic, Bool, queue_size=10)
 
         self.image_sub = rospy.Subscriber(image_topic, Image, self.image_callback,
@@ -401,12 +420,14 @@ if __name__ == '__main__':
                                     NIR_IMAGE_TOPIC,
                                     NIR_TRACKING_STATUS_TOPIC,
                                     NIR_CROPPED_IMAGE_TOPIC,
+                                    NIR_REGION_IN_IMAGE_TOPIC,
                                     0,
                                     NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
     blue_cct = CalibratedCameraTrack('blue_' + rospy.get_name(), fdt,
                                      BLUE_IMAGE_TOPIC,
                                      BLUE_TRACKING_STATUS_TOPIC,
                                      BLUE_CROPPED_IMAGE_TOPIC,
+                                     BLUE_REGION_IN_IMAGE_TOPIC,
                                      BLUE_X_OFFSET_FRAC_OF_FACE_HEIGHT,
                                      BLUE_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
                                      rot180=True)

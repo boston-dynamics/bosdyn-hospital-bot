@@ -47,9 +47,12 @@ from drspot.utils.tracking import ROITracker
 
 # Inputs.
 RED_IMAGE_TOPIC = 'mono_red_cropped'
+RED_REGION_IN_IMAGE_TOPIC = 'mono_red_region'
 NIR_IMAGE_TOPIC = 'mono_nir_cropped'
+NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
 BLUE_IMAGE_TOPIC = 'mono_blue_cropped'
-RED_FACE_IN_ROI_REGION_TOPIC = 'mono_red_roi'
+BLUE_REGION_IN_IMAGE_TOPIC = 'mono_blue_region'
+
 TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 
 # Outputs.
@@ -57,17 +60,21 @@ MSMT_TOPIC = 'full_heart_rate'
 DATA_TOPIC = 'full_data_heart_rate'
 
 # Carotid
-SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
-SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.15
-SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.3
+# SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = -0.2
+# SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.2
+# SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
+# NUM_SUBREGIONS_X = 6
+# NUM_SUBREGIONS_Y = 5
 
 # Forehead
-#SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
-#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
-#SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
+SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
+NUM_SUBREGIONS_X = 10
+NUM_SUBREGIONS_Y = 5
 
 HELPER_TIMER_PERIOD_SEC = 1
-FULL_MSMT_PERIOD_SEC = 10
+FULL_MSMT_PERIOD_SEC = 3
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
@@ -76,16 +83,13 @@ IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
 T_EPS = 1e-4
 
-DETECT_TRACK_SCALE_FACTOR = 1.0
+DETECT_TRACK_SCALE_FACTOR = 0.5
 
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.9
 FACE_DETECTION_SCALE = 1.0
 # Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
 # and/or run on every frame, at the expense of more computation time.
 CV_TRACKER_TYPE = 'TM_CCORR_NORMED'
-
-NUM_SUBREGIONS_X = 6
-NUM_SUBREGIONS_Y = 3
 
 NUM_PLOT_X = NUM_SUBREGIONS_X
 NUM_PLOT_Y = NUM_SUBREGIONS_Y
@@ -135,7 +139,8 @@ if DEBUG_RATE_CUT:
     _TMP_ = None
 
 class HeartRate(object):
-    def image_callback(self, red_image_data, nir_image_data, blue_image_data):
+    def image_callback(self, red_image_data, nir_image_data, blue_image_data,
+                       red_region, nir_region, blue_region):
         if DEBUG_RATE_CUT:
             global _TMP_
             if _TMP_ is None: _TMP_ = 0
@@ -146,9 +151,10 @@ class HeartRate(object):
                 return
         with self.lock:
             chans = zip((red_image_data, nir_image_data, blue_image_data),
+                        (red_region, nir_region, blue_region),
                         CHAN_TXT)
 
-            for image_data, txt in chans:
+            for image_data, region, txt in chans:
                 t = image_data.header.stamp.to_sec()
 
                 if self.tlast[txt] is None:
@@ -157,11 +163,11 @@ class HeartRate(object):
 
                 # Detect backward jumps in time in replay.
                 if self.tlast[txt] > t + T_EPS:
-                    self.clear_msmt_state()
+                    #self.clear_msmt_state()
                     self.tlast[txt] = t
                     rospy.logwarn_throttle(1, '{} {}: Backward jump in time {:0.6f} vs {:0.6f}'.format(
                         self.name, txt, self.tlast[txt], t))
-                    return
+                    #return
 
                 # Detect duplicate timestamps due to message synchronization.
                 if self.tlast[txt] >= t:
@@ -175,6 +181,15 @@ class HeartRate(object):
                     self.clear_msmt_state()
                     self.tlast[txt] = t
                     return
+
+                # Detect region message header mismatch with image header.
+                region_t = region.header.stamp.to_sec()
+                if abs(t - region_t) > T_EPS:
+                    #self.clear_msmt_state()
+                    self.tlast[txt] = t
+                    rospy.logwarn_throttle(1, '{} {}: Region out of sync with image {:0.6f} vs {:0.6f}'.format(
+                        self.name, txt, region_t, t))
+                    #return
 
                 if self.delta[txt] is None:
                     self.delta[txt] = t - self.tlast[txt]
@@ -199,6 +214,12 @@ class HeartRate(object):
             self.red_msmt_buffer.append(red_image)
             self.nir_msmt_buffer.append(nir_image)
             self.blue_msmt_buffer.append(blue_image)
+            self.red_offset_buffer.append(np.array([red_region.polygon.points[0].x,
+                                                    red_region.polygon.points[0].y]))
+            self.nir_offset_buffer.append(np.array([nir_region.polygon.points[0].x,
+                                                    nir_region.polygon.points[0].y]))
+            self.blue_offset_buffer.append(np.array([blue_region.polygon.points[0].x,
+                                                     blue_region.polygon.points[0].y]))
             self.tf = t
         # End locked region.
 
@@ -221,10 +242,12 @@ class HeartRate(object):
             ti = self.ti
             tf = self.tf
             t_data = list(self.t_buffer)
-            roi_data = list(self.roi_buffer)
             red_data = list(self.red_msmt_buffer)
             nir_data = list(self.nir_msmt_buffer)
             blue_data = list(self.blue_msmt_buffer)
+            red_offset = list(self.red_offset_buffer)
+            nir_offset = list(self.nir_offset_buffer)
+            blue_offset = list(self.blue_offset_buffer)
             do_it = ti is not None and tf is not None and tf - ti >= FULL_MSMT_PERIOD_SEC
             if do_it:
                 self.clear_buffers()
@@ -238,26 +261,18 @@ class HeartRate(object):
             t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
                                  args=(event, ti, tf,
                                        red_data, nir_data, blue_data,
-                                       t_data, roi_data, delta))
+                                       red_offset, nir_offset, blue_offset,
+                                       t_data, delta))
             t.start()
 
-    def msmt_callback(self, event, ti, tf, red_data, nir_data, blue_data, t_data, roi_data, delta):
+    def msmt_callback(self, event, ti, tf,
+                      red_data, nir_data, blue_data,
+                      red_offset, nir_offset, blue_offset,
+                      t_data, delta):
         msmt_n = len(red_data)
-
-        if msmt_n != len(nir_data) or msmt_n != len(blue_data) or msmt_n != len(t_data):
-            rospy.logerror('{}: mismatched channels {} {} {} {}'.format(self.name, msmt_n,
-                                                                        len(nir_data),
-                                                                        len(blue_data),
-                                                                        len(t_data)))
-            return
 
         if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
             rospy.loginfo_throttle(1, '{}: not enough samples {}'.format(self.name, msmt_n))
-            return
-
-        if len(roi_data) == 0:
-            rospy.loginfo_throttle(1, '{}: no ROI {}; ti: {:.1f}; tf: {:.1f}'.format(
-                self.name, len(roi_data), ti, tf))
             return
 
         if DEBUG_MKDIR:
@@ -276,19 +291,29 @@ class HeartRate(object):
         red_tracker = ROITracker(CV_TRACKER_TYPE)
         nir_tracker = ROITracker(CV_TRACKER_TYPE)
         blue_tracker = ROITracker(CV_TRACKER_TYPE)
+        red_last_loc = np.array([0, 0])
+        nir_last_loc = np.array([0, 0])
+        blue_last_loc = np.array([0, 0])
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
-        for red, nir, blue, t in zip(red_data, nir_data, blue_data, t_data):
-            # TODO - how to use this information?
-            # Find the next ROI update from the detect / track routine.
-            #while ri < len(roi_data) - 1 and t >= roi_data[ri][0]:
-            #    ri += 1
-
-            for chan, tracker, cc, txt in zip((red, nir, blue),
-                                              (red_tracker,
-                                               nir_tracker,
-                                               blue_tracker),
-                                              CHAN_IDX, CHAN_TXT):
+        for red, nir, blue, red_off, nir_off, blue_off, t in zip(red_data,
+                                                                 nir_data,
+                                                                 blue_data,
+                                                                 red_offset,
+                                                                 nir_offset,
+                                                                 blue_offset,
+                                                                 t_data):
+            for chan, off, last_loc, tracker, cc, txt in zip((red, nir, blue),
+                                                             (red_off,
+                                                              nir_off,
+                                                              blue_off),
+                                                             (red_last_loc,
+                                                              nir_last_loc,
+                                                              blue_last_loc),
+                                                             (red_tracker,
+                                                              nir_tracker,
+                                                              blue_tracker),
+                                                             CHAN_IDX, CHAN_TXT):
                 (rows, cols) = chan.shape
                 r = int(rows * DETECT_TRACK_SCALE_FACTOR)
                 c = int(cols * DETECT_TRACK_SCALE_FACTOR)
@@ -321,14 +346,17 @@ class HeartRate(object):
                     bboxes[0][2] += SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
                     bboxes[0][3] = bboxes[0][1] + SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hface
                     try:
+                        last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
                         tracker.start_track(resize, bboxes[0])
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
                             self.name, txt, ti, tf, bboxes[0], e))
                         return
                 else:
-                    tracker.update(resize)
+                    expected_in_region = last_loc - off * DETECT_TRACK_SCALE_FACTOR
+                    tracker.update(resize, expected_in_region)
                     bboxes = np.array([tracker.bbox])
+                    last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
 
                 xmin, ymin, xmax, ymax = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
                 if xmin < 0: xmin = 0
@@ -347,13 +375,13 @@ class HeartRate(object):
 
                 if DEBUG_SAVE_IMAGES:
                     try:
-                        cv_image = crop.copy()
+                        cv_image = chan.copy()
                         # Draw vertical lines (constant x coordinate).
-                        for xline in range(0, crop.shape[1], xd):
-                            cv2.line(cv_image, (xline, 0), (xline, crop.shape[0]), (255,255,255), 1)
+                        for xline in range(xmin, xmax, xd):
+                            cv2.line(cv_image, (xline, ymin), (xline, ymax), (255,255,255), 3)
                         # Draw vertical lines (constant y coordinate).
-                        for yline in range(0, crop.shape[0], yd):
-                            cv2.line(cv_image, (0, yline), (crop.shape[1], yline), (255,255,255), 1)
+                        for yline in range(ymin, ymax, yd):
+                            cv2.line(cv_image, (xmin, yline), (xmax, yline), (255,255,255), 3)
                         cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), cv_image)
                     except Exception as e:
                         print(e)
@@ -429,8 +457,8 @@ class HeartRate(object):
             fig = [None]*NUM_FIG
             data_axes = [None]*NUM_FIG
             for ii in range(NUM_FIG):
-                fig[ii] = plt.figure(figsize=(NUM_PLOT_X * 10,
-                                              NUM_PLOT_Y * 10))
+                fig[ii] = plt.figure(figsize=(NUM_PLOT_X * 20,
+                                              NUM_PLOT_Y * 20))
                 data_axes[ii] = [fig[ii].add_subplot(NUM_PLOT_Y, NUM_PLOT_X, i) for i in range(1, NUM_PLOT_X * NUM_PLOT_Y + 1)]
             for rr in range(len(data_axes[0])):
                 if rr > patch_avg.shape[1] - 1:
@@ -442,7 +470,8 @@ class HeartRate(object):
                     data_axes[CC+2*ss+1][rr].plot(freq * 60.0, patch_freq[:, rr, ss])
                     data_axes[CC+2*ss+1][rr].set_xticks(np.arange(freq[0] * 60.0,
                                                                   freq[-1] * 60.0,
-                                                                  20.0))
+                                                                  10.0))
+                    data_axes[CC+2*ss+1][rr].grid()
 
                 for cc in CHAN_IDX:
                     data_axes[cc][rr].plot(patch_filt[:, rr, cc])
@@ -478,27 +507,15 @@ class HeartRate(object):
         rospy.loginfo('{}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
             self.name, beats, msmt_n, ti, tf, (tf - ti) / msmt_n))
 
-    def region_callback(self, data):
-        if len(data.polygon.points) != 2:
-            return
-
-        xmin = int(data.polygon.points[0].x)
-        ymin = int(data.polygon.points[0].y)
-        xmax = int(data.polygon.points[1].x)
-        ymax = int(data.polygon.points[1].y)
-        if (xmax - xmin) <= 0 or (ymax - ymin) <= 0:
-            return
-
-        with self.lock:
-            self.roi_buffer.append([data.header.stamp.to_sec(), xmin, ymin, xmax, ymax])
-
     def clear_buffers(self):
         # Measurement buffers
         self.t_buffer = []
-        self.roi_buffer = []
         self.red_msmt_buffer = []
         self.nir_msmt_buffer = []
         self.blue_msmt_buffer = []
+        self.red_offset_buffer = []
+        self.nir_offset_buffer = []
+        self.blue_offset_buffer = []
 
         self.start_msmt = True
 
@@ -534,21 +551,32 @@ class HeartRate(object):
         self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
                                                         queue_size=IMG_QUEUE_SIZE,
                                                         buff_size=IMG_BUF_SIZE)
+        self.red_region_sub = message_filters.Subscriber(RED_REGION_IN_IMAGE_TOPIC,
+                                                         PolygonStamped,
+                                                         queue_size=IMG_QUEUE_SIZE)
+
         self.nir_image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image,
                                                         queue_size=IMG_QUEUE_SIZE,
                                                         buff_size=IMG_BUF_SIZE)
+        self.nir_region_sub = message_filters.Subscriber(NIR_REGION_IN_IMAGE_TOPIC,
+                                                         PolygonStamped,
+                                                         queue_size=IMG_QUEUE_SIZE)
+
         self.blue_image_sub = message_filters.Subscriber(BLUE_IMAGE_TOPIC, Image,
                                                          queue_size=IMG_QUEUE_SIZE,
                                                          buff_size=IMG_BUF_SIZE)
+        self.blue_region_sub = message_filters.Subscriber(BLUE_REGION_IN_IMAGE_TOPIC,
+                                                          PolygonStamped,
+                                                          queue_size=IMG_QUEUE_SIZE)
 
         self.approx_image_sync = message_filters.ApproximateTimeSynchronizer([self.red_image_sub,
                                                                               self.nir_image_sub,
-                                                                              self.blue_image_sub],
+                                                                              self.blue_image_sub,
+                                                                              self.red_region_sub,
+                                                                              self.nir_region_sub,
+                                                                              self.blue_region_sub],
                                                                              200, 0.1)
         self.approx_image_sync.registerCallback(self.image_callback)
-
-        self.region_sub = rospy.Subscriber(RED_FACE_IN_ROI_REGION_TOPIC, PolygonStamped,
-                                           self.region_callback, queue_size=IMG_QUEUE_SIZE)
 
         self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
                                                     self.tracking_status_callback, queue_size=1)
