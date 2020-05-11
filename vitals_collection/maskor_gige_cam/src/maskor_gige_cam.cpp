@@ -607,6 +607,8 @@ int GigeCam::_findDevices() {
       {
         std::cout << "  Type: USB Controller " << std::endl;
         std::cout << "  Name: " << USB->GetName().GetAscii() << std::endl << std::endl;
+	std::cout << "Skipping USB device" << std::endl;
+	continue;
       }
 
       std::cout << "Scanning interface " << i << " for Devices...." << std::endl;
