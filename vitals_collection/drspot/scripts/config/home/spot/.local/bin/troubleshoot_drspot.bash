@@ -76,9 +76,32 @@ exec_and_log "roswtf"
 
 # ROS nodes
 TIMEOUT=2
+## Image rates
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_image_raw"
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/temperature_image"
 exec_and_log "rostopic hz /${DRSPOT_THERMAL_NS}/thermal_image_palette"
+exec_and_log "rostopic hz /debug_thermal_tracking"
+
+for band in red nir narrow_nir; do
+    exec_and_log "rostopic hz /camera_array/mono_${band}/image_raw"
+    exec_and_log "rostopic hz /mono_${band}_cropped"
+done
+exec_and_log "rostopic hz /debug_mono_red_tracking"
+
+## Small messages rates and contents
+exec_and_log "rostopic echo /thermal_reference_temp"
+
+exec_and_log "rostopic echo /skin_temp_roi"
+exec_and_log "rostopic echo /mask_roi"
+exec_and_log "rostopic echo /ir_tracking_status"
+exec_and_log "rostopic echo /skin_temperature_frame_msmt"
+exec_and_log "rostopic echo /respiratory_rate_frame_msmt"
+
+for band in red nir narrow_nir; do
+    exec_and_log "rostopic echo /mono_${band}_region"
+    exec_and_log "rostopic echo /mono_${band}_tracking_status"
+done
+exec_and_log "rostopic echo /mono_red_roi"
 unset TIMEOUT
 
 # Devices

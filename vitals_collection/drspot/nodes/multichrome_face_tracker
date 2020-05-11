@@ -42,10 +42,10 @@ NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
 NIR_CROPPED_IMAGE_TOPIC = 'mono_nir_cropped'
 NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
 
-BLUE_IMAGE_TOPIC = 'camera_array/mono_blue/image_raw'
-BLUE_TRACKING_STATUS_TOPIC = 'mono_blue_tracking_status'
-BLUE_CROPPED_IMAGE_TOPIC = 'mono_blue_cropped'
-BLUE_REGION_IN_IMAGE_TOPIC = 'mono_blue_region'
+NARROW_NIR_IMAGE_TOPIC = 'camera_array/mono_narrow_nir/image_raw'
+NARROW_NIR_TRACKING_STATUS_TOPIC = 'mono_narrow_nir_tracking_status'
+NARROW_NIR_CROPPED_IMAGE_TOPIC = 'mono_narrow_nir_cropped'
+NARROW_NIR_REGION_IN_IMAGE_TOPIC = 'mono_narrow_nir_region'
 
 # Buffer about 1 second of full-size frames.
 IMG_QUEUE_SIZE = 35
@@ -53,6 +53,9 @@ IMG_BUF_SIZE = IMG_QUEUE_SIZE * 2448 * 2048
 
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
+
+RATE_CUT = True
+RATE_DIV = 2
 
 DETECT_TRACK_SCALE_FACTOR = 0.125
 
@@ -77,11 +80,18 @@ ROI_HALF_WIDTH_FRAC_OF_FACE = 1.25
 # Therefore, we use it as a proxy for the depth-dependent ROI offset
 # we need to apply because the camera centers are offset.
 NIR_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
-BLUE_X_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
-BLUE_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
+NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
+NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
+        if RATE_CUT:
+            if self.RATE_CUT is None: self.RATE_CUT = 0
+            self.RATE_CUT += 1
+            if self.RATE_CUT == RATE_DIV:
+                self.RATE_CUT = 0
+            else:
+                return
         det_msg = Bool()
         det_msg.data = False
         t = data.header.stamp.to_sec()
@@ -273,6 +283,9 @@ class FaceDetectorTracker(object):
             return self.roi
 
     def __init__(self, name):
+        if RATE_CUT:
+            self.RATE_CUT = None
+
         self.name = name
 
         self.lock = threading.Lock()
@@ -304,6 +317,13 @@ class FaceDetectorTracker(object):
 
 class CalibratedCameraTrack(object):
     def image_callback(self, data):
+        if RATE_CUT:
+            if self.RATE_CUT is None: self.RATE_CUT = 0
+            self.RATE_CUT += 1
+            if self.RATE_CUT == RATE_DIV:
+                self.RATE_CUT = 0
+            else:
+                return
         det_msg = Bool()
         det_msg.data = False
         t = data.header.stamp.to_sec()
@@ -393,6 +413,9 @@ class CalibratedCameraTrack(object):
                  # Expressed as a fraction of the ROI height.
                  x_pix_offset, y_pix_offset,
                  rot180=False):
+        if RATE_CUT:
+            self.RATE_CUT = None
+
         self.name = name
 
         self.face_tracker = face_tracker
@@ -423,12 +446,12 @@ if __name__ == '__main__':
                                     NIR_REGION_IN_IMAGE_TOPIC,
                                     0,
                                     NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
-    blue_cct = CalibratedCameraTrack('blue_' + rospy.get_name(), fdt,
-                                     BLUE_IMAGE_TOPIC,
-                                     BLUE_TRACKING_STATUS_TOPIC,
-                                     BLUE_CROPPED_IMAGE_TOPIC,
-                                     BLUE_REGION_IN_IMAGE_TOPIC,
-                                     BLUE_X_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                     BLUE_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                     rot180=True)
+    narrow_nir_cct = CalibratedCameraTrack('narrow_nir_' + rospy.get_name(), fdt,
+                                           NARROW_NIR_IMAGE_TOPIC,
+                                           NARROW_NIR_TRACKING_STATUS_TOPIC,
+                                           NARROW_NIR_CROPPED_IMAGE_TOPIC,
+                                           NARROW_NIR_REGION_IN_IMAGE_TOPIC,
+                                           NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT,
+                                           NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
+                                           rot180=True)
     rospy.spin()

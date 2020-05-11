@@ -71,11 +71,8 @@ class ROITracker(object):
                 dist_sq_with_min = x**2 + y**2
                 # TODO - make the distance cost layer configurable.
                 dist_sq_with_min[dist_sq_with_min < 200] = 200
-                max_vals = np.array([dist_sq_with_min[0,0],
-                                     dist_sq_with_min[0,-1],
-                                     dist_sq_with_min[-1,0],
-                                     dist_sq_with_min[-1,-1]])
-                dist_sq_with_min /= np.amax(max_vals) * 2.0
+                tshape = self.template.shape
+                dist_sq_with_min *= tshape[0] * tshape[1] / 100.0
                 if self.tracker_type in ['TM_SQDIFF', 'TM_SQDIFF_NORMED']:
                     # Minimum value is best, so add distance from expected location.
                     res += dist_sq_with_min

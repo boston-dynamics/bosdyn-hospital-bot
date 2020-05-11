@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEBUG_RATE_CUT = False
-DEBUG_RATE_DIV = 2
+# The algorithm implemented here is based on:
+# https://www.nature.com/articles/srep38609
+
 DEBUG_SAVE_IMAGES = False
 DEBUG_SAVE_DATA = False
 DEBUG_MKDIR = DEBUG_SAVE_IMAGES or DEBUG_SAVE_DATA
@@ -44,24 +45,23 @@ RED_IMAGE_TOPIC = 'mono_red_cropped'
 RED_REGION_IN_IMAGE_TOPIC = 'mono_red_region'
 NIR_IMAGE_TOPIC = 'mono_nir_cropped'
 NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
-BLUE_IMAGE_TOPIC = 'mono_blue_cropped'
-BLUE_REGION_IN_IMAGE_TOPIC = 'mono_blue_region'
+NARROW_NIR_IMAGE_TOPIC = 'mono_narrow_nir_cropped'
+NARROW_NIR_REGION_IN_IMAGE_TOPIC = 'mono_narrow_nir_region'
 
 TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 
 # Outputs.
 MSMT_TOPIC = 'full_heart_rate'
-DATA_TOPIC = 'full_data_heart_rate'
 
 # Carotid
-# SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = -0.2
+# SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.2
 # SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.2
-# SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
-# NUM_SUBREGIONS_X = 6
+# SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.3
+# NUM_SUBREGIONS_X = 12
 # NUM_SUBREGIONS_Y = 5
 
 # Forehead
-SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.0
+SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
 NUM_SUBREGIONS_X = 10
@@ -75,11 +75,14 @@ MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 IMG_QUEUE_SIZE = 3 * 35
 IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
+RATE_CUT = False
+RATE_DIV = 2
+
 MAX_DELTA_T = 0.1 # seconds.
 
 T_EPS = 1e-4
 
-DETECT_TRACK_SCALE_FACTOR = 0.5
+DETECT_TRACK_SCALE_FACTOR = 1.0
 
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.9
 FACE_DETECTION_SCALE = 1.0
@@ -96,19 +99,26 @@ MIN_HEART_HZ = 45.0 / 60.0
 MAX_HEART_HZ = 220.0 / 60.0
 # Minimum of 30 beats per minute in stored FFT.
 MIN_HZ = 30.0 / 60.0
-# Maximum of 440 beats per minute to look for the 2nd harmonic.
+# Enough to look for the 2nd harmonic of heart rate.
 MAX_HZ = 2 * MAX_HEART_HZ
 
 CHAN_IDX = (0, 1, 2)
-CHAN_TXT = ('red', 'nir', 'blue')
+CHAN_TXT = ('red', 'nir', 'narrow_nir')
 CC = len(CHAN_IDX)
 
-PBV_STATIC = np.array([ 0.68,  1.0,    0.70])
-PBV_UPDATE = np.array([-0.014, 0.0024, 0.0013])
+# halogen illumination, IMX264 monochrome with BN660, BP880, BN470
+#PBV_STATIC = np.array([ 0.68,  1.0,    0.73])
+#PBV_UPDATE = np.array([-0.014, 0.0024, 0.0012])
+
+# halogen illumination, IMX264 monochrome with BN660, BP880, BN810
+PBV_STATIC = np.array([ 0.68,  1.0,    0.56])
+PBV_UPDATE = np.array([-0.014, 0.0024, -0.0003])
+
+# sunlight illumination, IMX264 monochrome with BN660, BP880, BN810
+#PBV_STATIC = np.array([ 1.0,   0.56,    0.42])
+#PBV_UPDATE = np.array([-0.021, 0.0013, -0.0003])
 
 PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
-
-NUM_FIG = len(CHAN_IDX) + 2 * len(PBV_TO_CHECK)
 
 def grad(im) :
     # Calculate the x and y gradients using Sobel operator
@@ -131,23 +141,19 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
     y = signal.lfilter(b, a, data, axis=axis)
     return y
 
-if DEBUG_RATE_CUT:
-    _TMP_ = None
-
 class HeartRate(object):
-    def image_callback(self, red_image_data, nir_image_data, blue_image_data,
-                       red_region, nir_region, blue_region):
-        if DEBUG_RATE_CUT:
-            global _TMP_
-            if _TMP_ is None: _TMP_ = 0
-            _TMP_ += 1
-            if _TMP_ == DEBUG_RATE_DIV:
-                _TMP_ = 0
+    def image_callback(self, red_image_data, nir_image_data, narrow_nir_image_data,
+                       red_region, nir_region, narrow_nir_region):
+        if RATE_CUT:
+            if self.RATE_CUT is None: self.RATE_CUT = 0
+            self.RATE_CUT += 1
+            if self.RATE_CUT == RATE_DIV:
+                self.RATE_CUT = 0
             else:
                 return
         with self.lock:
-            chans = zip((red_image_data, nir_image_data, blue_image_data),
-                        (red_region, nir_region, blue_region),
+            chans = zip((red_image_data, nir_image_data, narrow_nir_image_data),
+                        (red_region, nir_region, narrow_nir_region),
                         CHAN_TXT)
 
             for image_data, region, txt in chans:
@@ -199,7 +205,7 @@ class HeartRate(object):
                                               desired_encoding='passthrough')
         nir_image = self.bridge.imgmsg_to_cv2(nir_image_data,
                                               desired_encoding='passthrough')
-        blue_image = self.bridge.imgmsg_to_cv2(blue_image_data,
+        narrow_nir_image = self.bridge.imgmsg_to_cv2(narrow_nir_image_data,
                                                desired_encoding='passthrough')
 
         t = red_image_data.header.stamp.to_sec()
@@ -209,13 +215,13 @@ class HeartRate(object):
             self.t_buffer.append(t)
             self.red_msmt_buffer.append(red_image)
             self.nir_msmt_buffer.append(nir_image)
-            self.blue_msmt_buffer.append(blue_image)
+            self.narrow_nir_msmt_buffer.append(narrow_nir_image)
             self.red_offset_buffer.append(np.array([red_region.polygon.points[0].x,
                                                     red_region.polygon.points[0].y]))
             self.nir_offset_buffer.append(np.array([nir_region.polygon.points[0].x,
                                                     nir_region.polygon.points[0].y]))
-            self.blue_offset_buffer.append(np.array([blue_region.polygon.points[0].x,
-                                                     blue_region.polygon.points[0].y]))
+            self.narrow_nir_offset_buffer.append(np.array([narrow_nir_region.polygon.points[0].x,
+                                                           narrow_nir_region.polygon.points[0].y]))
             self.tf = t
         # End locked region.
 
@@ -240,10 +246,10 @@ class HeartRate(object):
             t_data = list(self.t_buffer)
             red_data = list(self.red_msmt_buffer)
             nir_data = list(self.nir_msmt_buffer)
-            blue_data = list(self.blue_msmt_buffer)
+            narrow_nir_data = list(self.narrow_nir_msmt_buffer)
             red_offset = list(self.red_offset_buffer)
             nir_offset = list(self.nir_offset_buffer)
-            blue_offset = list(self.blue_offset_buffer)
+            narrow_nir_offset = list(self.narrow_nir_offset_buffer)
             do_it = ti is not None and tf is not None and tf - ti >= FULL_MSMT_PERIOD_SEC
             if do_it:
                 self.clear_buffers()
@@ -256,14 +262,14 @@ class HeartRate(object):
             # Spawn a thread to do the measurement.
             t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
                                  args=(event, ti, tf,
-                                       red_data, nir_data, blue_data,
-                                       red_offset, nir_offset, blue_offset,
+                                       red_data, nir_data, narrow_nir_data,
+                                       red_offset, nir_offset, narrow_nir_offset,
                                        t_data, delta))
             t.start()
 
     def msmt_callback(self, event, ti, tf,
-                      red_data, nir_data, blue_data,
-                      red_offset, nir_offset, blue_offset,
+                      red_data, nir_data, narrow_nir_data,
+                      red_offset, nir_offset, narrow_nir_offset,
                       t_data, delta):
         msmt_n = len(red_data)
 
@@ -292,29 +298,29 @@ class HeartRate(object):
         # computation time.
         red_tracker = ROITracker(CV_TRACKER_TYPE)
         nir_tracker = ROITracker(CV_TRACKER_TYPE)
-        blue_tracker = ROITracker(CV_TRACKER_TYPE)
+        narrow_nir_tracker = ROITracker(CV_TRACKER_TYPE)
         red_last_loc = np.array([0, 0])
         nir_last_loc = np.array([0, 0])
-        blue_last_loc = np.array([0, 0])
+        narrow_nir_last_loc = np.array([0, 0])
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
-        for red, nir, blue, red_off, nir_off, blue_off, t in zip(red_data,
-                                                                 nir_data,
-                                                                 blue_data,
-                                                                 red_offset,
-                                                                 nir_offset,
-                                                                 blue_offset,
-                                                                 t_data):
-            for chan, off, last_loc, tracker, cc, txt in zip((red, nir, blue),
+        for red, nir, narrow_nir, red_off, nir_off, narrow_nir_off, t in zip(red_data,
+                                                                             nir_data,
+                                                                             narrow_nir_data,
+                                                                             red_offset,
+                                                                             nir_offset,
+                                                                             narrow_nir_offset,
+                                                                             t_data):
+            for chan, off, last_loc, tracker, cc, txt in zip((red, nir, narrow_nir),
                                                              (red_off,
                                                               nir_off,
-                                                              blue_off),
+                                                              narrow_nir_off),
                                                              (red_last_loc,
                                                               nir_last_loc,
-                                                              blue_last_loc),
+                                                              narrow_nir_last_loc),
                                                              (red_tracker,
                                                               nir_tracker,
-                                                              blue_tracker),
+                                                              narrow_nir_tracker),
                                                              CHAN_IDX, CHAN_TXT):
                 (rows, cols) = chan.shape
                 r = int(rows * DETECT_TRACK_SCALE_FACTOR)
@@ -347,8 +353,8 @@ class HeartRate(object):
                     bboxes[0][1] += SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hface
                     bboxes[0][2] += SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
                     bboxes[0][3] = bboxes[0][1] + SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hface
+                    last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
                     try:
-                        last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
                         tracker.start_track(resize, bboxes[0])
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
@@ -401,13 +407,7 @@ class HeartRate(object):
 
         patch_avg /= np.mean(patch_avg, axis=0)
         patch_avg -= 1.0
-        #patch_avg = signal.detrend(patch_avg, axis=0)
-
-        patch_filt = butter_bandpass_filter(patch_avg, MIN_HZ, MAX_HZ,
-                                            1.0 / delta,
-                                            axis=0)
-
-        patch_pulse = np.zeros((patch_avg.shape[0], patch_avg.shape[1], len(PBV_TO_CHECK)))
+        patch_pulse = np.zeros((msmt_n, patch_avg.shape[1], len(PBV_TO_CHECK)))
 
         # Find the range of real frequency bins that we are interested in.
         fminind = int(MIN_HZ * msmt_n * delta)
@@ -443,9 +443,6 @@ class HeartRate(object):
                 np.savetxt(output_dir + 'raw_{:03d}.csv'.format(rr),
                            patch_avg[:, rr, :].reshape((-1,CC)),
                            delimiter=',', fmt='%.3e')
-                np.savetxt(output_dir + 'filt_{:03d}.csv'.format(rr),
-                           patch_filt[:, rr, :].reshape((-1,CC)),
-                           delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'pulse_{:03d}.csv'.format(rr),
                            patch_pulse[:, rr, :].reshape((-1, patch_pulse.shape[2])),
                            delimiter=',', fmt='%.3e')
@@ -459,6 +456,16 @@ class HeartRate(object):
                        delimiter=',', fmt='%.1f')
 
         beats = freq[peak_freq_count.argmax()] * 60.0
+
+        if DEBUG_SAVE_DATA:
+            for rr in range(patch_avg.shape[1]):
+                patch_filt = butter_bandpass_filter(patch_avg,
+                                                    (beats - 5.0) / 60.0,
+                                                    (beats + 5.0) / 60.0,
+                                                    1.0 / delta, axis=0)
+                np.savetxt(output_dir + 'filt_{:03d}.csv'.format(rr),
+                           patch_filt[:, rr, :].reshape((-1,CC)),
+                           delimiter=',', fmt='%.3e')
         msg = Float32()
         msg.data = beats
         self.msmt_pub.publish(msg)
@@ -470,10 +477,10 @@ class HeartRate(object):
         self.t_buffer = []
         self.red_msmt_buffer = []
         self.nir_msmt_buffer = []
-        self.blue_msmt_buffer = []
+        self.narrow_nir_msmt_buffer = []
         self.red_offset_buffer = []
         self.nir_offset_buffer = []
-        self.blue_offset_buffer = []
+        self.narrow_nir_offset_buffer = []
 
         self.start_msmt = True
 
@@ -486,12 +493,15 @@ class HeartRate(object):
         self.ti = None
         self.tf = None
 
-        self.tlast = dict(red=None, nir=None, blue=None)
-        self.delta = dict(red=None, nir=None, blue=None)
+        self.tlast = dict(red=None, nir=None, narrow_nir=None)
+        self.delta = dict(red=None, nir=None, narrow_nir=None)
 
         self.clear_buffers()
 
     def __init__(self, name):
+        if RATE_CUT:
+            self.RATE_CUT = None
+
         self.name = name
 
         self.lock = threading.Lock()
@@ -519,19 +529,19 @@ class HeartRate(object):
                                                          PolygonStamped,
                                                          queue_size=IMG_QUEUE_SIZE)
 
-        self.blue_image_sub = message_filters.Subscriber(BLUE_IMAGE_TOPIC, Image,
+        self.narrow_nir_image_sub = message_filters.Subscriber(NARROW_NIR_IMAGE_TOPIC, Image,
                                                          queue_size=IMG_QUEUE_SIZE,
                                                          buff_size=IMG_BUF_SIZE)
-        self.blue_region_sub = message_filters.Subscriber(BLUE_REGION_IN_IMAGE_TOPIC,
+        self.narrow_nir_region_sub = message_filters.Subscriber(NARROW_NIR_REGION_IN_IMAGE_TOPIC,
                                                           PolygonStamped,
                                                           queue_size=IMG_QUEUE_SIZE)
 
         self.approx_image_sync = message_filters.ApproximateTimeSynchronizer([self.red_image_sub,
                                                                               self.nir_image_sub,
-                                                                              self.blue_image_sub,
+                                                                              self.narrow_nir_image_sub,
                                                                               self.red_region_sub,
                                                                               self.nir_region_sub,
-                                                                              self.blue_region_sub],
+                                                                              self.narrow_nir_region_sub],
                                                                              200, 0.1)
         self.approx_image_sync.registerCallback(self.image_callback)
 
