@@ -72,6 +72,21 @@ roscd drspot
 rosrun rqt_gui rqt_gui --perspective-file ./resources/live_drspot.perspective
 ```
 
+## Disable use of the thermal reference
+This is also relevant for playback, as some of the datasets do not have thermal reference data.
+
+Add the following argument to the `roslaunch drspot vitals.launch` call: `use_thermal_reference:=false`.
+
+So, for nominal live usage:
+```
+roslaunch drspot vitals.launch use_thermal_reference:=false
+```
+
+And for nominal playback usage:
+```
+roslaunch drspot vitals.launch launch_drivers:=false use_thermal_reference:=false
+```
+
 ## Manually set the IR camera data source and namespace
 
 For Optris:
