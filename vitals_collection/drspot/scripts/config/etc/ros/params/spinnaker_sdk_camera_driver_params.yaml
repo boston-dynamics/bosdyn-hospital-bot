@@ -3,7 +3,7 @@ cam_ids:
 - 19415951
 - 19403949
 cam_aliases:
-- mono_red
-- mono_nir
-- mono_constant
+- mono_660
+- mono_810
+- mono_880
 master_cam: 19403948

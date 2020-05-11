@@ -7,4 +7,4 @@
 
 cd /log
 rosbag record -o auto --split --size=500 -a -x \
-       "(.*)/compressed(.*)|(.*)/theora|(.*)/theora/(.*)|(.*)camera_array(.*)|(.*)temperature_image2|(.*)thermal_image_palette(.*)|(.*)camera_info"
+       "(.*)/compressed(.*)|(.*)/theora|(.*)/theora/(.*)|(.*)camera_array(.*)|(.*)temperature_image2|(.*)thermal_image_palette(.*)|(.*)camera_info|(.*)debug_(.*)_tracking(.*)"

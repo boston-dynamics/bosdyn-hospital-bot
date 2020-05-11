@@ -14,276 +14,497 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEBUG_PLOT = False
-DEBUG_IMAGE = False
-if DEBUG_PLOT:
-    import matplotlib.pyplot as plt
-if DEBUG_IMAGE:
-    import cv2
+# The algorithm implemented here is based on:
+# https://www.nature.com/articles/srep38609
+
+DEBUG_SAVE_IMAGES = False
+DEBUG_SAVE_DATA = False
+DEBUG_MKDIR = DEBUG_SAVE_IMAGES or DEBUG_SAVE_DATA
+if DEBUG_MKDIR:
+    LOG_DIR = '/log'
+    import os
 
 import numpy as np
+from scipy import signal
 import threading
+import cv2
+import math
+import insightface
 
 import rospy
+import message_filters
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
-IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
-FRAME_MSMT_TOPIC_SUFFIX = '_frame_msmt'
-FULL_TOPIC = 'full_heart_rate'
-REPEAT_TOPIC = 'repeated_heart_rate'
-FULL_DATA_TOPIC = 'full_data_heart_rate'
-REPEAT_DATA_TOPIC = 'repeated_data_heart_rate'
-REGION_TOPIC = 'carotid_roi'
+from drspot.utils.tracking import ROITracker
+
+# Inputs.
+RED_IMAGE_TOPIC = 'mono_red_cropped'
+RED_REGION_IN_IMAGE_TOPIC = 'mono_red_region'
+NIR_IMAGE_TOPIC = 'mono_nir_cropped'
+NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
+NARROW_NIR_IMAGE_TOPIC = 'mono_narrow_nir_cropped'
+NARROW_NIR_REGION_IN_IMAGE_TOPIC = 'mono_narrow_nir_region'
+
 TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
+
+# Outputs.
+MSMT_TOPIC = 'full_heart_rate'
+
+# Carotid
+# SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.2
+# SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 1.2
+# SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.3
+# NUM_SUBREGIONS_X = 12
+# NUM_SUBREGIONS_Y = 5
+
+# Forehead
+SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
+SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
+NUM_SUBREGIONS_X = 10
+NUM_SUBREGIONS_Y = 5
+
 HELPER_TIMER_PERIOD_SEC = 1
-REPEAT_MSMT_PERIOD_SEC = 10
-FULL_MSMT_PERIOD_SEC = 20
-NOMINAL_RATE_HZ = 27
-NOMINAL_REPEAT_SAMPLES = REPEAT_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
-NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
+FULL_MSMT_PERIOD_SEC = 10
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
+# Buffer about 3 seconds of cropped frames.
+IMG_QUEUE_SIZE = 3 * 35
+IMG_BUF_SIZE = IMG_QUEUE_SIZE * 1000 * 1000
 
-# Minimum of 30 beats per minute.
-MIN_HEART_HZ = 30.0 / 60.0
-# Maximum of 120 beats per minute.
-MAX_HEART_HZ = 120.0 / 60.0
+RATE_CUT = False
+RATE_DIV = 2
 
-ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
+MAX_DELTA_T = 0.1 # seconds.
+
+T_EPS = 1e-4
+
+DETECT_TRACK_SCALE_FACTOR = 1.0
+
+FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.9
+FACE_DETECTION_SCALE = 1.0
+# Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
+# and/or run on every frame, at the expense of more computation time.
+CV_TRACKER_TYPE = 'TM_CCORR_NORMED'
+
+NUM_PLOT_X = NUM_SUBREGIONS_X
+NUM_PLOT_Y = NUM_SUBREGIONS_Y
+
+# Minimum of 45 beats per minute.
+MIN_HEART_HZ = 45.0 / 60.0
+# Maximum of 220 beats per minute.
+MAX_HEART_HZ = 220.0 / 60.0
+# Minimum of 30 beats per minute in stored FFT.
+MIN_HZ = 30.0 / 60.0
+# Enough to look for the 2nd harmonic of heart rate.
+MAX_HZ = 2 * MAX_HEART_HZ
+
+CHAN_IDX = (0, 1, 2)
+CHAN_TXT = ('red', 'nir', 'narrow_nir')
+CC = len(CHAN_IDX)
+
+# halogen illumination, IMX264 monochrome with BN660, BP880, BN470
+#PBV_STATIC = np.array([ 0.68,  1.0,    0.73])
+#PBV_UPDATE = np.array([-0.014, 0.0024, 0.0012])
+
+# halogen illumination, IMX264 monochrome with BN660, BP880, BN810
+PBV_STATIC = np.array([ 0.68,  1.0,    0.56])
+PBV_UPDATE = np.array([-0.014, 0.0024, -0.0003])
+
+# sunlight illumination, IMX264 monochrome with BN660, BP880, BN810
+#PBV_STATIC = np.array([ 1.0,   0.56,    0.42])
+#PBV_UPDATE = np.array([-0.021, 0.0013, -0.0003])
+
+PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
+
+def grad(im) :
+    # Calculate the x and y gradients using Sobel operator
+    grad_x = cv2.Sobel(im,cv2.CV_32F,1,0,ksize=3)
+    grad_y = cv2.Sobel(im,cv2.CV_32F,0,1,ksize=3)
+
+    # Combine the two gradients
+    grad = cv2.addWeighted(np.absolute(grad_x), 0.5, np.absolute(grad_y), 0.5, 0)
+    return grad
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = signal.butter(order, [low, high], btype='band')
+    return b, a
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = signal.lfilter(b, a, data, axis=axis)
+    return y
 
 class HeartRate(object):
-    def image_callback(self, data):
-        t = data.header.stamp.to_sec()
-
+    def image_callback(self, red_image_data, nir_image_data, narrow_nir_image_data,
+                       red_region, nir_region, narrow_nir_region):
+        if RATE_CUT:
+            if self.RATE_CUT is None: self.RATE_CUT = 0
+            self.RATE_CUT += 1
+            if self.RATE_CUT == RATE_DIV:
+                self.RATE_CUT = 0
+            else:
+                return
         with self.lock:
-            if self.tlast is None:
-                self.tlast = t
-                return
+            chans = zip((red_image_data, nir_image_data, narrow_nir_image_data),
+                        (red_region, nir_region, narrow_nir_region),
+                        CHAN_TXT)
 
-            # Detect backward jumps in time in replay.
-            if self.tlast > t:
-                self.clear_msmt_state()
-                self.tlast = t
-                rospy.logwarn_throttle(1, '{}: Backward jump in time'.format(self.name))
-                return
+            for image_data, region, txt in chans:
+                t = image_data.header.stamp.to_sec()
 
-            # Detect skips in data.
-            if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
-                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
-                self.clear_msmt_state()
-                self.tlast = t
-                return
+                if self.tlast[txt] is None:
+                    self.tlast[txt] = t
+                    return
 
-            if self.delta is None:
-                self.delta = t - self.tlast
-                return
+                # Detect backward jumps in time in replay.
+                if self.tlast[txt] > t + T_EPS:
+                    self.clear_msmt_state()
+                    self.tlast[txt] = t
+                    rospy.logwarn_throttle(1, '{} {}: Backward jump in time {:0.6f} vs {:0.6f}'.format(
+                        self.name, txt, self.tlast[txt], t))
+                    return
 
-            self.delta = self.delta_alpha * (t - self.tlast) + (1 - self.delta_alpha) * self.delta
-            self.tlast = t
+                # Detect duplicate timestamps due to message synchronization.
+                if self.tlast[txt] >= t:
+                    rospy.logwarn('{} {}: Duplicate timestamp {:0.6f} vs {:0.6f}'.format(
+                        self.name, txt, self.tlast[txt], t))
 
-            if not self.roiset:
-                rospy.logwarn_throttle(1, '{}: No ROI received.'.format(self.name))
-                return
+                # Detect skips in data.
+                if t - self.tlast[txt] > MAX_DROPOUT_BEFORE_RESET_SEC:
+                    rospy.logwarn_throttle(1, '{} {}: Dropped samples for {} sec'.format(
+                        self.name, txt, t - self.tlast[txt]))
+                    self.clear_msmt_state()
+                    self.tlast[txt] = t
+                    return
 
-            xmin = self.xmin
-            ymin = self.ymin
-            xmax = self.xmax
-            ymax = self.ymax
+                # Detect region message header mismatch with image header.
+                region_t = region.header.stamp.to_sec()
+                if abs(t - region_t) > T_EPS:
+                    self.clear_msmt_state()
+                    self.tlast[txt] = t
+                    rospy.logwarn_throttle(1, '{} {}: Region out of sync with image {:0.6f} vs {:0.6f}'.format(
+                        self.name, txt, region_t, t))
+                    return
+
+                if self.delta[txt] is None:
+                    self.delta[txt] = t - self.tlast[txt]
+                    return
+
+                self.delta[txt] = self.delta_alpha * (t - self.tlast[txt]) + (1 - self.delta_alpha) * self.delta[txt]
+                self.tlast[txt] = t
         # End locked region.
 
-        cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
-        (rows, cols) = cv_image.shape
+        red_image = self.bridge.imgmsg_to_cv2(red_image_data,
+                                              desired_encoding='passthrough')
+        nir_image = self.bridge.imgmsg_to_cv2(nir_image_data,
+                                              desired_encoding='passthrough')
+        narrow_nir_image = self.bridge.imgmsg_to_cv2(narrow_nir_image_data,
+                                               desired_encoding='passthrough')
 
-        if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
-            with self.lock:
-                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
-                self.clear_msmt_state()
-                return
-
-        if DEBUG_IMAGE:
-            f = 0.25
-            r = int(rows * f)
-            c = int(cols * f)
-            cv_image_dbg = cv2.resize(cv_image, (c, r), interpolation=cv2.INTER_AREA)
-            cv2.rectangle(cv_image_dbg, (int(f*xmin), int(f*ymin)), (int(f*xmax), int(f*ymax)),
-                          (255,0,0), 2)
-            cv2.imshow('heart rate ROI', cv_image_dbg)
-            cv2.waitKey(1)
-
-            cv_region = cv_image[ymin:ymax, xmin:xmax]
-            cv2.imshow('zoomed heart rate ROI', cv_region)
-            cv2.waitKey(1)
-
-        if cv_image[ymin:ymax, xmin:xmax].size == 0:
-            with self.lock:
-                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(self.name, t, data.header.seq))
-                self.clear_msmt_state()
-                return
-
-        val = np.mean(cv_image[ymin:ymax, xmin:xmax])
-
-        if np.isnan(val):
-            with self.lock:
-                rospy.logwarn_throttle(1, '{}: NaN at {}, seq {}'.format(self.name, t, data.header.seq))
-                self.clear_msmt_state()
-                return
-
-        msg = Float32()
-        msg.data = val
-        self.debug_msmt_pub.publish(msg)
-
+        t = red_image_data.header.stamp.to_sec()
         with self.lock:
-            if (self.repeat_msmt_n >= self.repeat_msmt_buffer.size):
-                self.repeat_msmt_buffer.resize((2 * self.repeat_msmt_buffer.size))
-            self.repeat_msmt_buffer[self.repeat_msmt_n] = val
-            if self.repeat_msmt_n == 0: self.r_ti = t
-            self.repeat_msmt_n += 1
-            self.r_tf = t
-
-            if (self.full_msmt_n >= self.full_msmt_buffer.size):
-                self.full_msmt_buffer.resize((2 * self.full_msmt_buffer.size))
-            self.full_msmt_buffer[self.full_msmt_n] = val
-            if self.full_msmt_n == 0: self.f_ti = t
-            self.full_msmt_n += 1
-            self.f_tf = t
+            if self.start_msmt: self.ti = t
+            self.start_msmt = False
+            self.t_buffer.append(t)
+            self.red_msmt_buffer.append(red_image)
+            self.nir_msmt_buffer.append(nir_image)
+            self.narrow_nir_msmt_buffer.append(narrow_nir_image)
+            self.red_offset_buffer.append(np.array([red_region.polygon.points[0].x,
+                                                    red_region.polygon.points[0].y]))
+            self.nir_offset_buffer.append(np.array([nir_region.polygon.points[0].x,
+                                                    nir_region.polygon.points[0].y]))
+            self.narrow_nir_offset_buffer.append(np.array([narrow_nir_region.polygon.points[0].x,
+                                                           narrow_nir_region.polygon.points[0].y]))
+            self.tf = t
         # End locked region.
-
-    def region_callback(self, data):
-        if len(data.polygon.points) != 2:
-            return
-
-        with self.lock:
-            self.xmin = int(data.polygon.points[0].x)
-            self.ymin = int(data.polygon.points[0].y)
-            self.xmax = int(data.polygon.points[1].x)
-            self.ymax = int(data.polygon.points[1].y)
-            if self.xmin < 0 or self.ymin < 0:
-                return
-            if (self.xmax - self.xmin) <= 0 or (self.ymax - self.ymin) <= 0:
-                return
-
-            self.roiset = True
 
     def tracking_status_callback(self, data):
         with self.lock:
-            if not self.roi_valid or not data.data:
+            if not self.tracking_status or not data.data:
                 # Clear the measurement buffer unless we are valid, staying valid.
                 self.clear_msmt_state()
-            self.roi_valid = data.data
+            self.tracking_status = data.data
 
     def msmt_helper_callback(self, event):
         with self.lock:
-            if not self.roi_valid or not self.roiset:
-                rospy.logwarn_throttle(1, '{}: No valid ROI received.'.format(self.name))
+            if not self.tracking_status:
+                rospy.logwarn_throttle(1, '{}: Invalid tracking status.'.format(self.name))
                 self.clear_msmt_state()
                 return
 
-            delta = self.delta
+            delta = self.delta['red']
 
-            r_ti = self.r_ti
-            r_tf = self.r_tf
-            r_msmt_n = self.repeat_msmt_n
-            r_data = np.copy(self.repeat_msmt_buffer[0:self.repeat_msmt_n])
-            r_do_it = r_ti is not None and r_tf is not None and r_tf - r_ti >= REPEAT_MSMT_PERIOD_SEC
-            if r_do_it:
-                self.repeat_msmt_n = 0
-            f_ti = self.f_ti
-            f_tf = self.f_tf
-            f_msmt_n = self.full_msmt_n
-            f_data = np.copy(self.full_msmt_buffer[0:self.full_msmt_n])
-            f_do_it = f_ti is not None and f_tf is not None and f_tf - f_ti >= FULL_MSMT_PERIOD_SEC
-            if f_do_it:
-                self.full_msmt_n = 0
+            ti = self.ti
+            tf = self.tf
+            t_data = list(self.t_buffer)
+            red_data = list(self.red_msmt_buffer)
+            nir_data = list(self.nir_msmt_buffer)
+            narrow_nir_data = list(self.narrow_nir_msmt_buffer)
+            red_offset = list(self.red_offset_buffer)
+            nir_offset = list(self.nir_offset_buffer)
+            narrow_nir_offset = list(self.narrow_nir_offset_buffer)
+            do_it = ti is not None and tf is not None and tf - ti >= FULL_MSMT_PERIOD_SEC
+            if do_it:
+                self.clear_buffers()
         # End locked region.
 
-        if r_do_it:
-            self.msmt_callback(event, r_ti, r_tf, r_msmt_n, r_data, delta, repeated=True)
-        if f_do_it:
-            self.msmt_callback(event, f_ti, f_tf, f_msmt_n, f_data, delta, repeated=False)
+        if do_it:
+            msmt_n = len(red_data)
+            rospy.loginfo('{}: starting computation; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
+                self.name, msmt_n, ti, tf, (tf - ti) / msmt_n))
+            # Spawn a thread to do the measurement.
+            t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
+                                 args=(event, ti, tf,
+                                       red_data, nir_data, narrow_nir_data,
+                                       red_offset, nir_offset, narrow_nir_offset,
+                                       t_data, delta))
+            t.start()
 
-    def msmt_callback(self, event, ti, tf, msmt_n, data, delta, repeated=True):
-        if repeated:
-            txt = 'repeat'
-            period = REPEAT_MSMT_PERIOD_SEC
-            data_pub = self.repeat_data_pub
-            msmt_pub = self.repeat_msmt_pub
-            if DEBUG_PLOT:
-                data_ax = self.repeat_data_ax
-                amp_ax = self.repeat_amp_ax
-        else:
-            txt = 'full'
-            period = FULL_MSMT_PERIOD_SEC
-            data_pub = self.full_data_pub
-            msmt_pub = self.full_msmt_pub
-            if DEBUG_PLOT:
-                data_ax = self.full_data_ax
-                amp_ax = self.full_amp_ax
+    def msmt_callback(self, event, ti, tf,
+                      red_data, nir_data, narrow_nir_data,
+                      red_offset, nir_offset, narrow_nir_offset,
+                      t_data, delta):
+        msmt_n = len(red_data)
 
-        if delta is None or delta < 1e-3 or msmt_n < OK_FRAC_MSMT * period / delta:
-            rospy.loginfo_throttle(1, '{} {}: not enough samples {}'.format(self.name, txt, msmt_n))
+        if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
+            rospy.loginfo_throttle(1, '{}: not enough samples {} in {}:{}'.format(
+                                   self.name, msmt_n, ti, tf))
             return
 
-        msg = Float32MultiArray()
-        msg.data = data
-        data_pub.publish(msg)
+        if delta > MAX_DELTA_T:
+            rospy.logwarn_throttle(1, '{}: Bad delta {} sec in {}:{}'.format(
+                self.name, delta, ti, tf))
+            return
 
-        sp = np.fft.fft(data)
-        freq = np.fft.fftfreq(sp.shape[-1], d=delta)
+        if DEBUG_MKDIR:
+            output_dir = LOG_DIR + os.path.sep + str(int(ti)) + os.path.sep
+            os.mkdir(output_dir)
+            if DEBUG_SAVE_IMAGES:
+                output_img_dir = output_dir + 'img' + os.path.sep
+                os.mkdir(output_img_dir)
+
+        ri = 0 # ROI index over time.
+        patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, 3))
+        ii = 0 # Index into synchronized channels.
+        # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
+        # the multichrome_face_tracker node and/or track on every frame at the expense of more
+        # computation time.
+        red_tracker = ROITracker(CV_TRACKER_TYPE)
+        nir_tracker = ROITracker(CV_TRACKER_TYPE)
+        narrow_nir_tracker = ROITracker(CV_TRACKER_TYPE)
+        red_last_loc = np.array([0, 0])
+        nir_last_loc = np.array([0, 0])
+        narrow_nir_last_loc = np.array([0, 0])
+        detector = insightface.model_zoo.get_model('retinaface_r50_v1')
+        detector.prepare(ctx_id=-1, nms=0.4)
+        for red, nir, narrow_nir, red_off, nir_off, narrow_nir_off, t in zip(red_data,
+                                                                             nir_data,
+                                                                             narrow_nir_data,
+                                                                             red_offset,
+                                                                             nir_offset,
+                                                                             narrow_nir_offset,
+                                                                             t_data):
+            for chan, off, last_loc, tracker, cc, txt in zip((red, nir, narrow_nir),
+                                                             (red_off,
+                                                              nir_off,
+                                                              narrow_nir_off),
+                                                             (red_last_loc,
+                                                              nir_last_loc,
+                                                              narrow_nir_last_loc),
+                                                             (red_tracker,
+                                                              nir_tracker,
+                                                              narrow_nir_tracker),
+                                                             CHAN_IDX, CHAN_TXT):
+                (rows, cols) = chan.shape
+                r = int(rows * DETECT_TRACK_SCALE_FACTOR)
+                c = int(cols * DETECT_TRACK_SCALE_FACTOR)
+                resize = cv2.resize(chan, (c, r), interpolation=cv2.INTER_AREA)
+                if ii == 0:
+                    chan3 = cv2.cvtColor(resize, cv2.COLOR_GRAY2RGB)
+                    bboxes, landmarks = detector.detect(chan3,
+                                                        threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
+                                                        scale=FACE_DETECTION_SCALE)
+                    if DEBUG_SAVE_IMAGES:
+                        # All overlays have colors below in case we use an RGB image in the future.
+                        for box in bboxes.astype(int):
+                            x, y, x2, y2 = box[0:4]
+                            # Draw a rectangle for each face bounding box.
+                            cv2.rectangle(resize, (x, y), (x2, y2), (255,255,255), 2)
+                        for face in landmarks.astype(int):
+                            for point in face:
+                                x, y = point
+                                # Draw a circle at each landmark.
+                                cv2.circle(resize, (x, y), 5, (255,255,255), 1)
+                        cv2.imwrite(output_dir + txt + '_debug_det.png', resize)
+                    if len(bboxes) != 1:
+                        rospy.logwarn_throttle(1, '{} {}: {} faces detected in {}:{}; erroring'.format(
+                            self.name, txt, len(bboxes), ti, tf))
+                        return
+                    wface = bboxes[0][2] - bboxes[0][0]
+                    hface = bboxes[0][3] - bboxes[0][1]
+                    bboxes[0][0] -= SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
+                    bboxes[0][1] += SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hface
+                    bboxes[0][2] += SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
+                    bboxes[0][3] = bboxes[0][1] + SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hface
+                    last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
+                    try:
+                        tracker.start_track(resize, bboxes[0])
+                    except Exception as e:
+                        rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
+                            self.name, txt, ti, tf, bboxes[0], e))
+                        return
+                else:
+                    expected_in_region = last_loc - off * DETECT_TRACK_SCALE_FACTOR
+                    tracker.update(resize, expected_in_region)
+                    bboxes = np.array([tracker.bbox])
+                    last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
+
+                xmin, ymin, xmax, ymax = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
+                if xmin < 0: xmin = 0
+                if ymin < 0: ymin = 0
+                if xmax >= cols: xmax = cols-1
+                if ymax >= rows: ymax = rows-1
+
+                xd = int(math.floor((xmax - xmin) / float(NUM_SUBREGIONS_X)))
+                yd = int(math.floor((ymax - ymin) / float(NUM_SUBREGIONS_Y)))
+
+                crop = chan[ymin:ymin + yd * NUM_SUBREGIONS_Y,
+                            xmin:xmin + xd * NUM_SUBREGIONS_X]
+
+                if DEBUG_SAVE_IMAGES:
+                    try:
+                        cv_image = chan.copy()
+                        # Draw vertical lines (constant x coordinate).
+                        for xline in range(xmin, xmax, xd):
+                            cv2.line(cv_image, (xline, ymin), (xline, ymax), (255,255,255), 3)
+                        # Draw vertical lines (constant y coordinate).
+                        for yline in range(ymin, ymax, yd):
+                            cv2.line(cv_image, (xmin, yline), (xmax, yline), (255,255,255), 3)
+                        cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), cv_image)
+                    except Exception as e:
+                        print(e)
+                        pass
+
+                # Spatial average over each subregion at this point in time.
+                try:
+                    patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)),
+                                                   axis=(0,1))
+                except Exception as e:
+                    rospy.logwarn_throttle(1, ('{} {}: failed spatial average in '
+                                           + '{}:{} idx {}; {} {} {} {} {} {} {} {} = {}').format(
+                        self.name, txt, ti, tf, ii, crop.shape, chan.shape, xd, yd, xmin, ymin, xmax, ymax, e))
+                    return
+            # End loop over colors.
+            ii += 1
+        # End loop through data series.
+
+        patch_avg /= np.mean(patch_avg, axis=0)
+        patch_avg -= 1.0
+        patch_pulse = np.zeros((msmt_n, patch_avg.shape[1], len(PBV_TO_CHECK)))
+
         # Find the range of real frequency bins that we are interested in.
-        nreal = data.shape[0]
-        fminind = int(MIN_HEART_HZ * nreal * delta) + 1
-        fmaxind = int(MAX_HEART_HZ * nreal * delta)
+        fminind = int(MIN_HZ * msmt_n * delta)
+        fmaxind = int(MAX_HZ * msmt_n * delta)
+        hr_fminind = int(MIN_HEART_HZ * msmt_n * delta) - fminind
+        hr_fmaxind = int(MAX_HEART_HZ * msmt_n * delta) - fminind
+        fminind += 1
+        hr_fminind += 1
+        patch_freq = np.zeros((fmaxind-fminind+1, patch_avg.shape[1], len(PBV_TO_CHECK)))
+        peak_freq_count = np.zeros(patch_freq.shape[0])
+        peak_freq = np.zeros((patch_avg.shape[1], len(PBV_TO_CHECK)))
+        freq = None
 
-        amp = np.abs(sp)[fminind:fmaxind]
-        if DEBUG_PLOT:
-            data_ax.cla()
-            data_ax.plot(data)
-            amp_ax.cla()
-            amp_ax.plot(freq[fminind:fmaxind] * 60.0, amp)
-        try:
-            beats = freq[amp.argmax() + fminind] * 60.0
-        except ValueError as e:
-            rospy.logwarn('{} {}: {}'.format(self.name, txt, str(e)))
-            beats = -1.0
-        else:
-            msg = Float32()
-            msg.data = beats
-            msmt_pub.publish(msg)
+        for rr in range(patch_avg.shape[1]):
+            c_n = patch_avg[:, rr, :].reshape((-1,3)).T
+            q_inv = np.linalg.inv(np.matmul(c_n, c_n.T))
+            for ss in range(len(PBV_TO_CHECK)):
+                spo2 = PBV_TO_CHECK[ss]
+                w_pbv = np.matmul(PBV_STATIC + (100.0 - spo2) * PBV_UPDATE,
+                                  q_inv)
+                w_pbv /= np.linalg.norm(w_pbv)
+                patch_pulse[:, rr, ss] = np.matmul(w_pbv, c_n)
 
-        rospy.loginfo('{} {}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, beats, nreal, ti, tf, (tf - ti) / nreal))
+                sp = np.fft.fft(patch_pulse[:, rr, ss])
+                if freq is None:
+                    freq = np.fft.fftfreq(sp.shape[-1], d=delta)[fminind:fmaxind+1]
+                patch_freq[:, rr, ss] = np.abs(sp)[fminind:fmaxind+1]
+                freq_idx = patch_freq[hr_fminind:hr_fmaxind, rr, ss].argmax() + hr_fminind
+                peak_freq[rr, ss] = freq[freq_idx]
+                peak_freq_count[freq_idx] += 1
+
+            if DEBUG_SAVE_DATA:
+                np.savetxt(output_dir + 'raw_{:03d}.csv'.format(rr),
+                           patch_avg[:, rr, :].reshape((-1,CC)),
+                           delimiter=',', fmt='%.3e')
+                np.savetxt(output_dir + 'pulse_{:03d}.csv'.format(rr),
+                           patch_pulse[:, rr, :].reshape((-1, patch_pulse.shape[2])),
+                           delimiter=',', fmt='%.3e')
+                np.savetxt(output_dir + 'freq_{:03d}.csv'.format(rr),
+                           np.hstack((freq.reshape((-1, 1)) * 60.0,
+                                      patch_freq[:, rr, :].reshape((-1, patch_freq.shape[2])))),
+                           delimiter=',', fmt='%.3e')
+        # End loop over regions.
+        if DEBUG_SAVE_DATA:
+            np.savetxt(output_dir + 'peak_freq.csv', peak_freq * 60.0,
+                       delimiter=',', fmt='%.1f')
+
+        beats = freq[peak_freq_count.argmax()] * 60.0
+
+        if DEBUG_SAVE_DATA:
+            for rr in range(patch_avg.shape[1]):
+                patch_filt = butter_bandpass_filter(patch_avg,
+                                                    (beats - 5.0) / 60.0,
+                                                    (beats + 5.0) / 60.0,
+                                                    1.0 / delta, axis=0)
+                np.savetxt(output_dir + 'filt_{:03d}.csv'.format(rr),
+                           patch_filt[:, rr, :].reshape((-1,CC)),
+                           delimiter=',', fmt='%.3e')
+        msg = Float32()
+        msg.data = beats
+        self.msmt_pub.publish(msg)
+        rospy.loginfo('{}: {:.1f} beats / min; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
+            self.name, beats, msmt_n, ti, tf, (tf - ti) / msmt_n))
+
+    def clear_buffers(self):
+        # Measurement buffers
+        self.t_buffer = []
+        self.red_msmt_buffer = []
+        self.nir_msmt_buffer = []
+        self.narrow_nir_msmt_buffer = []
+        self.red_offset_buffer = []
+        self.nir_offset_buffer = []
+        self.narrow_nir_offset_buffer = []
+
+        self.start_msmt = True
 
     def clear_msmt_state(self):
         rospy.logwarn_throttle(1, '{}: Resetting'.format(self.name))
 
-        # Region of Interest
-        self.roi_valid = False
-        self.roiset = False
-        self.xmin = 0
-        self.xmax = 0
-        self.ymin = 0
-        self.ymax = 0
+        # Tracking status
+        self.tracking_status = False
 
-        self.r_ti = None
-        self.r_tf = None
-        self.repeat_msmt_n = 0
-        self.f_ti = None
-        self.f_tf = None
-        self.full_msmt_n = 0
+        self.ti = None
+        self.tf = None
 
-        self.tlast = None
-        self.delta = None
+        self.tlast = dict(red=None, nir=None, narrow_nir=None)
+        self.delta = dict(red=None, nir=None, narrow_nir=None)
+
+        self.clear_buffers()
 
     def __init__(self, name):
+        if RATE_CUT:
+            self.RATE_CUT = None
+
         self.name = name
 
         self.lock = threading.Lock()
-
-        # Measurement buffers
-        self.repeat_msmt_buffer = np.zeros(NOMINAL_REPEAT_SAMPLES)
-        self.full_msmt_buffer = np.zeros(NOMINAL_FULL_SAMPLES)
 
         self.clear_msmt_state()
 
@@ -292,32 +513,45 @@ class HeartRate(object):
 
         self.bridge = CvBridge()
 
-        if DEBUG_PLOT:
-            self.fig = plt.figure()
-            self.full_data_ax = self.fig.add_subplot(2, 3, 1)
-            self.full_amp_ax = self.fig.add_subplot(2, 3, 2)
-            self.repeat_data_ax = self.fig.add_subplot(2, 3, 4)
-            self.repeat_amp_ax = self.fig.add_subplot(2, 3, 5)
+        self.msmt_pub = rospy.Publisher(MSMT_TOPIC, Float32, queue_size=10)
 
-        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32, queue_size=10)
+        self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
+                                                        queue_size=IMG_QUEUE_SIZE,
+                                                        buff_size=IMG_BUF_SIZE)
+        self.red_region_sub = message_filters.Subscriber(RED_REGION_IN_IMAGE_TOPIC,
+                                                         PolygonStamped,
+                                                         queue_size=IMG_QUEUE_SIZE)
 
-        self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
-        self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
-        self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
-        self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC, Float32MultiArray, queue_size=10)
+        self.nir_image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image,
+                                                        queue_size=IMG_QUEUE_SIZE,
+                                                        buff_size=IMG_BUF_SIZE)
+        self.nir_region_sub = message_filters.Subscriber(NIR_REGION_IN_IMAGE_TOPIC,
+                                                         PolygonStamped,
+                                                         queue_size=IMG_QUEUE_SIZE)
 
-        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
-        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback, queue_size=1)
-        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool, self.tracking_status_callback, queue_size=1)
+        self.narrow_nir_image_sub = message_filters.Subscriber(NARROW_NIR_IMAGE_TOPIC, Image,
+                                                         queue_size=IMG_QUEUE_SIZE,
+                                                         buff_size=IMG_BUF_SIZE)
+        self.narrow_nir_region_sub = message_filters.Subscriber(NARROW_NIR_REGION_IN_IMAGE_TOPIC,
+                                                          PolygonStamped,
+                                                          queue_size=IMG_QUEUE_SIZE)
 
-        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC), self.msmt_helper_callback)
+        self.approx_image_sync = message_filters.ApproximateTimeSynchronizer([self.red_image_sub,
+                                                                              self.nir_image_sub,
+                                                                              self.narrow_nir_image_sub,
+                                                                              self.red_region_sub,
+                                                                              self.nir_region_sub,
+                                                                              self.narrow_nir_region_sub],
+                                                                             200, 0.1)
+        self.approx_image_sync.registerCallback(self.image_callback)
+
+        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
+                                                    self.tracking_status_callback, queue_size=1)
+
+        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),
+                                             self.msmt_helper_callback)
 
 if __name__ == '__main__':
     rospy.init_node('heart_rate')
-    resp = HeartRate(rospy.get_name())
-    if DEBUG_PLOT:
-        while not rospy.is_shutdown():
-            plt.show(block=False)
-            plt.pause(0.5)
-    else:
-        rospy.spin()
+    hr = HeartRate(rospy.get_name())
+    rospy.spin()

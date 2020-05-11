@@ -27,6 +27,7 @@ from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool
 from cv_bridge import CvBridge
 
+THERMAL_REF_TOPIC = 'thermal_reference_temp'
 IMAGE_TOPIC = 'temperature_image'
 FRAME_MSMT_TOPIC_SUFFIX = '_frame_msmt'
 FULL_TOPIC = 'full_skin_temp'
@@ -44,9 +45,21 @@ NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
+MIN_REF_TEMP = 30.0
+MAX_REF_TEMP = 40.0
+
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
 class SkinTemperature(object):
+    def thermal_ref_callback(self, data):
+        if data.data < MIN_REF_TEMP or data.data > MAX_REF_TEMP:
+            rospy.logwarn_throttle(1, '{}: Thermal ref temp out of valid range:'.format(
+                self.name, data.data))
+            return
+
+        with self.lock:
+            self.thermal_ref_temp = data.data
+
     def image_callback(self, data):
         t = data.header.stamp.to_sec()
 
@@ -64,7 +77,8 @@ class SkinTemperature(object):
 
             # Detect skips in data.
             if t - self.tlast > MAX_DROPOUT_BEFORE_RESET_SEC:
-                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(self.name, t - self.tlast))
+                rospy.logwarn_throttle(1, '{}: Dropped samples for {} sec'.format(
+                    self.name, t - self.tlast))
                 self.clear_msmt_state()
                 self.tlast = t
                 return
@@ -75,6 +89,18 @@ class SkinTemperature(object):
 
             self.delta = self.delta_alpha * (t - self.tlast) + (1 - self.delta_alpha) * self.delta
             self.tlast = t
+
+            if self.use_thermal_ref:
+                if self.thermal_ref_temp is None:
+                    rospy.logwarn_throttle(1, '{}: No thermal ref temp received.'.format(self.name))
+                    return
+
+                tr_xmin = self.thermal_ref_prm['xmin']
+                tr_ymin = self.thermal_ref_prm['ymin']
+                tr_xmax = self.thermal_ref_prm['xmax']
+                tr_ymax = self.thermal_ref_prm['ymax']
+            else:
+                tr_xmin = None; tr_ymin = None; tr_xmax = None; tr_ymax = None
 
             if not self.roiset:
                 rospy.logwarn_throttle(1, '{}: No ROI received.'.format(self.name))
@@ -89,9 +115,17 @@ class SkinTemperature(object):
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
         (rows, cols) = cv_image.shape
 
+        if self.use_thermal_ref and (tr_xmin < 0 or tr_ymin < 0 or tr_xmax >= cols or tr_ymax >= rows):
+            with self.lock:
+                rospy.logwarn_throttle(1, '{}: Bad thermal ref roi {} image size {}- disabling.'.format(
+                    self.name, self.thermal_ref_prm, (rows, cols)))
+                self.use_thermal_ref = False
+                return
+
         if xmin < 0 or ymin < 0 or xmax >= cols or ymax >= rows:
             with self.lock:
-                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
+                rospy.logwarn_throttle(1, '{}: edge of frame at {}, seq {}. {} {} {} {} {} {}'.format(
+                    self.name, t, data.header.seq, xmin, xmax, cols, ymin, ymax, rows))
                 self.clear_msmt_state()
                 return
 
@@ -102,29 +136,35 @@ class SkinTemperature(object):
             if irange != 0:
                 cv_image_dbg = cv2.convertScaleAbs((cv_image - imin) * 255 / irange)
                 cv2.rectangle(cv_image_dbg, (xmin, ymin), (xmax, ymax), (0,0,0), 2)
+                if self.use_thermal_ref:
+                    cv2.rectangle(cv_image_dbg, (tr_xmin, tr_ymin), (tr_xmax, tr_ymax), (0,0,0), 2)
                 cv2.imshow('temperature ROI', cv_image_dbg)
                 cv2.waitKey(1)
 
-            cv_region = cv_image[ymin:ymax, xmin:xmax]
-            imin = np.amin(cv_region)
-            imax = np.amax(cv_region)
-            irange = imax - imin
-            if irange != 0:
-                cv_region = cv2.convertScaleAbs((cv_region - imin) * 255 / irange)
-                cv2.imshow('zoomed temperature ROI', cv_region)
+                cv2.imshow('zoomed temperature ROI', cv_image[ymin:ymax, xmin:xmax])
                 cv2.waitKey(1)
 
-        if cv_image[ymin:ymax, xmin:xmax].size == 0:
+                if self.use_thermal_ref:
+                    cv2.imshow('zoomed reference ROI', cv_image[tr_ymin:tr_ymax, tr_xmin:tr_xmax])
+                    cv2.waitKey(1)
+
+        if cv_image[ymin:ymax, xmin:xmax].size == 0 or (self.use_thermal_ref and cv_image[tr_ymin:tr_ymax, tr_xmin:tr_xmax].size == 0):
             with self.lock:
-                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(self.name, t, data.header.seq))
+                rospy.logwarn_throttle(1, '{}: empty image at {}, seq {}'.format(
+                    self.name, t, data.header.seq))
                 self.clear_msmt_state()
                 return
 
         val = np.amax(cv_image[ymin:ymax, xmin:xmax])
+        ref_val = None
+        if self.use_thermal_ref:
+            ref_val = np.mean(cv_image[tr_ymin:tr_ymax, tr_xmin:tr_xmax])
+            val *= self.thermal_ref_temp / ref_val
 
-        if np.isnan(val):
+        if np.isnan(val) or (self.use_thermal_ref and np.isnan(ref_val)):
             with self.lock:
-                rospy.logwarn_throttle(1, '{}: NaN at {}, seq {}'.format(self.name, t, data.header.seq))
+                rospy.logwarn_throttle(1, '{}: NaN at {}, seq {}'.format(
+                    self.name, t, data.header.seq))
                 self.clear_msmt_state()
                 return
 
@@ -220,7 +260,8 @@ class SkinTemperature(object):
         data_pub.publish(msg)
 
         val = np.median(data)
-        rospy.loginfo('{} {}: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
+        rospy.loginfo('{} {}: {:.1f} deg C; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
+            self.name, txt, val, data.shape[0], ti, tf, (tf - ti) / data.shape[0]))
 
         msg = Float32()
         msg.data = val
@@ -263,18 +304,40 @@ class SkinTemperature(object):
 
         self.bridge = CvBridge()
 
-        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32, queue_size=10)
+        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32,
+                                              queue_size=10)
 
         self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
         self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
         self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
         self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC, Float32MultiArray, queue_size=10)
 
-        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
-        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback, queue_size=1)
-        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool, self.tracking_status_callback, queue_size=1)
+        self.use_thermal_ref = rospy.get_param('use_thermal_reference', False)
+        self.thermal_ref_prm = rospy.get_param('thermal_reference_prm', None)
+        if self.use_thermal_ref:
+            if self.thermal_ref_prm is None or not all([self.thermal_ref_prm.has_key(key) for key in ['xmin', 'ymin', 'xmax', 'ymax']]):
+                self.use_thermal_ref = False
+                rospy.logwarn('{}: Missing thermal reference parameters; {}'.format(
+                    self.name, self.thermal_ref_prm))
+            else:
+                if (self.thermal_ref_prm['xmax'] - self.thermal_ref_prm['xmin']) <= 0 or (self.thermal_ref_prm['ymax'] - self.thermal_ref_prm['ymin']) <= 0:
+                    self.use_thermal_ref = False
+                    rospy.logwarn('{}: Bad thermal reference parameters; {}'.format(
+                        self.name, self.thermal_ref_prm))
+                else:
+                    self.thermal_ref_sub = rospy.Subscriber(THERMAL_REF_TOPIC, Float32, self.thermal_ref_callback,
+                                                            queue_size=1)
+                    self.thermal_ref_temp = None
 
-        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC), self.msmt_helper_callback)
+        self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback,
+                                          queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
+        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback,
+                                           queue_size=1)
+        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
+                                                    self.tracking_status_callback, queue_size=1)
+
+        self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),
+                                             self.msmt_helper_callback)
 
 if __name__ == '__main__':
     rospy.init_node('skin_temperature')

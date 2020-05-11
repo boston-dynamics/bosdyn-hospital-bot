@@ -24,6 +24,8 @@ from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
 from cv_bridge import CvBridge
 
+from drspot.utils.tracking import ROITracker
+
 IMAGE_TOPIC = 'thermal_image_raw'
 SCALED_IMAGE_TOPIC = 'debug_thermal_tracking_rescale'
 DEBUG_IMAGE_TOPIC = 'debug_thermal_tracking'
@@ -36,7 +38,7 @@ MAX_TIME_SINCE_DETECTION_SEC = 2.5
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.5
 MIN_FACE_DIM_PIXELS = 10
 FACE_DETECTION_SCALE = 0.7
-CV_TRACKER_TYPE = 'CSRT' #'KCF'
+CV_TRACKER_TYPE = 'CSRT'
 
 FACE_DETECTION_INTENSITY_RANGE = 150.0
 FACE_DETECTION_INTENSITY_OFFSET = (255.0 - FACE_DETECTION_INTENSITY_RANGE) / 2.0
@@ -50,49 +52,6 @@ MASK_HALF_HEIGHT_FRAC_OF_FACE = 0.35
 MASK_HALF_WIDTH_FRAC_OF_FACE = 0.35
 
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
-
-class ROITracker(object):
-    def __init__(self, tracker_type):
-        self.ok = False
-        self.bbox = np.array([0, 0, 0, 0])
-
-        try:
-            self.tracker = cv2.Tracker_create(tracker_type)
-        except AttributeError:
-            if tracker_type == 'BOOSTING':
-                self.tracker = cv2.TrackerBoosting_create()
-            if tracker_type == 'MIL':
-                self.tracker = cv2.TrackerMIL_create()
-            if tracker_type == 'KCF':
-                self.tracker = cv2.TrackerKCF_create()
-            if tracker_type == 'TLD':
-                self.tracker = cv2.TrackerTLD_create()
-            if tracker_type == 'MEDIANFLOW':
-                self.tracker = cv2.TrackerMedianFlow_create()
-            if tracker_type == 'GOTURN':
-                self.tracker = cv2.TrackerGOTURN_create()
-            if tracker_type == 'MOSSE':
-                self.tracker = cv2.TrackerMOSSE_create()
-            if tracker_type == 'CSRT':
-                self.tracker = cv2.TrackerCSRT_create()
-
-    def get_center(self):
-        return np.array([(self.bbox[0] + self.bbox[2]) * 0.5,
-                         (self.bbox[1] + self.bbox[3]) * 0.5])
-
-    def start_track(self, frame, bbox):
-        temp_bbox = (int(bbox[0]), int(bbox[1]), int(bbox[2] - bbox[0]), int(bbox[3] - bbox[1]))
-        self.tracker.init(frame, temp_bbox)
-        self.ok = True
-        self.bbox = np.array(bbox)
-
-    def update(self, frame):
-        if not self.ok:
-            return
-
-        self.ok, temp_bbox = self.tracker.update(frame)
-        self.bbox = np.array([temp_bbox[0], temp_bbox[1],
-                              temp_bbox[0] + temp_bbox[2], temp_bbox[1] + temp_bbox[3]])
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
@@ -134,6 +93,7 @@ class FaceDetectorTracker(object):
                     + FACE_DETECTION_INTENSITY_OFFSET).astype('uint8')
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
+        msg.header = data.header
         self.scaled_image_pub.publish(msg)
 
         chan3image = cv2.cvtColor(cv_image, cv2.COLOR_GRAY2RGB)
@@ -142,13 +102,17 @@ class FaceDetectorTracker(object):
         bboxes = np.array([])
         landmarks = np.array([])
         fidx = 0
-        self.eye_tracker.update(chan3image)
-        self.mouth_tracker.update(chan3image)
-        if self.eye_tracker.ok and self.mouth_tracker.ok and self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC:
+        self.eye_tracker.update(cv_image)
+        self.mouth_tracker.update(cv_image)
+        last_detection_ok = self.tlast_detection is not None and t - self.tlast_detection < MAX_TIME_SINCE_DETECTION_SEC
+        if self.eye_tracker.ok and self.mouth_tracker.ok and last_detection_ok:
             eye = self.eye_tracker.bbox.reshape((2, 2))
             mouth = self.mouth_tracker.bbox.reshape((2, 2))
         else:
-            rospy.loginfo_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
+            if not self.eye_tracker.ok or not self.mouth_tracker.ok:
+                rospy.logwarn_throttle(1, '{}: Lost tracking; running face detector'.format(self.name))
+            else:
+                rospy.loginfo_throttle(1, '{}: Time-triggered face detection'.format(self.name))
             self.mouth_tracker = ROITracker(CV_TRACKER_TYPE)
             self.eye_tracker = ROITracker(CV_TRACKER_TYPE)
             bboxes, landmarks = self.detector.detect(chan3image,
@@ -183,7 +147,7 @@ class FaceDetectorTracker(object):
             half_weye = max(abs(leye[0] - mideye[0]), wface * EYE_HALF_WIDTH_FRAC_OF_FACE)
             half_heye = max(abs(leye[1] - mideye[1]), hface * EYE_HALF_HEIGHT_FRAC_OF_FACE)
             eye = mideye + np.array([[-half_weye, -half_heye], [half_weye, half_heye]])
-            self.eye_tracker.start_track(chan3image, eye.reshape((4)))
+            self.eye_tracker.start_track(cv_image, eye.reshape((4)))
 
             lmouth = landmarks[fidx][3]
             rmouth = landmarks[fidx][4]
@@ -192,7 +156,7 @@ class FaceDetectorTracker(object):
             half_wmouth = max(abs(lmouth[0] - midmouth[0]), wface * MASK_HALF_WIDTH_FRAC_OF_FACE)
             half_hmouth = max(abs(lmouth[1] - midmouth[1]), hface * MASK_HALF_HEIGHT_FRAC_OF_FACE)
             mouth = midmouth + np.array([[-half_wmouth, -half_hmouth], [half_wmouth, half_hmouth]])
-            self.mouth_tracker.start_track(chan3image, mouth.reshape((4)))
+            self.mouth_tracker.start_track(cv_image, mouth.reshape((4)))
 
         region = PolygonStamped()
         region.header = data.header
@@ -220,6 +184,7 @@ class FaceDetectorTracker(object):
         cv2.rectangle(cv_image, tuple(mouth[0].tolist()), tuple(mouth[1].tolist()), (255,0,0), 2)
 
         msg = self.bridge.cv2_to_imgmsg(cv_image, encoding='passthrough')
+        msg.header = data.header
         self.debug_image_pub.publish(msg)
 
     def clear_msmt_state(self):
@@ -254,5 +219,5 @@ class FaceDetectorTracker(object):
 
 if __name__ == '__main__':
     rospy.init_node('ir_face_tracker')
-    resp = FaceDetectorTracker(rospy.get_name())
+    fdt = FaceDetectorTracker(rospy.get_name())
     rospy.spin()

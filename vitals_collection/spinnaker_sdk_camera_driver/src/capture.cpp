@@ -54,7 +54,7 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
         if (mem >= 1000)
             ROS_INFO_STREAM("[ OK ] USB memory: "<<mem<<" MB");
         else{
-            ROS_FATAL_STREAM("  USB memory on system too low ("<<mem<<" MB)! Must be at least 1000 MB. Run: \nsudo sh -c \"echo 1000 > /sys/module/usbcore/parameters/usbfs_memory_mb\"\n Terminating...");
+	  ROS_FATAL_STREAM("  USB memory on system too low ("<<mem<<" MB)! Must be at least 1000 MB. Run: \nsudo sh -c \"echo 1000 > /sys/module/usbcore/parameters/usbfs_memory_mb\"\n Terminating...");
             ros::shutdown();
         }
     } else {
@@ -63,7 +63,8 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
-    exposure_time_ = 0 ; // default as 0 = auto exposure
+    exposure_time_ = 27800;
+    gain_ = -1.0; // default as -1 = auto gain
     soft_framerate_ = 20; //default soft framrate
     ext_ = ".bmp";
     SOFT_FRAME_RATE_CTRL_ = false;
@@ -142,7 +143,8 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
-    exposure_time_ = 0 ; // default as 0 = auto exposure
+    exposure_time_ = 27800;
+    gain_ = -1.0; // default as -1 = auto gain
     soft_framerate_ = 20; //default soft framrate
     ext_ = ".bmp";
     SOFT_FRAME_RATE_CTRL_ = false;
@@ -446,6 +448,11 @@ void acquisition::Capture::read_parameters() {
         else ROS_INFO("  'exposure_time'=%0.f, Setting autoexposure",exposure_time_);
     } else ROS_WARN("  'exposure_time' Parameter not set, using default behavior: Automatic Exposure ");
 
+    if (nh_pvt_.getParam("gain", gain_)){
+        if (gain_ >=0.0) ROS_INFO("  Gain set to: %.1f",gain_);
+        else ROS_INFO("  'gain'=%0.f, Setting autogain",gain_);
+    } else ROS_WARN("  'gain' Parameter not set, using default behavior: Automatic Gain ");
+
     if (nh_pvt_.getParam("target_grey_value", target_grey_value_)){
         if (target_grey_value_ >0) ROS_INFO("  target_grey_value set to: %.1f",target_grey_value_);
         else ROS_INFO("  'target_grey_value'=%0.f, Setting AutoExposureTargetGreyValueAuto to Continuous/ auto",target_grey_value_);} 
@@ -628,8 +635,12 @@ void acquisition::Capture::init_cameras(bool soft = false) {
                 } else {
                     cams[i].setEnumValue("ExposureAuto", "Continuous");
                 }
-		cams[i].setEnumValue("GainAuto", "Off");
-		cams[i].setFloatValue("Gain", 0.0);
+                if (gain_ >= 0.0) { 
+                    cams[i].setEnumValue("GainAuto", "Off");
+                    cams[i].setFloatValue("Gain", gain_);
+                } else {
+                    cams[i].setEnumValue("GainAuto", "Continuous");
+                }
                 /*if (target_grey_value_ > 4.0) {
                     cams[i].setEnumValue("AutoExposureTargetGreyValueAuto", "Off");
                     cams[i].setFloatValue("AutoExposureTargetGreyValue", target_grey_value_);
@@ -1203,7 +1214,7 @@ std::string acquisition::Capture::todays_date()
 void acquisition::Capture::dynamicReconfigureCallback(spinnaker_sdk_camera_driver::spinnaker_camConfig &config, uint32_t level){
     
     ROS_INFO_STREAM("Dynamic Reconfigure: Level : " << level);
-    if(level == 1 || level ==3){
+    if(level & 1){
         ROS_INFO_STREAM("Target grey value : " << config.target_grey_value);
         for (int i = numCameras_-1 ; i >=0 ; i--) {
             
@@ -1211,7 +1222,7 @@ void acquisition::Capture::dynamicReconfigureCallback(spinnaker_sdk_camera_drive
             cams[i].setFloatValue("AutoExposureTargetGreyValue", config.target_grey_value);
         }
     }
-    if (level == 2 || level ==3){
+    if (level & (1 << 1)){
         ROS_INFO_STREAM("Exposure "<<config.exposure_time);
         if(config.exposure_time > 0){
             for (int i = numCameras_-1 ; i >=0 ; i--) {
@@ -1227,5 +1238,30 @@ void acquisition::Capture::dynamicReconfigureCallback(spinnaker_sdk_camera_drive
                 cams[i].setEnumValue("ExposureMode", "Timed");
             }
         }
+    }
+    for (int i = numCameras_-1 ; i >=0 ; i--) {
+        if (level & (1 << (2+i))) {
+  	    double gain = gain_;
+	    switch (i) {
+		case 0:
+		    gain = config.gain_0;
+		    break;
+		case 1:
+		    gain = config.gain_1;
+		    break;
+		case 2:
+		    gain = config.gain_2;
+		    break;
+	    }
+
+  	    ROS_INFO_STREAM("Level " << level << "; Gain " << i << " " << gain);
+	    if(gain >= 0.0){
+		cams[i].setEnumValue("GainAuto", "Off");
+		cams[i].setFloatValue("Gain", gain);
+	    }
+	    else {
+		cams[i].setEnumValue("GainAuto", "Continuous");
+	    }
+	}
     }
 }
