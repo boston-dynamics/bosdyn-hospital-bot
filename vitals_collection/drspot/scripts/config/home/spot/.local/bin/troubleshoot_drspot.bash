@@ -128,7 +128,7 @@ unset SIGNAL
 # Other debug files
 exec_and_log "/home/spot/.local/bin/save_rosgraph.py ${outfolder}/rosgraph.dot"
 exec_and_log "cp /var/log/*.log ${outfolder}/"
-dmesg > ${outfolder}/dmesg.log
+timeout 20 dmesg > ${outfolder}/dmesg.log
 
 # Last step - can't use the files anymore
-tar -cz -O $outfile $errfile $outfolder >&5
+timeout 20 tar -cz -O $outfile $errfile $outfolder >&5
