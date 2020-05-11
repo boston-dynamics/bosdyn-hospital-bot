@@ -45,10 +45,18 @@ NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
+MIN_REF_TEMP = 30.0
+MAX_REF_TEMP = 40.0
+
 ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
 class SkinTemperature(object):
     def thermal_ref_callback(self, data):
+        if data.data < MIN_REF_TEMP or data.data > MAX_REF_TEMP:
+            rospy.logwarn_throttle(1, '{}: Thermal ref temp out of valid range:'.format(
+                self.name, data.data))
+            return
+
         with self.lock:
             self.thermal_ref_temp = data.data
 
