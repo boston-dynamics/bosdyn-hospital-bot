@@ -4,6 +4,7 @@
   <arg name="launch_multichrome_tracker" default="true" />
   <arg name="launch_heart_rate_spo2" default="true" />
   <arg name="launch_thermal_algos" default="true" />
+  <arg name="use_thermal_reference" default="true" />
 
   <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
 
@@ -44,6 +45,18 @@
     </group>
   </group>
 
+  <param name="use_thermal_reference" value="$(arg use_thermal_reference)" />
+  <group if="$(arg use_thermal_reference)">
+    <arg name="thermal_ref_config_file" default="/etc/ros/params/thermal_reference_params.yaml" />
+    <rosparam command="load" file="$(arg thermal_ref_config_file)" ns="thermal_reference_prm" />
+
+    <group if="$(arg launch_drivers)">
+      <node name="thermal_reference" pkg="drspot" type="thermal_reference" output="screen"
+            respawn="true" respawn_delay="10">
+      </node>
+    </group>
+  </group>
+
   <group if="$(arg launch_thermal_algos)">
     <remap from="temperature_image" to="$(arg thermal_ns)/temperature_image" />
     <remap from="thermal_image_raw" to="$(arg thermal_ns)/thermal_image_raw" />
@@ -59,11 +72,5 @@
     <node name="skin_temperature" pkg="drspot" type="skin_temperature" output="screen"
           respawn="true">
     </node>
-
-    <group if="$(arg launch_drivers)">
-      <node name="thermal_reference" pkg="drspot" type="thermal_reference" output="screen"
-            respawn="true">
-      </node>
-    </group>
   </group>
 </launch>

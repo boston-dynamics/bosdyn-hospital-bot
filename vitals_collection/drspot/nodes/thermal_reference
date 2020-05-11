@@ -17,8 +17,11 @@
 # This requires the yoctopuce module (python -m pip install yoctopuce)
 
 import sys
+from threading import Thread
+import time
 
 DEBUG_PLOT = False
+DEBUG_TXT = False
 if DEBUG_PLOT:
     import matplotlib.pyplot as plt
 
@@ -28,23 +31,142 @@ import threading
 import rospy
 from std_msgs.msg import Float32
 
+from scipy.integrate import odeint
+
 from yoctopuce.yocto_api import YAPI, YRefParam
 from yoctopuce.yocto_temperature import YTemperature
 
+# For TCL
+try:
+    import serial
+except:
+    import pip
+    pip.main(['install','pyserial'])
+    import serial
+from serial.tools import list_ports
+
 TOPIC = 'thermal_reference_temp'
+
+######################################################
+# PID Controller                                     #
+######################################################
+# inputs -----------------------------------
+# sp = setpoint
+# pv = current temperature
+# pv_last = prior temperature
+# ierr = integral error
+# dt = time increment between measurements
+# outputs ----------------------------------
+# op = output of the PID controller
+# P = proportional contribution
+# I = integral contribution
+# D = derivative contribution
+def pid(sp,pv,pv_last,ierr,dt):
+    Kc   = 5.0 # K/%Heater
+    tauI = 25.0 # sec
+    tauD = 1.0  # sec
+    # Parameters in terms of PID coefficients
+    KP = Kc
+    KI = Kc/tauI
+    KD = Kc*tauD
+    # ubias for controller (initial heater)
+    op0 = 0
+    # upper and lower bounds on heater level
+    ophi = 100
+    oplo = 0
+    # calculate the error
+    error = sp-pv
+    # calculate the integral error
+    ierr = ierr + KI * error * dt
+    # calculate the measurement derivative
+    dpv = (pv - pv_last) / dt
+    # calculate the PID output
+    P = KP * error
+    I = ierr
+    D = -KD * dpv
+    op = op0 + P + I + D
+    # implement anti-reset windup
+    if op < oplo or op > ophi:
+        I = I - KI * error * dt
+        # clip output
+        op = max(oplo,min(ophi,op))
+    # return the controller output and PID terms
+    return [op,P,I,D]
+
+# save txt file with data and set point
+# t = time
+# u1,u2 = heaters
+# y1,y2 = tempeatures
+# sp1,sp2 = setpoints
+def save_txt(t, u1, y1, sp1):
+    data = np.vstack((t, u1, y1, sp1))  # vertical stack
+    data = data.T  # transpose data
+    top = ('Time (sec), Heater 1 (%), '
+           'Temperature 1 (degC) '
+           'Set Point 1 (degC)')
+    np.savetxt('data.txt', data, delimiter=',', header=top, comments='')
+
+######################################################
+# FOPDT model                                        #
+######################################################
+Kp = 0.5      # degC/%
+tauP = 120.0  # seconds
+thetaP = 10   # seconds (integer)
+Tss = 23      # degC (ambient temperature)
+Qss = 0       # % heater
+
+######################################################
+# Energy balance model                               #
+######################################################
+def heat(x,t,Q):
+    # Parameters
+    Ta = 23 + 273.15   # K
+    U = 10.0           # W/m^2-K
+    m = 4.0/1000.0     # kg
+    Cp = 0.5 * 1000.0  # J/kg-K
+    A = 12.0 / 100.0**2 # Area in m^2
+    alpha = 0.01       # W / % heater
+    eps = 0.9          # Emissivity
+    sigma = 5.67e-8    # Stefan-Boltzman
+
+    # Temperature State
+    T = x[0]
+
+    # Nonlinear Energy Balance
+    dTdt = (1.0/(m*Cp))*(U*A*(Ta-T) \
+            + eps * sigma * A * (Ta**4 - T**4) \
+            + alpha*Q)
+    return dTdt
 
 class ThermalReference(object):
 
-    def __init__(self, name, target='any'):
+    def __init__(self, name, port=None, baud=9600, target='any'):
         self.name = name
         rospy.loginfo('{} : Constructor called'.format(self.name))
         self.name = name
         self.temperature_pub = rospy.Publisher(TOPIC, Float32, queue_size=10)
 
+        # TCL init
+        port = self.findPort()
+        print('Opening connection')
+        self.sp = serial.Serial(port=port, baudrate=baud, timeout=2)
+        self.sp.flushInput()
+        self.sp.flushOutput()
+        time.sleep(3)
+        print('TCLab connected via Arduino on port ' + port)
+
         # Setup the API to use local USB devices
-        errmsg = YRefParam()
-        if YAPI.RegisterHub('usb', errmsg) != YAPI.SUCCESS:
-            sys.exit('init error' + errmsg.value)
+        #errmsg = YRefParam()
+        #if YAPI.RegisterHub('usb', errmsg) != YAPI.SUCCESS:
+        #    sys.exit('init error' + errmsg.value)
+
+	errmsg = YRefParam()
+	if YAPI.TestHub("http://127.0.0.1:4444",100,  errmsg) == YAPI.SUCCESS:
+	    YAPI.RegisterHub("http://127.0.0.1:4444",  errmsg)
+	elif YAPI.RegisterHub("usb",  errmsg) != YAPI.SUCCESS:
+	    sys.exit('init error' + errmsg.value)
+
+
         if target == 'any':
             # retrieve any temperature sensor
             self.sensor = YTemperature.FirstTemperature()
@@ -57,18 +179,287 @@ class ThermalReference(object):
             sys.exit('Device not connected (check USB connection)')
 
     def measure_temperature(self):
-        temp = self.sensor.get_currentValue()
-        rospy.loginfo('{} Temp : {:2.1f} C'.format(self.name, temp))
+        self.temp = self.sensor.get_currentValue()
+        rospy.loginfo('{} Temp : {:2.1f} C'.format(self.name, self.temp))
         msg = Float32()
-        msg.data = temp # thermal reference temp
+        msg.data = self.temp # thermal reference temp
         self.temperature_pub.publish(msg)
-    
+        return self.temp
+
+    def findPort(self):
+        found = False
+        for port in list(list_ports.comports()):
+            # Arduino Uno
+            if port[2].startswith('USB VID:PID=16D0:0613'):
+                port = port[0]
+                found = True
+            # Arduino HDuino
+            if port[2].startswith('USB VID:PID=1A86:7523'):
+                port = port[0]
+                found = True
+            # Arduino Leonardo
+            if port[2].startswith('USB VID:PID=2341:8036'):
+                port = port[0]
+                found = True
+        if (not found):
+            print('Arduino COM port not found')
+            print('Please ensure that the USB cable is connected')
+            print('--- Printing Serial Ports ---')            
+            for port in list(serial.tools.list_ports.comports()):
+                print(port[0] + ' ' + port[1] + ' ' + port[2])
+            print('For Windows:')
+            print('  Open device manager, select "Ports (COM & LPT)"')
+            print('  Look for COM port of Arduino such as COM4')
+            print('For MacOS:')
+            print('  Open terminal and type: ls /dev/*.')
+            print('  Search for /dev/tty.usbmodem* or /dev/tty.usbserial*. The port number is *.')
+            print('For Linux')
+            print('  Open terminal and type: ls /dev/tty*')
+            print('  Search for /dev/ttyUSB* or /dev/ttyACM*. The port number is *.')
+            print('')
+            #port = input('Input port: ')
+            # or hard-code it here
+            port = '/dev/ttyUSB0' # for SpotCore
+            #port = '/dev/tty.wchusbserial1410' # for MacOS
+        return port
+
+    def stop(self):
+        return self.read('X')
+
+    def version(self):
+        return self.read('VER')
+
+    @property
+    def T1(self):
+        self._T1 = self.measure_temperature()
+        #self._T1 = float(self.read('T1'))
+        return self._T1
+
+    def LED(self,pwm):
+        pwm = max(0.0,min(100.0,pwm))/2.0
+        self.write('LED',pwm)
+        return pwm
+
+    def Q1(self,pwm):
+        pwm = max(0.0,min(100.0,pwm))
+        self.write('Q1',pwm)
+        return pwm
+
+    # save txt file with data and set point
+    # t = time
+    # u1,u2 = heaters
+    # y1,y2 = tempeatures
+    # sp1,sp2 = setpoints
+    def save_txt(self,t,u1,y1,sp1):
+        data = np.vstack((t,u1,y1,sp1))  # vertical stack
+        data = data.T                 # transpose data
+        top = 'Time (sec), Heater 1 (%),' \
+          + 'Temperature 1 (degC), ' \
+          + 'Set Point 1 (degC)'
+        np.savetxt('data.txt',data,delimiter=',',header=top,comments='')
+
+    def read(self,cmd):
+        cmd_str = self.build_cmd_str(cmd,'')
+        try:
+            self.sp.write(cmd_str.encode())
+            self.sp.flush()
+        except Exception:
+            return None
+        return self.sp.readline().decode('UTF-8').replace("\r\n", "")
+
+    def write(self,cmd,pwm):
+        cmd_str = self.build_cmd_str(cmd,(pwm,))
+        try:
+            self.sp.write(cmd_str.encode())
+            self.sp.flush()
+        except:
+            return None
+        return self.sp.readline().decode('UTF-8').replace("\r\n", "")
+
+    def build_cmd_str(self,cmd, args=None):
+        """
+        Build a command string that can be sent to the arduino.
+
+        Input:
+            cmd (str): the command to send to the arduino, must not
+                contain a % character
+            args (iterable): the arguments to send to the command
+        """
+        if args:
+            args = ' '.join(map(str, args))
+        else:
+            args = ''
+        return "{cmd} {args}\n".format(cmd=cmd, args=args)
+
+    def close(self):
+        try:
+            self.sp.close()
+            print('Arduino disconnected successfully')
+        except:
+            print('Problems disconnecting from Arduino.')
+            print('Please unplug and reconnect Arduino.')
+        return True
+
     def spin(self):
-        while self.sensor.isOnline():
-            self.measure_temperature()
-            YAPI.Sleep(1000)
+        # Turn LED on
+        print('LED On')
+        self.LED(100)
+
+        tm = []
+
+        # Temperature
+        # set point (degC)
+        Tsp1 = 34.0
+        T1 = [] # measured temps
+        error_sp = []
+
+        # Predictions
+        Tp = error_eb = Tpl = error_fopdt = []
+
+        # impulse tests (0 - 100%)
+        Q1 = []
+
+        print('Running Main Loop. Ctrl-C to end.')
+        print('  Time     SP     PV     Q1   =  P   +  I  +   D')
+
+        if DEBUG_PLOT:
+            # Create plot
+            plt.figure() #figsize=(10,7)
+            plt.ion()
+            plt.show()
+
+        # Main Loop
+        start_time = time.time()
+        prev_time = start_time
+        dt_error = 0.0
+        # Integral error
+        ierr = 0.0
+
+        try:
+            i = 0
+            while self.sensor.isOnline() and not rospy.is_shutdown():
+                # set initial state
+                if i == 0:
+                    tm.append(0)
+                    # Temperature
+                    T1.append(self.T1) # measured T (degC)
+                    error_sp.append(0)
+                    # Predictions
+                    Tp.append(self.T1)
+                    error_eb.append(0)
+                    Tpl.append(self.T1)
+                    error_fopdt.append(0)
+                    # impulse tests (0 - 100%)
+                    Q1.append(0)
+                    i += 1
+                    continue
+                # Sleep time
+                sleep_max = 1.0
+                sleep = sleep_max - (time.time() - prev_time) - dt_error
+                if sleep>=1e-4:
+                    time.sleep(sleep-1e-4)
+                else:
+                    print('exceeded max cycle time by ' + str(abs(sleep)) + ' sec')
+                    time.sleep(1e-4)
+
+                # Record time and change in time
+                t = time.time()
+                dt = t - prev_time
+                if (sleep>=1e-4):
+                    dt_error = dt-1.0+0.009
+                else:
+                    dt_error = 0.0
+                prev_time = t
+                tm.append(t - start_time)
+
+                # Read temperatures in Kelvin
+                T1.append(self.T1)
+
+                # Simulate one time step with Energy Balance
+                Tnext = odeint(heat,Tp[i-1]+273.15,[0,dt],args=(Q1[i-1],))
+                Tp.append(Tnext[1]-273.15)
+
+                # Simulate one time step with linear FOPDT model
+                z = np.exp(-dt/tauP)
+                Tpl.append((Tpl[i-1]-Tss) * z +
+                    (Q1[max(0,i-int(thetaP)-1)]-Qss) * (1-z) * Kp + Tss)
+
+                # Calculate PID output
+                Q1.append(0)
+                [Q1[i],P,ierr,D] = pid(Tsp1,T1[i],T1[i-1],ierr,dt)
+
+                # Start setpoint error accumulation after 10 sec
+                if i>=10:
+                    error_eb.append(error_eb[i-1] + abs(Tp[i]-T1[i]))
+                    error_fopdt.append(error_fopdt[i-1] + abs(Tpl[i]-T1[i]))
+                    error_sp.append(error_sp[i-1] + abs(Tsp1-T1[i]))
+                else:
+                    error_eb.append(0)
+                    error_fopdt.append(0)
+                    error_sp.append(0)
+
+                # Write output (0-100)
+                self.Q1(Q1[i])
+
+                # Print line of data
+                #print(('{:6.1f} {:6.2f} {:6.2f} ' + \
+                #    '{:6.2f} {:6.2f} {:6.2f} {:6.2f}').format( \
+                #        tm[i],Tsp1,T1[i], \
+                #        Q1[i],P,ierr,D))
+
+		#print(('{} {} {} {} {} {} {}').format(tm[i], Tsp1, T1[i], Q1[i], P, ierr, D))
+
+
+                if DEBUG_PLOT:
+                    # Plot
+                    plt.clf()
+                    ax=plt.subplot(4,1,1)
+                    ax.grid()
+                    plt.plot(tm[0:i],T1[0:i],'r.',label=r'$T_1$ measured')
+                    plt.plot(tm[0:i],[Tsp1 for i in range(i)],'k--',label=r'$T_1$ set point')
+                    plt.ylabel('Temperature (degC)')
+                    plt.legend(loc=2)
+                    ax=plt.subplot(4,1,2)
+                    ax.grid()
+                    plt.plot(tm[0:i],Q1[0:i],'b-',label=r'$Q_1$')
+                    plt.ylabel('Heater')
+                    plt.legend(loc='best')
+                    ax=plt.subplot(4,1,3)
+                    ax.grid()
+                    plt.plot(tm[0:i],T1[0:i],'r.',label=r'$T_1$ measured')
+                    plt.plot(tm[0:i],Tp[0:i],'k-',label=r'$T_1$ energy balance')
+                    plt.plot(tm[0:i],Tpl[0:i],'g-',label=r'$T_1$ linear model')
+                    plt.ylabel('Temperature (degC)')
+                    plt.legend(loc=2)
+                    ax=plt.subplot(4,1,4)
+                    ax.grid()
+                    plt.plot(tm[0:i],error_sp[0:i],'r-',label='Set Point Error')
+                    plt.plot(tm[0:i],error_eb[0:i],'k-',label='Energy Balance Error')
+                    plt.plot(tm[0:i],error_fopdt[0:i],'g-',label='Linear Model Error')
+                    plt.ylabel('Cumulative Error')
+                    plt.legend(loc='best')
+                    plt.xlabel('Time (sec)')
+                    plt.draw()
+                    plt.pause(0.05)
+
+                i += 1
+
+        # Make sure serial connection still closes when there's an error or when terminating
+        # with Ctrl+C
+        except Exception as e:
+            # Disconnect from Arduino
+            # Turn off heaters
+            self.Q1(0)
+            print(e)
+            self.close()
+            if DEBUG_PLOT:
+                if DEBUG_TXT:
+                    save_txt(tm[0:i],Q1[0:i],T1[0:i],[Tsp1 for i in range(i)])
+                plt.savefig('test_PID.png')
+
 
 if __name__ == '__main__':
     rospy.init_node('thermal_reference_temperature')
     temp = ThermalReference(rospy.get_name())
     temp.spin()
+    YAPI.FreeAPI()
