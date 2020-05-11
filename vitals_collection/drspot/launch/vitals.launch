@@ -22,7 +22,7 @@
           output="screen" respawn="true">
       <remap from="camera_array/mono_red/image_raw" to="camera_array/mono_660/image_raw" />
       <remap from="camera_array/mono_nir/image_raw" to="camera_array/mono_880/image_raw" />
-      <remap from="camera_array/mono_blue/image_raw" to="camera_array/mono_470/image_raw" />
+      <remap from="camera_array/mono_narrow_nir/image_raw" to="camera_array/mono_810/image_raw" />
     </node>
   </group>
   <group if="$(arg launch_heart_rate_spo2)">
