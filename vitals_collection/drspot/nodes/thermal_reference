@@ -407,9 +407,6 @@ class ThermalReference(object):
                 #        tm[i],Tsp1,T1[i], \
                 #        Q1[i],P,ierr,D))
 
-		#print(('{} {} {} {} {} {} {}').format(tm[i], Tsp1, T1[i], Q1[i], P, ierr, D))
-
-
                 if DEBUG_PLOT:
                     # Plot
                     plt.clf()
@@ -443,6 +440,8 @@ class ThermalReference(object):
                     plt.pause(0.05)
 
                 i += 1
+            self.Q1(0)
+            self.close()
 
         # Make sure serial connection still closes when there's an error or when terminating
         # with Ctrl+C
