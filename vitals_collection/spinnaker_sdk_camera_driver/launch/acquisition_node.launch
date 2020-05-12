@@ -32,6 +32,7 @@
 
     <!-- Load parameters onto server using argument or default values above -->
     <param name="exposure_time"     value="$(arg exposure_time)" />
+    <param name="gain"     value="$(arg gain)" />
     <param name="target_grey_value" value="$(arg target_grey_value)" />
     <param name="binning"           value="$(arg binning)" />
     <param name="color"             value="$(arg color)" />

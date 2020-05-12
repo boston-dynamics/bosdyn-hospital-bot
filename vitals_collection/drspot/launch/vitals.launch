@@ -13,6 +13,7 @@
       <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
         <arg name="config_file" default="/etc/ros/params/spinnaker_sdk_camera_driver_params.yaml" />
         <arg name="exposure_time" default="27800" />
+        <arg name="gain" default="0.0" />
       </include>
     </group>
   </group>

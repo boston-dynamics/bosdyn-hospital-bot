@@ -124,7 +124,7 @@ class FaceDetectorTracker(object):
         # Use our member function to make sure behavior is consistent.
         roi_unscaled = self.get_roi()
 
-        do_detect_track = self.detect_track_thread is None or self.detect_track_thread is not None and not self.detect_track_thread.is_alive()
+        do_detect_track = self.detect_track_thread is None or not self.detect_track_thread.is_alive()
         if do_detect_track:
             # Spawn a thread to do the detection and tracking.
             self.detect_track_thread = threading.Thread(target=self.detect_track,
