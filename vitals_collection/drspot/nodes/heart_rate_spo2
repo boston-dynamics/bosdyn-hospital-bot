@@ -548,7 +548,9 @@ class HeartRate(object):
             snr_per_spo2[ss] = np.sum(masked) / np.sum(1.0 - masked)
 
         if DEBUG_SAVE_DATA:
-            np.savetxt(output_dir + 'avg_pulse_fft.csv', fft_per_spo2,
+            np.savetxt(output_dir + 'avg_pulse_fft.csv',
+                       np.hstack((freq.reshape((-1, 1)) * 60.0,
+                                  fft_per_spo2)),
                        delimiter=',', fmt='%.3e')
             np.savetxt(output_dir + 'avg_pulse_snr.csv', snr_per_spo2,
                        delimiter=',', fmt='%.3e')
