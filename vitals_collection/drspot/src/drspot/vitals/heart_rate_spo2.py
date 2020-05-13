@@ -261,7 +261,7 @@ class HeartRate(object):
         if do_it:
             msmt_n = len(red_data)
             rospy.loginfo('{}: starting computation; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
-                self.name, msmt_n, ti, tf, (tf - ti) / msmt_n))
+                self.name, msmt_n, ti, tf, delta))
             # Spawn a thread to do the measurement.
             if RUN_CONTINUOUS:
                 do_msmt = True
@@ -274,7 +274,7 @@ class HeartRate(object):
                                            red_offset, nir_offset, narrow_nir_offset,
                                            t_data, delta))
                 t.start()
-            if not RUN_CONTINUOUS:
+            if not RUN_CONTINUOUS and do_msmt:
                 self.msmt_thread = t
 
     def msmt_callback(self, event, ti, tf,
@@ -284,8 +284,8 @@ class HeartRate(object):
         msmt_n = len(red_data)
 
         if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
-            rospy.loginfo_throttle(1, '{}: not enough samples {} in {}:{}'.format(
-                                   self.name, msmt_n, ti, tf))
+            rospy.loginfo_throttle(1, '{}: not enough samples {} in {}:{} with delta {:.4f}'.format(
+                                   self.name, msmt_n, ti, tf, delta))
             return
 
         if delta > MAX_DELTA_T:

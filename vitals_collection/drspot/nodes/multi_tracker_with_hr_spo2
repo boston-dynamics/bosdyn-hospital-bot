@@ -78,12 +78,12 @@ if __name__ == '__main__':
         fdt.image_callback(red)
         nir_cct.image_callback(nir)
         narrow_nir_cct.image_callback(narrow_nir)
-        payload = [fdt.cropped_image_pub.payload,
-                   nir_cct.cropped_image_pub.payload,
-                   narrow_nir_cct.cropped_image_pub.payload,
-                   fdt.region_pub.payload,
-                   nir_cct.region_pub.payload,
-                   narrow_nir_cct.region_pub.payload]
+        payload = [fdt.cropped_image_pub.get_payload(),
+                   nir_cct.cropped_image_pub.get_payload(),
+                   narrow_nir_cct.cropped_image_pub.get_payload(),
+                   fdt.region_pub.get_payload(),
+                   nir_cct.region_pub.get_payload(),
+                   narrow_nir_cct.region_pub.get_payload()]
         if all([p is not None for p in payload]):
             hr.synced_callback(*payload)
 

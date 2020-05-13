@@ -22,6 +22,11 @@ class CachingPublisher(Publisher):
         self.payload = args_kwds_to_message(self.data_class, args, kwargs)
         super(CachingPublisher, self).publish(*args, **kwargs)
 
+    def get_payload(self):
+        payload = self.payload
+        self.payload = None
+        return payload
+
     def __init__(self, *args, **kwargs):
         self.payload = None
 
