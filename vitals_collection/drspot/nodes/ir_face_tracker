@@ -232,6 +232,11 @@ if __name__ == '__main__':
     def handle_enable(req):
         rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),
                                                         req.data))
+        if not req.data:
+            det_msg = Bool()
+            det_msg.data = False
+            fdt.tracking_status_pub.publish(det_msg)
+
         fdt.enabled = req.data
         return SetBoolResponse(True, '')
 

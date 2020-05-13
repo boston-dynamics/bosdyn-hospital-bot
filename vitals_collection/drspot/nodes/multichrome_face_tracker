@@ -471,6 +471,13 @@ if __name__ == '__main__':
     def handle_enable(req):
         rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),
                                                         req.data))
+        if not req.data:
+            det_msg = Bool()
+            det_msg.data = False
+            fdt.tracking_status_pub.publish(det_msg)
+            nir_cct.tracking_status_pub.publish(det_msg)
+            narrow_nir_cct.tracking_status_pub.publish(det_msg)
+
         fdt.enabled = req.data
         nir_cct.enabled = req.data
         narrow_nir_cct.enabled = req.data
