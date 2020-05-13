@@ -1,18 +1,3 @@
-#!/usr/bin/env python
-
-# Copyright 2020 Boston Dynamics Inc.
-
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-
-#     http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import threading
 import numpy as np
@@ -23,7 +8,6 @@ import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
-from std_srvs.srv import SetBool, SetBoolResponse
 from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
@@ -448,40 +432,3 @@ class CalibratedCameraTrack(object):
         self.image_sub = rospy.Subscriber(image_topic, Image, self.image_callback,
                                           queue_size=IMG_QUEUE_SIZE,
                                           buff_size=IMG_BUF_SIZE)
-
-if __name__ == '__main__':
-    rospy.init_node('multichrome_face_tracker')
-    fdt = FaceDetectorTracker('red_' + rospy.get_name())
-    nir_cct = CalibratedCameraTrack('nir_' + rospy.get_name(), fdt,
-                                    NIR_IMAGE_TOPIC,
-                                    NIR_TRACKING_STATUS_TOPIC,
-                                    NIR_CROPPED_IMAGE_TOPIC,
-                                    NIR_REGION_IN_IMAGE_TOPIC,
-                                    0,
-                                    NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
-    narrow_nir_cct = CalibratedCameraTrack('narrow_nir_' + rospy.get_name(), fdt,
-                                           NARROW_NIR_IMAGE_TOPIC,
-                                           NARROW_NIR_TRACKING_STATUS_TOPIC,
-                                           NARROW_NIR_CROPPED_IMAGE_TOPIC,
-                                           NARROW_NIR_REGION_IN_IMAGE_TOPIC,
-                                           NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                           NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                           rot180=True)
-
-    def handle_enable(req):
-        rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),
-                                                        req.data))
-        if not req.data:
-            det_msg = Bool()
-            det_msg.data = False
-            fdt.tracking_status_pub.publish(det_msg)
-            nir_cct.tracking_status_pub.publish(det_msg)
-            narrow_nir_cct.tracking_status_pub.publish(det_msg)
-
-        fdt.enabled = req.data
-        nir_cct.enabled = req.data
-        narrow_nir_cct.enabled = req.data
-        return SetBoolResponse(True, '')
-
-    s = rospy.Service(ENABLE_TOPIC, SetBool, handle_enable)
-    rospy.spin()

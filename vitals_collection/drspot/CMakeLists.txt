@@ -21,8 +21,9 @@ catkin_install_python(PROGRAMS
   nodes/ir_face_tracker
   nodes/respiratory_rate
   nodes/skin_temperature
-  nodes/multichrome_face_tracker
-  nodes/heart_rate_spo2
+  nodes/multichrome_face_tracker_standalone
+  nodes/heart_rate_spo2_standalone
+  nodes/multi_tracker_with_hr_spo2
   nodes/mode_manager
   scripts/rqt_vitals_readout
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

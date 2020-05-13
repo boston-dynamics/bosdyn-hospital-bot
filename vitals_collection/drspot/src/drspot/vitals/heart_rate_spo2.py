@@ -657,8 +657,3 @@ class HeartRate(object):
 
         self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),
                                              self.msmt_helper_callback)
-
-if __name__ == '__main__':
-    rospy.init_node('heart_rate')
-    hr = HeartRate(rospy.get_name())
-    rospy.spin()
