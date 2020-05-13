@@ -58,6 +58,6 @@ if __name__ == '__main__':
                                                                         hr.nir_region_sub,
                                                                         hr.narrow_nir_region_sub],
                                                                        200, 0.1)
-    hr.approx_image_sync.registerCallback(hr.image_callback)
+    hr.approx_image_sync.registerCallback(hr.synced_callback)
 
     rospy.spin()

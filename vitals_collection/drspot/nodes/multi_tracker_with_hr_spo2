@@ -15,13 +15,18 @@
 # limitations under the License.
 
 import rospy
+import message_filters
+from sensor_msgs.msg import Image
+from geometry_msgs.msg import PolygonStamped
 from std_srvs.srv import SetBool, SetBoolResponse
 from std_msgs.msg import Bool
+
+from drspot.utils.transport import CachingPublisher as Publisher
 
 from drspot.vitals.heart_rate_spo2 import HeartRate
 from drspot.vitals.multichrome_face_tracker import FaceDetectorTracker, CalibratedCameraTrack
 from drspot.vitals.multichrome_face_tracker import ENABLE_TOPIC
-from drspot.vitals.multichrome_face_tracker import RED_IMAGE_TOPIC, RED_TRACKING_STATUS_TOPIC, RED_CROPPED_IMAGE_TOPIC, RED_REGION_IN_IMAGE_TOPIC, RED_OFFSET_FRAC_OF_FACE_HEIGHT
+from drspot.vitals.multichrome_face_tracker import RED_IMAGE_TOPIC, RED_TRACKING_STATUS_TOPIC, RED_CROPPED_IMAGE_TOPIC, RED_REGION_IN_IMAGE_TOPIC
 from drspot.vitals.multichrome_face_tracker import NIR_IMAGE_TOPIC, NIR_TRACKING_STATUS_TOPIC, NIR_CROPPED_IMAGE_TOPIC, NIR_REGION_IN_IMAGE_TOPIC, NIR_OFFSET_FRAC_OF_FACE_HEIGHT
 from drspot.vitals.multichrome_face_tracker import NARROW_NIR_IMAGE_TOPIC, NARROW_NIR_TRACKING_STATUS_TOPIC, NARROW_NIR_CROPPED_IMAGE_TOPIC, NARROW_NIR_REGION_IN_IMAGE_TOPIC, NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT, NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT
 
@@ -31,22 +36,58 @@ from drspot.vitals.multichrome_face_tracker import IMG_QUEUE_SIZE, IMG_BUF_SIZE
 if __name__ == '__main__':
     rospy.init_node('multi_tracker_with_hr_spo2')
     hr = HeartRate(rospy.get_name())
-    fdt = FaceDetectorTracker('red_' + rospy.get_name())
+    fdt = FaceDetectorTracker('red_' + rospy.get_name(),
+                              RED_TRACKING_STATUS_TOPIC,
+                              Publisher(RED_CROPPED_IMAGE_TOPIC,
+                                        Image, queue_size=10),
+                              Publisher(RED_REGION_IN_IMAGE_TOPIC,
+                                        PolygonStamped, queue_size=10))
+    fdt.image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
+                                               queue_size=IMG_QUEUE_SIZE,
+                                               buff_size=IMG_BUF_SIZE)
     nir_cct = CalibratedCameraTrack('nir_' + rospy.get_name(), fdt,
-                                    NIR_IMAGE_TOPIC,
                                     NIR_TRACKING_STATUS_TOPIC,
-                                    NIR_CROPPED_IMAGE_TOPIC,
-                                    NIR_REGION_IN_IMAGE_TOPIC,
+                                    Publisher(NIR_CROPPED_IMAGE_TOPIC,
+                                              Image, queue_size=10),
+                                    Publisher(NIR_REGION_IN_IMAGE_TOPIC,
+                                              PolygonStamped, queue_size=10),
                                     0,
                                     NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
+    nir_cct.image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image,
+                                                   queue_size=IMG_QUEUE_SIZE,
+                                                   buff_size=IMG_BUF_SIZE)
     narrow_nir_cct = CalibratedCameraTrack('narrow_nir_' + rospy.get_name(), fdt,
-                                           NARROW_NIR_IMAGE_TOPIC,
                                            NARROW_NIR_TRACKING_STATUS_TOPIC,
-                                           NARROW_NIR_CROPPED_IMAGE_TOPIC,
-                                           NARROW_NIR_REGION_IN_IMAGE_TOPIC,
+                                           Publisher(NARROW_NIR_CROPPED_IMAGE_TOPIC,
+                                                     Image, queue_size=10),
+                                           Publisher(NARROW_NIR_REGION_IN_IMAGE_TOPIC,
+                                                     PolygonStamped, queue_size=10),
                                            NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT,
                                            NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
                                            rot180=True)
+    narrow_nir_cct.image_sub = message_filters.Subscriber(NARROW_NIR_IMAGE_TOPIC, Image,
+                                                          queue_size=IMG_QUEUE_SIZE,
+                                                          buff_size=IMG_BUF_SIZE)
+
+    approx_image_sync = message_filters.ApproximateTimeSynchronizer([fdt.image_sub,
+                                                                     nir_cct.image_sub,
+                                                                     narrow_nir_cct.image_sub],
+                                                                    200, 0.1)
+
+    def synced_callback_and_republish(red, nir, narrow_nir):
+        fdt.image_callback(red)
+        nir_cct.image_callback(nir)
+        narrow_nir_cct.image_callback(narrow_nir)
+        payload = [fdt.cropped_image_pub.payload,
+                   nir_cct.cropped_image_pub.payload,
+                   narrow_nir_cct.cropped_image_pub.payload,
+                   fdt.region_pub.payload,
+                   nir_cct.region_pub.payload,
+                   narrow_nir_cct.region_pub.payload]
+        if all([p is not None for p in payload]):
+            hr.synced_callback(*payload)
+
+    approx_image_sync.registerCallback(synced_callback_and_republish)
 
     def handle_enable(req):
         rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),

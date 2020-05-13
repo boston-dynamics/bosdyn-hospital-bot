@@ -145,8 +145,8 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
     return y
 
 class HeartRate(object):
-    def image_callback(self, red_image_data, nir_image_data, narrow_nir_image_data,
-                       red_region, nir_region, narrow_nir_region):
+    def synced_callback(self, red_image_data, nir_image_data, narrow_nir_image_data,
+                        red_region, nir_region, narrow_nir_region):
         if RATE_CUT:
             if self.RATE_CUT is None: self.RATE_CUT = 0
             self.RATE_CUT += 1
