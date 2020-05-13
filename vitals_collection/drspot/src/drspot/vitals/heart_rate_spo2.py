@@ -32,7 +32,6 @@ import math
 import insightface
 
 import rospy
-import message_filters
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped
 from std_msgs.msg import Float32MultiArray, Float32, Bool, Empty
@@ -621,36 +620,6 @@ class HeartRate(object):
         self.spo2_msmt_pub = rospy.Publisher(SPO2_MSMT_TOPIC,
                                              Float32,
                                              queue_size=10)
-
-        self.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
-                                                        queue_size=IMG_QUEUE_SIZE,
-                                                        buff_size=IMG_BUF_SIZE)
-        self.red_region_sub = message_filters.Subscriber(RED_REGION_IN_IMAGE_TOPIC,
-                                                         PolygonStamped,
-                                                         queue_size=IMG_QUEUE_SIZE)
-
-        self.nir_image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image,
-                                                        queue_size=IMG_QUEUE_SIZE,
-                                                        buff_size=IMG_BUF_SIZE)
-        self.nir_region_sub = message_filters.Subscriber(NIR_REGION_IN_IMAGE_TOPIC,
-                                                         PolygonStamped,
-                                                         queue_size=IMG_QUEUE_SIZE)
-
-        self.narrow_nir_image_sub = message_filters.Subscriber(NARROW_NIR_IMAGE_TOPIC, Image,
-                                                         queue_size=IMG_QUEUE_SIZE,
-                                                         buff_size=IMG_BUF_SIZE)
-        self.narrow_nir_region_sub = message_filters.Subscriber(NARROW_NIR_REGION_IN_IMAGE_TOPIC,
-                                                          PolygonStamped,
-                                                          queue_size=IMG_QUEUE_SIZE)
-
-        self.approx_image_sync = message_filters.ApproximateTimeSynchronizer([self.red_image_sub,
-                                                                              self.nir_image_sub,
-                                                                              self.narrow_nir_image_sub,
-                                                                              self.red_region_sub,
-                                                                              self.nir_region_sub,
-                                                                              self.narrow_nir_region_sub],
-                                                                             200, 0.1)
-        self.approx_image_sync.registerCallback(self.image_callback)
 
         self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
                                                     self.tracking_status_callback, queue_size=1)

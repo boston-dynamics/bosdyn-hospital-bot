@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+
+# Copyright 2020 Boston Dynamics Inc.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import threading
 import numpy as np
@@ -272,7 +287,9 @@ class FaceDetectorTracker(object):
         with self.lock:
             return self.roi
 
-    def __init__(self, name):
+    def __init__(self, name,
+                 tracking_status_topic,
+                 cropped_image_pub, region_in_image_pub):
         if RATE_CUT:
             self.RATE_CUT = None
 
@@ -292,20 +309,17 @@ class FaceDetectorTracker(object):
 
         self.clear_msmt_state()
 
-        self.cropped_image_pub = rospy.Publisher(RED_CROPPED_IMAGE_TOPIC, Image, queue_size=10)
-        self.region_pub = rospy.Publisher(RED_REGION_IN_IMAGE_TOPIC, PolygonStamped,
-                                          queue_size=10)
-        self.tracking_status_pub = rospy.Publisher(RED_TRACKING_STATUS_TOPIC, Bool, queue_size=10)
+        self.cropped_image_pub = cropped_image_pub
+        self.region_pub = region_in_image_pub
+        self.tracking_status_pub = rospy.Publisher(tracking_status_topic,
+                                                   Bool, queue_size=10)
 
-        self.face_in_region_pub = rospy.Publisher(RED_FACE_IN_REGION_TOPIC, PolygonStamped,
+        self.face_in_region_pub = rospy.Publisher(RED_FACE_IN_REGION_TOPIC,
+                                                  PolygonStamped,
                                                   queue_size=10)
 
         self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
         self.scaled_image_pub = rospy.Publisher(SCALED_RED_IMAGE_TOPIC, Image, queue_size=10)
-
-        self.image_sub = rospy.Subscriber(RED_IMAGE_TOPIC, Image, self.image_callback,
-                                          queue_size=IMG_QUEUE_SIZE,
-                                          buff_size=IMG_BUF_SIZE)
 
 class CalibratedCameraTrack(object):
     def image_callback(self, data):
@@ -402,8 +416,8 @@ class CalibratedCameraTrack(object):
         self.tlast = None
 
     def __init__(self, name, face_tracker,
-                 image_topic, tracking_status_topic, cropped_image_topic,
-                 region_in_image_topic,
+                 tracking_status_topic,
+                 cropped_image_pub, region_in_image_pub,
                  # Moving the ROI down and right is positive.
                  # Expressed as a fraction of the ROI height.
                  x_pix_offset, y_pix_offset,
@@ -425,10 +439,7 @@ class CalibratedCameraTrack(object):
 
         self.clear_msmt_state()
 
-        self.cropped_image_pub = rospy.Publisher(cropped_image_topic, Image, queue_size=10)
-        self.region_pub = rospy.Publisher(region_in_image_topic, PolygonStamped, queue_size=10)
-        self.tracking_status_pub = rospy.Publisher(tracking_status_topic, Bool, queue_size=10)
-
-        self.image_sub = rospy.Subscriber(image_topic, Image, self.image_callback,
-                                          queue_size=IMG_QUEUE_SIZE,
-                                          buff_size=IMG_BUF_SIZE)
+        self.cropped_image_pub = cropped_image_pub
+        self.region_pub = region_in_image_pub
+        self.tracking_status_pub = rospy.Publisher(tracking_status_topic,
+                                                   Bool, queue_size=10)

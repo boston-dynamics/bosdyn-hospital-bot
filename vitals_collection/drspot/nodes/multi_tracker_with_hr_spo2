@@ -20,7 +20,13 @@ from std_msgs.msg import Bool
 
 from drspot.vitals.heart_rate_spo2 import HeartRate
 from drspot.vitals.multichrome_face_tracker import FaceDetectorTracker, CalibratedCameraTrack
-from drspot.vitals.multichrome_face_tracker import ENABLE_TOPIC, NIR_IMAGE_TOPIC, NIR_TRACKING_STATUS_TOPIC, NIR_CROPPED_IMAGE_TOPIC, NIR_REGION_IN_IMAGE_TOPIC, NIR_OFFSET_FRAC_OF_FACE_HEIGHT, NARROW_NIR_IMAGE_TOPIC, NARROW_NIR_TRACKING_STATUS_TOPIC, NARROW_NIR_CROPPED_IMAGE_TOPIC, NARROW_NIR_REGION_IN_IMAGE_TOPIC, NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT, NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT
+from drspot.vitals.multichrome_face_tracker import ENABLE_TOPIC
+from drspot.vitals.multichrome_face_tracker import RED_IMAGE_TOPIC, RED_TRACKING_STATUS_TOPIC, RED_CROPPED_IMAGE_TOPIC, RED_REGION_IN_IMAGE_TOPIC, RED_OFFSET_FRAC_OF_FACE_HEIGHT
+from drspot.vitals.multichrome_face_tracker import NIR_IMAGE_TOPIC, NIR_TRACKING_STATUS_TOPIC, NIR_CROPPED_IMAGE_TOPIC, NIR_REGION_IN_IMAGE_TOPIC, NIR_OFFSET_FRAC_OF_FACE_HEIGHT
+from drspot.vitals.multichrome_face_tracker import NARROW_NIR_IMAGE_TOPIC, NARROW_NIR_TRACKING_STATUS_TOPIC, NARROW_NIR_CROPPED_IMAGE_TOPIC, NARROW_NIR_REGION_IN_IMAGE_TOPIC, NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT, NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT
+
+# Use the bigger buffer and queue sizes from multichrome_face_tracker, not heart_rate_spo2
+from drspot.vitals.multichrome_face_tracker import IMG_QUEUE_SIZE, IMG_BUF_SIZE
 
 if __name__ == '__main__':
     rospy.init_node('multi_tracker_with_hr_spo2')
