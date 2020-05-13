@@ -7,6 +7,9 @@ This code and these algorithms were developed in collaboration with:
 - Canchen Li <canchenl@mit.edu>
 - Giovanni Traverso <cgt20@mit.edu>
 
+The heart rate and SpO2 algorithm implemented here is based on
+[https://www.nature.com/articles/srep38609](https://www.nature.com/articles/srep38609)
+
 Also see:
 - [Multiperson tracking and vitals](https://github.com/Frost-Lee/thermal_monitoring)
 
@@ -15,7 +18,7 @@ Also see:
 ```
 pip uninstall opencv-python
 pip install opencv-contrib-python
-pip install mxnet-mkl insightface numpy scipy
+pip install mxnet-mkl insightface numpy scipy transitions
 pip install yoctopuce # for the thermal reference
 ```
 

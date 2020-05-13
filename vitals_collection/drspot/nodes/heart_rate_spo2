@@ -35,7 +35,7 @@ import rospy
 import message_filters
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped
-from std_msgs.msg import Float32MultiArray, Float32, Bool
+from std_msgs.msg import Float32MultiArray, Float32, Bool, Empty
 from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
@@ -53,6 +53,8 @@ TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
 # Outputs.
 HEART_RATE_MSMT_TOPIC = 'full_heart_rate'
 SPO2_MSMT_TOPIC = 'full_spo2'
+
+START_COMPUTE_TOPIC = 'start_compute_heart_rate_spo2'
 
 # Carotid
 # SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.2
@@ -298,6 +300,8 @@ class HeartRate(object):
             if DEBUG_SAVE_IMAGES:
                 output_img_dir = output_dir + 'img' + os.path.sep
                 os.mkdir(output_img_dir)
+
+        self.start_compute_pub.publish(Empty())
 
         ri = 0 # ROI index over time.
         patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, 3))
@@ -606,6 +610,10 @@ class HeartRate(object):
         self.delta_alpha = 0.8
 
         self.bridge = CvBridge()
+
+        self.start_compute_pub = rospy.Publisher(START_COMPUTE_TOPIC,
+                                                 Empty,
+                                                 queue_size=1)
 
         self.heart_rate_msmt_pub = rospy.Publisher(HEART_RATE_MSMT_TOPIC,
                                                    Float32,

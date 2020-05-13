@@ -22,9 +22,12 @@ import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
+from std_srvs.srv import SetBool, SetBoolResponse
 from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
+
+ENABLE_TOPIC = 'ir_face_tracker_enable'
 
 IMAGE_TOPIC = 'thermal_image_raw'
 SCALED_IMAGE_TOPIC = 'debug_thermal_tracking_rescale'
@@ -55,6 +58,9 @@ ROS_THERMAL_IMAGE_BUFFER_SIZE = 640*480 * 2 * 3
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
+        if not self.enabled:
+            return
+
         det_msg = Bool()
         det_msg.data = False
         t = data.header.stamp.to_sec()
@@ -197,6 +203,8 @@ class FaceDetectorTracker(object):
     def __init__(self, name):
         self.name = name
 
+        self.enabled = True
+
         self.bridge = CvBridge()
 
         self.detector = insightface.model_zoo.get_model('retinaface_r50_v1')
@@ -220,4 +228,12 @@ class FaceDetectorTracker(object):
 if __name__ == '__main__':
     rospy.init_node('ir_face_tracker')
     fdt = FaceDetectorTracker(rospy.get_name())
+
+    def handle_enable(req):
+        rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),
+                                                        req.data))
+        fdt.enabled = req.data
+        return SetBoolResponse(True, '')
+
+    s = rospy.Service(ENABLE_TOPIC, SetBool, handle_enable)
     rospy.spin()

@@ -23,9 +23,12 @@ import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped, Point32
 from std_msgs.msg import Bool
+from std_srvs.srv import SetBool, SetBoolResponse
 from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
+
+ENABLE_TOPIC = 'multichrome_face_tracker_enable'
 
 SCALED_RED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
 DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
@@ -85,6 +88,9 @@ NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
+        if not self.enabled:
+            return
+
         if RATE_CUT:
             if self.RATE_CUT is None: self.RATE_CUT = 0
             self.RATE_CUT += 1
@@ -288,6 +294,8 @@ class FaceDetectorTracker(object):
 
         self.name = name
 
+        self.enabled = True
+
         self.lock = threading.Lock()
         self.detect_track_thread = None
 
@@ -317,6 +325,9 @@ class FaceDetectorTracker(object):
 
 class CalibratedCameraTrack(object):
     def image_callback(self, data):
+        if not self.enabled:
+            return
+
         if RATE_CUT:
             if self.RATE_CUT is None: self.RATE_CUT = 0
             self.RATE_CUT += 1
@@ -418,6 +429,8 @@ class CalibratedCameraTrack(object):
 
         self.name = name
 
+        self.enabled = True
+
         self.face_tracker = face_tracker
 
         self.x_pix_offset = x_pix_offset
@@ -454,4 +467,14 @@ if __name__ == '__main__':
                                            NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT,
                                            NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
                                            rot180=True)
+
+    def handle_enable(req):
+        rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),
+                                                        req.data))
+        fdt.enabled = req.data
+        nir_cct.enabled = req.data
+        narrow_nir_cct.enabled = req.data
+        return SetBoolResponse(True, '')
+
+    s = rospy.Service(ENABLE_TOPIC, SetBool, handle_enable)
     rospy.spin()

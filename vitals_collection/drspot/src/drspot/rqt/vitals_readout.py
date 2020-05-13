@@ -11,6 +11,7 @@ from python_qt_binding.QtGui import QPalette
 RESP_RATE_TOPIC = 'full_resp_rate'
 HEART_RATE_TOPIC = 'full_heart_rate'
 SKIN_TEMP_TOPIC = 'full_skin_temp'
+SPO2_TOPIC = 'full_spo2'
 
 VALID_DURATION_SEC = 5.0
 
@@ -63,15 +64,18 @@ class VitalsReadout(Plugin):
                                                queue_size=1)
         self.skin_temp_sub = rospy.Subscriber(SKIN_TEMP_TOPIC, Float32, self.skin_temp_callback,
                                               queue_size=1)
+        self.spo2_sub = rospy.Subscriber(SPO2_TOPIC, Float32, self.spo2_callback,
+                                         queue_size=1)
 
         self.resp_rate_timeout_callback(None)
         self.heart_rate_timeout_callback(None)
         self.skin_temp_timeout_callback(None)
-        self._widget.spo2.setPalette(OLD_PALETTE)
+        self.spo2_timeout_callback(None)
 
         self.resp_rate_timeout = None
         self.heart_rate_timeout = None
         self.skin_temp_timeout = None
+        self.spo2_timeout = None
 
     def resp_rate_callback(self, data):
         self._widget.resp_rate.display(int(data.data))
@@ -98,6 +102,19 @@ class VitalsReadout(Plugin):
     def heart_rate_timeout_callback(self, event):
         rospy.loginfo('heart_rate_timeout_callback')
         self._widget.heart_rate.setPalette(OLD_PALETTE)
+
+    def spo2_callback(self, data):
+        self._widget.spo2.display(int(data.data))
+        rospy.logdebug('spo2_callback')
+        if self.spo2_timeout is not None:
+            self.spo2_timeout.shutdown()
+        self.spo2_timeout = rospy.Timer(rospy.Duration(VALID_DURATION_SEC),
+                                        self.spo2_timeout_callback, oneshot=True)
+        self._widget.spo2.setPalette(NOMINAL_PALETTE)
+
+    def spo2_timeout_callback(self, event):
+        rospy.loginfo('spo2_timeout_callback')
+        self._widget.spo2.setPalette(OLD_PALETTE)
 
     def skin_temp_callback(self, data):
         rospy.logdebug('skin_temp_callback')

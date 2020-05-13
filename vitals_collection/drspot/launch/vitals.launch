@@ -5,8 +5,15 @@
   <arg name="launch_heart_rate_spo2" default="true" />
   <arg name="launch_thermal_algos" default="true" />
   <arg name="use_thermal_reference" default="true" />
+  <arg name="launch_mode_manager" default="true" />
 
   <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
+
+  <group if="$(arg launch_mode_manager)">
+    <node name="mode_manager" pkg="drspot" type="mode_manager"
+          output="screen" respawn="true">
+    </node>
+  </group>
 
   <group if="$(eval multichrome_provider == 'spinnaker_sdk_camera_driver')">
     <group if="$(arg launch_drivers)">
