@@ -18,7 +18,7 @@ Also see:
 ```
 pip uninstall opencv-python
 pip install opencv-contrib-python
-pip install mxnet-mkl insightface numpy scipy transitions
+pip install mxnet-mkl insightface numpy scipy transitions transitions-gui
 pip install yoctopuce # for the thermal reference
 ```
 
