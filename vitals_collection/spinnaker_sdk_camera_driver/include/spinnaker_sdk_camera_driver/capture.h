@@ -17,6 +17,8 @@
 
 #include "spinnaker_sdk_camera_driver/SpinnakerImageNames.h"
 
+#include <mutex>
+
 #include <sstream>
 #include <image_transport/image_transport.h>
 
@@ -70,6 +72,7 @@ namespace acquisition {
         bool onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res);
         ros::ServiceServer Enable_;
         bool enabled_;
+	mutex enabled_mutex_;
 
         float mem_usage();
     

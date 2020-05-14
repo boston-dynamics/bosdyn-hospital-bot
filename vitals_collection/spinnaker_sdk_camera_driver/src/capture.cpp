@@ -710,12 +710,16 @@ void acquisition::Capture::init_cameras(bool soft = false) {
 
 bool acquisition::Capture::onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
 {
+  cout << "enable service callback before lock\n";
+  const lock_guard<mutex> lock(enabled_mutex_);
+  cout << "enable service callback " << (req.data ? 1 : 0)  << "\n";
   if (req.data) {
     start_acquisition();
+    enabled_ = true;
   } else {
+    enabled_ = false;
     end_acquisition();
   }
-  enabled_ = req.data;
   res.success = true;
   return true;
 }
@@ -881,7 +885,11 @@ void acquisition::Capture::get_mat_images() {
     
     int frameID;
     int fid_mismatch = 0;
-   
+
+    const lock_guard<mutex> lock(enabled_mutex_);
+    if (!enabled_) {
+        return;
+    }
 
     for (int i=0; i<numCameras_; i++) {
         //ROS_INFO_STREAM("CAM ID IS "<< i);
@@ -938,8 +946,14 @@ void acquisition::Capture::run_soft_trig() {
     try{
         while( ros::ok() ) {
 
-            if (!enabled_) {
+            bool enabled = true;
+            {
+                const lock_guard<mutex> lock(enabled_mutex_);
+                enabled = enabled_;
+            }
+            if (!enabled) {
                 ros_rate.sleep();
+                continue;
             }
 
             double t = ros::Time::now().toSec();
