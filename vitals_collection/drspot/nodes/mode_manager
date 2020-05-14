@@ -96,9 +96,15 @@ class ModeManager(Machine):
 
     def on_enter_setup(self):
         self.multichrome_tracker_enable_srv(False)
-        self.multichrome_enable_srv(False)
         self.ir_tracker_enable_srv(False)
-        self.thermal_enable_srv(True)
+        try:
+            self.multichrome_enable_srv(False)
+        except Exception as e:
+            rospy.logwarn('{} failed disable multichrome in setup'.format(self.name))
+        try:
+            self.thermal_enable_srv(True)
+        except Exception as e:
+            rospy.logwarn('{} failed disable thermal in setup'.format(self.name))
 
         with self.lock:
             self.completeSetup()
