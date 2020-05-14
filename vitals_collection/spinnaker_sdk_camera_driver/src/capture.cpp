@@ -83,7 +83,7 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     master_fps_ = 20.0;
     binning_ = 1;
     todays_date_ = todays_date();
-    
+
     dump_img_ = "dump" + ext_;
 
     grab_time_ = 0;
@@ -113,7 +113,10 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     system_ = System::GetInstance();
 
     load_cameras();
- 
+
+    enabled_ = true;
+    Enable_ = nh_.advertiseService("camera_array_stream_enable", &Capture::onEnable, this);
+
     //initializing the ros publisher
     acquisition_pub = nh_.advertise<spinnaker_sdk_camera_driver::SpinnakerImageNames>("camera", 1000);
     //dynamic reconfigure
@@ -193,6 +196,9 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     system_ = System::GetInstance();
 
     load_cameras();
+
+    enabled_ = true;
+    Enable_ = nh_.advertiseService("camera_array_stream_enable", &Capture::onEnable, this);
 
     //initializing the ros publisher
     acquisition_pub = nh_.advertise<spinnaker_sdk_camera_driver::SpinnakerImageNames>("camera", 1000);
@@ -700,6 +706,18 @@ void acquisition::Capture::init_cameras(bool soft = false) {
 
     }
     ROS_DEBUG_STREAM("All cameras initialized.");
+}
+
+bool acquisition::Capture::onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
+{
+  if (req.data) {
+    start_acquisition();
+  } else {
+    end_acquisition();
+  }
+  enabled_ = req.data;
+  res.success = true;
+  return true;
 }
 
 void acquisition::Capture::start_acquisition() {

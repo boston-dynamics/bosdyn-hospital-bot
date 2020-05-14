@@ -35,7 +35,7 @@ from std_srvs.srv import SetBool
 MULTICHROME_TRACKER_ENABLE_TOPIC = 'multichrome_face_tracker_enable'
 IR_TRACKER_ENABLE_TOPIC = 'ir_face_tracker_enable'
 THERMAL_ENABLE_TOPIC = 'thermal_stream_enable'
-MULTICHROME_ENABLE_TOPIC = 'multichrome_stream_enable'
+MULTICHROME_ENABLE_TOPIC = 'camera_array_stream_enable'
 
 RESP_RATE_TOPIC = 'full_resp_rate'
 HEART_RATE_TOPIC = 'full_heart_rate'
@@ -95,6 +95,7 @@ class ModeManager(Machine):
 
     def on_enter_setup(self):
         self.multichrome_tracker_enable_srv(False)
+        self.multichrome_enable_srv(False)
         self.ir_tracker_enable_srv(False)
         self.thermal_enable_srv(True)
 
@@ -125,8 +126,10 @@ class ModeManager(Machine):
                 self.completeComputeWithIR()
 
     def on_enter_accumulate_multichrome(self):
+        self.multichrome_enable_srv(True)
         self.multichrome_tracker_enable_srv(True)
     def on_exit_accumulate_multichrome(self):
+        self.multichrome_enable_srv(False)
         self.multichrome_tracker_enable_srv(False)
 
     def hr_spo2_start_compute_callback(self, data):
@@ -161,13 +164,8 @@ class ModeManager(Machine):
                                                         SetBool)
         self.thermal_enable_srv = rospy.ServiceProxy(THERMAL_ENABLE_TOPIC,
                                                      SetBool)
-
-        self.multichrome_enable_srv = None
-        try:
-            self.multichrome_enable_srv = rospy.ServiceProxy(MULTICHROME_ENABLE_TOPIC,
-                                                             SetBool)
-        except Exception as e:
-            rospy.logwarn('{} unable to connect to multichrome enable service'.format(self.name))
+        self.multichrome_enable_srv = rospy.ServiceProxy(MULTICHROME_ENABLE_TOPIC,
+                                                         SetBool)
 
         if DEBUG_WEB_VIEW:
             Machine.__init__(self, states=states, transitions=transitions,
