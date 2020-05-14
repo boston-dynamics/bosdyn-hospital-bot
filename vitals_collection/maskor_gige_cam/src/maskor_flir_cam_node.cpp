@@ -49,7 +49,7 @@ FlirNode::FlirNode()
     //bind dynamic reconfigure callback
     ReconfigSvr_.setCallback(boost::bind(&FlirNode::_configCb, this, _1, _2));
 
-    Enable_ = nh_.advertiseService("thermal_stream_enable", &FlirNode::_onEnable, this);
+    Enable_ = nh_.advertiseService("flir_camera/thermal_stream_enable", &FlirNode::_onEnable, this);
 }
 
 
