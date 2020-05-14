@@ -9,6 +9,8 @@
 
   <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
 
+  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
+
   <group if="$(arg launch_mode_manager)">
     <node name="mode_manager" pkg="drspot" type="mode_manager"
           output="screen" respawn="true">
@@ -49,8 +51,6 @@
           output="screen" respawn="true">
     </node>
   </group>
-
-  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
 
   <group if="$(eval thermal_ns == 'optris')">
     <group if="$(arg launch_drivers)">
