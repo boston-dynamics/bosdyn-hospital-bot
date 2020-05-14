@@ -90,6 +90,9 @@ transitions = [
 
 @add_state_features(Tags, Timeout)
 class ModeManager(Machine):
+    def on_exit_initial(self):
+        rospy.loginfo('{} completed init'.format(self.name))
+
     def on_enter_setup(self):
         self.multichrome_tracker_enable_srv(False)
         self.ir_tracker_enable_srv(False)
@@ -136,11 +139,14 @@ class ModeManager(Machine):
 
         self.lock = threading.Lock()
 
-        self.resp_rate_sub = rospy.Subscriber(RESP_RATE_TOPIC, Float32, self.resp_rate_callback,
+        self.resp_rate_sub = rospy.Subscriber(RESP_RATE_TOPIC, Float32,
+                                              self.resp_rate_callback,
                                               queue_size=1)
-        self.heart_rate_sub = rospy.Subscriber(HEART_RATE_TOPIC, Float32, self.heart_rate_callback,
+        self.heart_rate_sub = rospy.Subscriber(HEART_RATE_TOPIC, Float32,
+                                               self.heart_rate_callback,
                                                queue_size=1)
-        self.skin_temp_sub = rospy.Subscriber(SKIN_TEMP_TOPIC, Float32, self.skin_temp_callback,
+        self.skin_temp_sub = rospy.Subscriber(SKIN_TEMP_TOPIC, Float32,
+                                              self.skin_temp_callback,
                                               queue_size=1)
         self.spo2_sub = rospy.Subscriber(SPO2_TOPIC, Float32, self.spo2_callback,
                                          queue_size=1)
@@ -170,7 +176,6 @@ class ModeManager(Machine):
             Machine.__init__(self, states=states, transitions=transitions)
 
         self.doSetup()
-        rospy.loginfo('{} completed init'.format(self.name))
 
     def shutdown_hook(self):
         if DEBUG_WEB_VIEW:
