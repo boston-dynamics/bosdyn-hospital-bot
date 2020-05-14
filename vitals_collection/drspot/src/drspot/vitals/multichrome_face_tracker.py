@@ -27,6 +27,8 @@ from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
 
+ENABLE_TOPIC = 'multichrome_face_tracker_enable'
+
 SCALED_RED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
 DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
 
@@ -54,7 +56,7 @@ IMG_BUF_SIZE = IMG_QUEUE_SIZE * 2448 * 2048
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
 
-RATE_CUT = True
+RATE_CUT = False
 RATE_DIV = 2
 
 DETECT_TRACK_SCALE_FACTOR = 0.125
@@ -85,6 +87,9 @@ NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
+        if not self.enabled:
+            return
+
         if RATE_CUT:
             if self.RATE_CUT is None: self.RATE_CUT = 0
             self.RATE_CUT += 1
@@ -124,7 +129,7 @@ class FaceDetectorTracker(object):
         # Use our member function to make sure behavior is consistent.
         roi_unscaled = self.get_roi()
 
-        do_detect_track = self.detect_track_thread is None or self.detect_track_thread is not None and not self.detect_track_thread.is_alive()
+        do_detect_track = self.detect_track_thread is None or not self.detect_track_thread.is_alive()
         if do_detect_track:
             # Spawn a thread to do the detection and tracking.
             self.detect_track_thread = threading.Thread(target=self.detect_track,
@@ -282,11 +287,15 @@ class FaceDetectorTracker(object):
         with self.lock:
             return self.roi
 
-    def __init__(self, name):
+    def __init__(self, name,
+                 tracking_status_topic,
+                 cropped_image_pub, region_in_image_pub):
         if RATE_CUT:
             self.RATE_CUT = None
 
         self.name = name
+
+        self.enabled = True
 
         self.lock = threading.Lock()
         self.detect_track_thread = None
@@ -300,23 +309,23 @@ class FaceDetectorTracker(object):
 
         self.clear_msmt_state()
 
-        self.cropped_image_pub = rospy.Publisher(RED_CROPPED_IMAGE_TOPIC, Image, queue_size=10)
-        self.region_pub = rospy.Publisher(RED_REGION_IN_IMAGE_TOPIC, PolygonStamped,
-                                          queue_size=10)
-        self.tracking_status_pub = rospy.Publisher(RED_TRACKING_STATUS_TOPIC, Bool, queue_size=10)
+        self.cropped_image_pub = cropped_image_pub
+        self.region_pub = region_in_image_pub
+        self.tracking_status_pub = rospy.Publisher(tracking_status_topic,
+                                                   Bool, queue_size=10)
 
-        self.face_in_region_pub = rospy.Publisher(RED_FACE_IN_REGION_TOPIC, PolygonStamped,
+        self.face_in_region_pub = rospy.Publisher(RED_FACE_IN_REGION_TOPIC,
+                                                  PolygonStamped,
                                                   queue_size=10)
 
         self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
         self.scaled_image_pub = rospy.Publisher(SCALED_RED_IMAGE_TOPIC, Image, queue_size=10)
 
-        self.image_sub = rospy.Subscriber(RED_IMAGE_TOPIC, Image, self.image_callback,
-                                          queue_size=IMG_QUEUE_SIZE,
-                                          buff_size=IMG_BUF_SIZE)
-
 class CalibratedCameraTrack(object):
     def image_callback(self, data):
+        if not self.enabled:
+            return
+
         if RATE_CUT:
             if self.RATE_CUT is None: self.RATE_CUT = 0
             self.RATE_CUT += 1
@@ -407,8 +416,8 @@ class CalibratedCameraTrack(object):
         self.tlast = None
 
     def __init__(self, name, face_tracker,
-                 image_topic, tracking_status_topic, cropped_image_topic,
-                 region_in_image_topic,
+                 tracking_status_topic,
+                 cropped_image_pub, region_in_image_pub,
                  # Moving the ROI down and right is positive.
                  # Expressed as a fraction of the ROI height.
                  x_pix_offset, y_pix_offset,
@@ -417,6 +426,8 @@ class CalibratedCameraTrack(object):
             self.RATE_CUT = None
 
         self.name = name
+
+        self.enabled = True
 
         self.face_tracker = face_tracker
 
@@ -428,30 +439,7 @@ class CalibratedCameraTrack(object):
 
         self.clear_msmt_state()
 
-        self.cropped_image_pub = rospy.Publisher(cropped_image_topic, Image, queue_size=10)
-        self.region_pub = rospy.Publisher(region_in_image_topic, PolygonStamped, queue_size=10)
-        self.tracking_status_pub = rospy.Publisher(tracking_status_topic, Bool, queue_size=10)
-
-        self.image_sub = rospy.Subscriber(image_topic, Image, self.image_callback,
-                                          queue_size=IMG_QUEUE_SIZE,
-                                          buff_size=IMG_BUF_SIZE)
-
-if __name__ == '__main__':
-    rospy.init_node('multichrome_face_tracker')
-    fdt = FaceDetectorTracker('red_' + rospy.get_name())
-    nir_cct = CalibratedCameraTrack('nir_' + rospy.get_name(), fdt,
-                                    NIR_IMAGE_TOPIC,
-                                    NIR_TRACKING_STATUS_TOPIC,
-                                    NIR_CROPPED_IMAGE_TOPIC,
-                                    NIR_REGION_IN_IMAGE_TOPIC,
-                                    0,
-                                    NIR_OFFSET_FRAC_OF_FACE_HEIGHT)
-    narrow_nir_cct = CalibratedCameraTrack('narrow_nir_' + rospy.get_name(), fdt,
-                                           NARROW_NIR_IMAGE_TOPIC,
-                                           NARROW_NIR_TRACKING_STATUS_TOPIC,
-                                           NARROW_NIR_CROPPED_IMAGE_TOPIC,
-                                           NARROW_NIR_REGION_IN_IMAGE_TOPIC,
-                                           NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                           NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT,
-                                           rot180=True)
-    rospy.spin()
+        self.cropped_image_pub = cropped_image_pub
+        self.region_pub = region_in_image_pub
+        self.tracking_status_pub = rospy.Publisher(tracking_status_topic,
+                                                   Bool, queue_size=10)

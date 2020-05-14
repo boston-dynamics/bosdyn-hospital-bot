@@ -5,33 +5,52 @@
   <arg name="launch_heart_rate_spo2" default="true" />
   <arg name="launch_thermal_algos" default="true" />
   <arg name="use_thermal_reference" default="true" />
+  <arg name="launch_mode_manager" default="true" />
 
   <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
+
+  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
+
+  <group if="$(arg launch_mode_manager)">
+    <node name="mode_manager" pkg="drspot" type="mode_manager"
+          output="screen" respawn="true">
+      <remap from="thermal_stream_enable" to="$(arg thermal_ns)/thermal_stream_enable" />
+    </node>
+  </group>
 
   <group if="$(eval multichrome_provider == 'spinnaker_sdk_camera_driver')">
     <group if="$(arg launch_drivers)">
       <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
         <arg name="config_file" default="/etc/ros/params/spinnaker_sdk_camera_driver_params.yaml" />
         <arg name="exposure_time" default="27800" />
+        <arg name="gain" default="0.0" />
       </include>
     </group>
   </group>
 
   <group if="$(arg launch_multichrome_tracker)">
-    <node name="multichrome_face_tracker" pkg="drspot" type="multichrome_face_tracker"
-          output="screen" respawn="true">
-      <remap from="camera_array/mono_red/image_raw" to="camera_array/mono_660/image_raw" />
-      <remap from="camera_array/mono_nir/image_raw" to="camera_array/mono_880/image_raw" />
-      <remap from="camera_array/mono_narrow_nir/image_raw" to="camera_array/mono_810/image_raw" />
-    </node>
-  </group>
-  <group if="$(arg launch_heart_rate_spo2)">
-    <node name="heart_rate_spo2" pkg="drspot" type="heart_rate_spo2"
-          output="screen" respawn="true">
-    </node>
+    <remap from="camera_array/mono_red/image_raw" to="camera_array/mono_660/image_raw" />
+    <remap from="camera_array/mono_nir/image_raw" to="camera_array/mono_880/image_raw" />
+    <remap from="camera_array/mono_narrow_nir/image_raw" to="camera_array/mono_810/image_raw" />
+
+    <group if="$(arg launch_heart_rate_spo2)">
+      <node name="multi_tracker_with_hr_spo2" pkg="drspot" type="multi_tracker_with_hr_spo2"
+            output="screen" respawn="true">
+      </node>
+    </group>
+
+    <group unless="$(arg launch_heart_rate_spo2)">
+      <node name="multichrome_face_tracker" pkg="drspot" type="multichrome_face_tracker_standalone"
+            output="screen" respawn="true">
+      </node>
+    </group>
   </group>
 
-  <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
+  <group if="$(eval arg('launch_heart_rate_spo2') and not arg('launch_multichrome_tracker'))">
+    <node name="heart_rate_spo2" pkg="drspot" type="heart_rate_spo2_standalone"
+          output="screen" respawn="true">
+    </node>
+  </group>
 
   <group if="$(eval thermal_ns == 'optris')">
     <group if="$(arg launch_drivers)">

@@ -74,6 +74,12 @@ exec_and_log "systemctl status roscore.service"
 exec_and_log "systemctl status roslaunch.service"
 exec_and_log "roswtf"
 
+# Config files
+exec_and_log "cat /etc/ros/env.sh"
+exec_and_log "cat /etc/ros/params/spinnaker_sdk_camera_driver_params.yaml"
+exec_and_log "cat /etc/ros/params/thermal_reference_params.yaml"
+exec_and_log "cat /usr/sbin/roslaunch"
+
 # ROS nodes
 TIMEOUT=2
 ## Image rates

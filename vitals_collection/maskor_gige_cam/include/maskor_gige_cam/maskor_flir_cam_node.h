@@ -40,6 +40,7 @@
 #include <maskor_gige_cam/FlirConfig.h>
 #include <driver_base/SensorLevels.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <std_srvs/SetBool.h>
 
 class FlirNode
 {
@@ -59,6 +60,8 @@ private:
     image_transport::Publisher TemperatureImagePub_;
     ros::Publisher TemperatureImagePub2_;
     sensor_msgs::ImagePtr ImagePtr_;
+    ros::ServiceServer Enable_;
+    bool _enabled;
 
     // FLIR Camera
     boost::scoped_ptr <maskor::GigeCam> cam_;
@@ -78,6 +81,7 @@ private:
     void _temperatureImageProc(cv::Mat &in, std_msgs::Float32MultiArray &array);
     void _showImages();
     void _configCb(maskor_gige_camera::FlirConfig &config, uint32_t level);
+    bool _onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res);
 
     //show images in separate openCV windows?
     bool showImages;

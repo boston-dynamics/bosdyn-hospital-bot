@@ -63,8 +63,8 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
-    exposure_time_ = 27800;
-    gain_ = -1.0; // default as -1 = auto gain
+    exposure_time_ = 1000;
+    gain_ = 0.0; // default as 0 = no gain
     soft_framerate_ = 20; //default soft framrate
     ext_ = ".bmp";
     SOFT_FRAME_RATE_CTRL_ = false;
@@ -83,7 +83,7 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     master_fps_ = 20.0;
     binning_ = 1;
     todays_date_ = todays_date();
-    
+
     dump_img_ = "dump" + ext_;
 
     grab_time_ = 0;
@@ -113,7 +113,10 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     system_ = System::GetInstance();
 
     load_cameras();
- 
+
+    enabled_ = true;
+    Enable_ = nh_.advertiseService("camera_array_stream_enable", &Capture::onEnable, this);
+
     //initializing the ros publisher
     acquisition_pub = nh_.advertise<spinnaker_sdk_camera_driver::SpinnakerImageNames>("camera", 1000);
     //dynamic reconfigure
@@ -143,8 +146,8 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
-    exposure_time_ = 27800;
-    gain_ = -1.0; // default as -1 = auto gain
+    exposure_time_ = 1000;
+    gain_ = 0.0; // default as 0 = no gain
     soft_framerate_ = 20; //default soft framrate
     ext_ = ".bmp";
     SOFT_FRAME_RATE_CTRL_ = false;
@@ -193,6 +196,9 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     system_ = System::GetInstance();
 
     load_cameras();
+
+    enabled_ = true;
+    Enable_ = nh_.advertiseService("camera_array_stream_enable", &Capture::onEnable, this);
 
     //initializing the ros publisher
     acquisition_pub = nh_.advertise<spinnaker_sdk_camera_driver::SpinnakerImageNames>("camera", 1000);
@@ -249,7 +255,7 @@ void acquisition::Capture::load_cameras() {
         
                 cams.push_back(cam);
                 
-                camera_image_pubs.push_back(it_.advertiseCamera("camera_array/"+cam_names_[j]+"/image_raw", 1));
+                camera_image_pubs.push_back(it_.advertiseCamera("camera_array/"+cam_names_[j]+"/image_raw", 35));
                 //camera_info_pubs.push_back(nh_.advertise<sensor_msgs::CameraInfo>("camera_array/"+cam_names_[j]+"/camera_info", 1));
 
                 img_msgs.push_back(sensor_msgs::ImagePtr());
@@ -702,6 +708,22 @@ void acquisition::Capture::init_cameras(bool soft = false) {
     ROS_DEBUG_STREAM("All cameras initialized.");
 }
 
+bool acquisition::Capture::onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
+{
+  cout << "enable service callback before lock\n";
+  const lock_guard<mutex> lock(enabled_mutex_);
+  cout << "enable service callback " << (req.data ? 1 : 0)  << "\n";
+  if (req.data) {
+    start_acquisition();
+    enabled_ = true;
+  } else {
+    enabled_ = false;
+    end_acquisition();
+  }
+  res.success = true;
+  return true;
+}
+
 void acquisition::Capture::start_acquisition() {
 
     for (int i = numCameras_-1; i>=0; i--)
@@ -863,7 +885,11 @@ void acquisition::Capture::get_mat_images() {
     
     int frameID;
     int fid_mismatch = 0;
-   
+
+    const lock_guard<mutex> lock(enabled_mutex_);
+    if (!enabled_) {
+        return;
+    }
 
     for (int i=0; i<numCameras_; i++) {
         //ROS_INFO_STREAM("CAM ID IS "<< i);
@@ -919,6 +945,16 @@ void acquisition::Capture::run_soft_trig() {
     ros::Rate ros_rate(soft_framerate_);
     try{
         while( ros::ok() ) {
+
+            bool enabled = true;
+            {
+                const lock_guard<mutex> lock(enabled_mutex_);
+                enabled = enabled_;
+            }
+            if (!enabled) {
+                ros_rate.sleep();
+                continue;
+            }
 
             double t = ros::Time::now().toSec();
 

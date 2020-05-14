@@ -4,12 +4,6 @@ set datafile separator ','
 set multiplot layout 4, 1 title "Region stats" font ",14"
 set tmargin 2
 
-set title "Raw color channels"
-plot raw using 1 with lines, '' using 2 with lines, '' using 3 with lines, '' using 4 with lines
-#
-set title "Normalized color channels"
-plot normalized using 1 with lines, '' using 2 with lines, '' using 3 with lines, '' using 4 with lines
-#
 set title "Pulse signals for each candidate SpO2 level"
 plot pulse using 1 with lines, '' using 2 with lines, '' using 3 with lines, '' using 4 with lines, '' using 5 with lines, '' using 6 with lines, '' using 7 with lines, '' using 8 with lines
 #

@@ -304,13 +304,18 @@ class SkinTemperature(object):
 
         self.bridge = CvBridge()
 
-        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX, Float32,
+        self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX,
+                                              Float32,
                                               queue_size=10)
 
         self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
-        self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32, queue_size=10)
-        self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray, queue_size=10)
-        self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC, Float32MultiArray, queue_size=10)
+        self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32,
+                                               queue_size=10)
+        self.full_data_pub = rospy.Publisher(FULL_DATA_TOPIC, Float32MultiArray,
+                                             queue_size=10)
+        self.repeat_data_pub = rospy.Publisher(REPEAT_DATA_TOPIC,
+                                               Float32MultiArray,
+                                               queue_size=10)
 
         self.use_thermal_ref = rospy.get_param('use_thermal_reference', False)
         self.thermal_ref_prm = rospy.get_param('thermal_reference_prm', None)
@@ -325,16 +330,21 @@ class SkinTemperature(object):
                     rospy.logwarn('{}: Bad thermal reference parameters; {}'.format(
                         self.name, self.thermal_ref_prm))
                 else:
-                    self.thermal_ref_sub = rospy.Subscriber(THERMAL_REF_TOPIC, Float32, self.thermal_ref_callback,
+                    self.thermal_ref_sub = rospy.Subscriber(THERMAL_REF_TOPIC,
+                                                            Float32,
+                                                            self.thermal_ref_callback,
                                                             queue_size=1)
                     self.thermal_ref_temp = None
 
         self.image_sub = rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback,
-                                          queue_size=1, buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
-        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped, self.region_callback,
+                                          queue_size=1,
+                                          buff_size=ROS_THERMAL_IMAGE_BUFFER_SIZE)
+        self.region_sub = rospy.Subscriber(REGION_TOPIC, PolygonStamped,
+                                           self.region_callback,
                                            queue_size=1)
         self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
-                                                    self.tracking_status_callback, queue_size=1)
+                                                    self.tracking_status_callback,
+                                                    queue_size=1)
 
         self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),
                                              self.msmt_helper_callback)

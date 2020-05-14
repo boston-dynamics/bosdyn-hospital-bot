@@ -51,6 +51,8 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
   _sForce = n.advertiseService("force_flag", &OptrisImager::onForceFlag, this);
   _sTemp  = n.advertiseService("temperature_range", &OptrisImager::onSetTemperatureRange, this);
 
+  _sEnable = n.advertiseService("thermal_stream_enable", &OptrisImager::onEnable, this);
+
   // advertise all of the camera's temperatures in a single custom message
   _temp_pub = n.advertise<Temperature> ("internal_temperature", 1);
   _internal_temperature.header.frame_id=_thermal_image.header.frame_id;
@@ -60,6 +62,8 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
   _img_cnt = 0;
 
   _dev = dev;
+
+  _enabled = true;
 }
 
 OptrisImager::~OptrisImager()
@@ -153,6 +157,18 @@ bool OptrisImager::onAutoFlag(AutoFlag::Request &req, AutoFlag::Response &res)
 {
   _imager.setAutoFlag(req.autoFlag);
   res.isAutoFlagActive = _imager.getAutoFlag();
+  return true;
+}
+
+bool OptrisImager::onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
+{
+  if (req.data) {
+    _dev->startStreaming();
+  } else {
+    _dev->stopStreaming();
+  }
+  _enabled = req.data;
+  res.success = true;
   return true;
 }
 

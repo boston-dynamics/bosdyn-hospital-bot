@@ -30,6 +30,8 @@ FlirNode::FlirNode()
 {
     showImages = false;
 
+    _enabled = true;
+
     //new instance of gige camera
     cam_.reset(new maskor::GigeCam());
 
@@ -46,6 +48,8 @@ FlirNode::FlirNode()
 
     //bind dynamic reconfigure callback
     ReconfigSvr_.setCallback(boost::bind(&FlirNode::_configCb, this, _1, _2));
+
+    Enable_ = nh_.advertiseService("flir_camera/thermal_stream_enable", &FlirNode::_onEnable, this);
 }
 
 
@@ -179,7 +183,17 @@ void FlirNode::_temperatureImageProc(cv::Mat &in, std_msgs::Float32MultiArray &a
 
 }
 
-
+bool FlirNode::_onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res)
+{
+  if (req.data) {
+    cam_->acquisitionStart();
+  } else {
+    cam_->acquisitionStop();
+  }
+  _enabled = req.data;
+  res.success = true;
+  return true;
+}
 
 
 void FlirNode::_configCb(maskor_gige_camera::FlirConfig &config, uint32_t level)

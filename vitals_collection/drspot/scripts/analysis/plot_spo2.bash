@@ -8,8 +8,6 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
-gnuplot -p -e "raw='$1/raw_$2.csv'; \
-              normalized='$1/normalized_$2.csv'; \
-              pulse='$1/pulse_$2.csv'; \
-              freq='$1/freq_$2.csv'" \
-        ${DIR}/region.gnuplot
+gnuplot -p -e "pulse='$1/avg_pulse.csv'; \
+              freq='$1/avg_pulse_fft.csv'" \
+        ${DIR}/spo2.gnuplot

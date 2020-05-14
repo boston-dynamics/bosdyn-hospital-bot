@@ -1,0 +1,226 @@
+#!/usr/bin/env python
+
+# Copyright 2020 Boston Dynamics Inc.
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+DEBUG_WEB_VIEW = False
+
+import threading
+import time
+if DEBUG_WEB_VIEW:
+    from transitions_gui import WebMachine as Machine
+else:
+    from transitions import Machine
+from transitions import MachineError
+from transitions.extensions.states import add_state_features, Tags, Timeout
+import logging
+logging.basicConfig(level=logging.DEBUG)
+# Set transitions' log level to INFO; DEBUG messages will be omitted
+logging.getLogger('transitions').setLevel(logging.INFO)
+
+import rospy
+from std_msgs.msg import Float32, Empty, Bool
+from std_srvs.srv import SetBool
+
+MULTICHROME_TRACKER_ENABLE_TOPIC = 'multichrome_face_tracker_enable'
+IR_TRACKER_ENABLE_TOPIC = 'ir_face_tracker_enable'
+THERMAL_ENABLE_TOPIC = 'thermal_stream_enable'
+MULTICHROME_ENABLE_TOPIC = 'camera_array_stream_enable'
+
+IR_TRACKER_STATUS_TOPIC = 'ir_tracking_status'
+
+RESP_RATE_TOPIC = 'full_resp_rate'
+HEART_RATE_TOPIC = 'full_heart_rate'
+SKIN_TEMP_TOPIC = 'full_skin_temp'
+SPO2_TOPIC = 'full_spo2'
+HR_SPO2_START_COMPUTE_TOPIC = 'start_compute_heart_rate_spo2'
+HR_SPO2_ABORT_COMPUTE_TOPIC = 'abort_compute_heart_rate_spo2'
+
+timeouts = { 'compute_with_ir': (30.0, 'completeComputeWithIR'),
+             'accumulate_multichrome': (20.0, 'abortAccumulateMultichrome'),
+             # TODO - do we need to explicitly cancel the computation?
+             'compute_with_multichrome': (45.0, 'completeComputeWithMultichrome')
+}
+
+states = ['setup',
+          'wait_for_ir_face',
+          {'name': 'compute_with_ir',
+           'timeout': timeouts['compute_with_ir'][0],
+           'on_timeout': timeouts['compute_with_ir'][1]},
+          {'name': 'accumulate_multichrome',
+           'timeout': timeouts['accumulate_multichrome'][0],
+           'on_timeout': timeouts['accumulate_multichrome'][1]},
+          {'name': 'compute_with_multichrome',
+           'timeout': timeouts['compute_with_multichrome'][0],
+           'on_timeout': timeouts['compute_with_multichrome'][1]}
+]
+
+transitions = [
+    { 'trigger': 'doSetup',
+      'source': 'initial',
+      'dest': 'setup'
+    },
+    { 'trigger': 'completeSetup',
+      'source': 'setup',
+      'dest': 'wait_for_ir_face'
+    },
+    { 'trigger': 'completeWaitForIRFace',
+      'source': 'wait_for_ir_face',
+      'dest': 'compute_with_ir'
+    },
+    { 'trigger': 'completeComputeWithIR',
+      'source': 'compute_with_ir',
+      'dest': 'accumulate_multichrome'
+    },
+    { 'trigger': 'completeAccumulateMultichrome',
+      'source': 'accumulate_multichrome',
+      'dest': 'compute_with_multichrome'
+    },
+    { 'trigger': 'abortAccumulateMultichrome',
+      'source': 'accumulate_multichrome',
+      'dest': 'wait_for_ir_face'
+    },
+    { 'trigger': 'completeComputeWithMultichrome',
+      'source': 'compute_with_multichrome',
+      'dest': 'wait_for_ir_face'
+    }
+]
+
+@add_state_features(Tags, Timeout)
+class ModeManager(Machine):
+    def on_exit_initial(self):
+        rospy.loginfo('{} completed init'.format(self.name))
+
+    def on_enter_setup(self):
+        self.multichrome_tracker_enable_srv(False)
+        self.ir_tracker_enable_srv(False)
+        try:
+            self.multichrome_enable_srv(False)
+        except Exception as e:
+            rospy.logwarn('{} failed disable multichrome in setup'.format(self.name))
+        try:
+            self.thermal_enable_srv(True)
+        except Exception as e:
+            rospy.logwarn('{} failed disable thermal in setup'.format(self.name))
+
+        with self.lock:
+            self.completeSetup()
+
+    def heart_rate_callback(self, data):
+        pass
+
+    def spo2_callback(self, data):
+        with self.lock:
+            if self.state == 'compute_with_multichrome':
+                self.completeComputeWithMultichrome()
+
+    def on_enter_wait_for_ir_face(self):
+        self.thermal_enable_srv(True)
+        self.ir_tracker_enable_srv(True)
+
+    def ir_tracker_status_callback(self, data):
+        if data.data:
+            with self.lock:
+                if self.state == 'wait_for_ir_face':
+                    self.completeWaitForIRFace()
+
+    def on_exit_compute_with_ir(self):
+        self.thermal_enable_srv(False)
+        self.ir_tracker_enable_srv(False)
+
+    def skin_temp_callback(self, data):
+        pass
+
+    def resp_rate_callback(self, data):
+        with self.lock:
+            if self.state == 'compute_with_ir':
+                self.completeComputeWithIR()
+
+    def on_enter_accumulate_multichrome(self):
+        self.multichrome_enable_srv(True)
+        self.multichrome_tracker_enable_srv(True)
+    def on_exit_accumulate_multichrome(self):
+        self.multichrome_enable_srv(False)
+        self.multichrome_tracker_enable_srv(False)
+
+    def hr_spo2_start_compute_callback(self, data):
+        with self.lock:
+            if self.state == 'accumulate_multichrome':
+                self.completeAccumulateMultichrome()
+
+    def hr_spo2_abort_compute_callback(self, data):
+        with self.lock:
+            if self.state == 'compute_with_multichrome':
+                self.completeComputeWithMultichrome()
+            elif self.state == 'accumulate_multichrome':
+                # In case we missed the transition to compute_with_multichrome.
+                self.abortAccumulateMultichrome()
+
+    def __init__(self, name):
+        self.name = name
+
+        self.lock = threading.Lock()
+
+        self.resp_rate_sub = rospy.Subscriber(RESP_RATE_TOPIC, Float32,
+                                              self.resp_rate_callback,
+                                              queue_size=1)
+        self.heart_rate_sub = rospy.Subscriber(HEART_RATE_TOPIC, Float32,
+                                               self.heart_rate_callback,
+                                               queue_size=1)
+        self.skin_temp_sub = rospy.Subscriber(SKIN_TEMP_TOPIC, Float32,
+                                              self.skin_temp_callback,
+                                              queue_size=1)
+        self.spo2_sub = rospy.Subscriber(SPO2_TOPIC, Float32, self.spo2_callback,
+                                         queue_size=1)
+        self.ir_tracker_status_sub = rospy.Subscriber(IR_TRACKER_STATUS_TOPIC,
+                                                      Bool,
+                                                      self.ir_tracker_status_callback,
+                                                      queue_size=1)
+        self.hr_spo2_start_compute_sub = rospy.Subscriber(HR_SPO2_START_COMPUTE_TOPIC,
+                                                          Empty,
+                                                          self.hr_spo2_start_compute_callback,
+                                                          queue_size=1)
+        self.hr_spo2_abort_compute_sub = rospy.Subscriber(HR_SPO2_ABORT_COMPUTE_TOPIC,
+                                                          Empty,
+                                                          self.hr_spo2_abort_compute_callback,
+                                                          queue_size=1)
+
+        self.multichrome_tracker_enable_srv = rospy.ServiceProxy(MULTICHROME_TRACKER_ENABLE_TOPIC,
+                                                                 SetBool)
+        self.ir_tracker_enable_srv = rospy.ServiceProxy(IR_TRACKER_ENABLE_TOPIC,
+                                                        SetBool)
+        self.thermal_enable_srv = rospy.ServiceProxy(THERMAL_ENABLE_TOPIC,
+                                                     SetBool)
+        self.multichrome_enable_srv = rospy.ServiceProxy(MULTICHROME_ENABLE_TOPIC,
+                                                         SetBool)
+
+        if DEBUG_WEB_VIEW:
+            Machine.__init__(self, states=states, transitions=transitions,
+                             ignore_invalid_triggers=True)
+        else:
+            Machine.__init__(self, states=states, transitions=transitions)
+
+    def shutdown_hook(self):
+        if DEBUG_WEB_VIEW:
+            self.stop_server()
+
+if __name__ == '__main__':
+    rospy.init_node('mode_manager')
+    rospy.loginfo('{} before constructor'.format(rospy.get_name()))
+    mm = ModeManager(rospy.get_name())
+    rospy.on_shutdown(mm.shutdown_hook)
+    # Wait for the multichrome camera array to come up.
+    time.sleep(10)
+    mm.doSetup()
+    rospy.spin()
