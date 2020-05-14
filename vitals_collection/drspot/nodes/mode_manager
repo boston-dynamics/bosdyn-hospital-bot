@@ -93,6 +93,7 @@ class ModeManager(Machine):
     def on_enter_setup(self):
         self.multichrome_tracker_enable_srv(False)
         self.ir_tracker_enable_srv(False)
+        self.thermal_enable_srv(True)
 
         with self.lock:
             self.completeSetup()
@@ -106,8 +107,10 @@ class ModeManager(Machine):
                 self.completeComputeWithMultichrome()
 
     def on_enter_compute_with_ir(self):
+        self.thermal_enable_srv(True)
         self.ir_tracker_enable_srv(True)
     def on_exit_compute_with_ir(self):
+        self.thermal_enable_srv(False)
         self.ir_tracker_enable_srv(False)
 
     def skin_temp_callback(self, data):
