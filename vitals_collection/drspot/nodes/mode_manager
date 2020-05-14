@@ -17,6 +17,7 @@
 DEBUG_WEB_VIEW = False
 
 import threading
+import time
 if DEBUG_WEB_VIEW:
     from transitions_gui import WebMachine as Machine
 else:
@@ -210,8 +211,6 @@ class ModeManager(Machine):
         else:
             Machine.__init__(self, states=states, transitions=transitions)
 
-        self.doSetup()
-
     def shutdown_hook(self):
         if DEBUG_WEB_VIEW:
             self.stop_server()
@@ -221,4 +220,7 @@ if __name__ == '__main__':
     rospy.loginfo('{} before constructor'.format(rospy.get_name()))
     mm = ModeManager(rospy.get_name())
     rospy.on_shutdown(mm.shutdown_hook)
+    # Wait for the multichrome camera array to come up.
+    time.sleep(10)
+    mm.doSetup()
     rospy.spin()
