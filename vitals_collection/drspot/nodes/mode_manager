@@ -42,9 +42,9 @@ SPO2_TOPIC = 'full_spo2'
 HR_SPO2_START_COMPUTE_TOPIC = 'start_compute_heart_rate_spo2'
 
 timeouts = { 'compute_with_ir': (30.0, 'completeComputeWithIR'),
-             'accumulate_multichrome': (30.0, 'abortAccumulateMultichrome'),
+             'accumulate_multichrome': (20.0, 'abortAccumulateMultichrome'),
              # TODO - do we need to explicitly cancel the computation?
-             'compute_with_multichrome': (30.0, 'completeComputeWithMultichrome')
+             'compute_with_multichrome': (45.0, 'completeComputeWithMultichrome')
 }
 
 states = ['setup',

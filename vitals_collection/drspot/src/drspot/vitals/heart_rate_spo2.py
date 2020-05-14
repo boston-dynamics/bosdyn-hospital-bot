@@ -84,13 +84,14 @@ MAX_DELTA_T = 0.1 # seconds.
 
 T_EPS = 1e-4
 
-DETECT_TRACK_SCALE_FACTOR = 1.0
+DETECT_TRACK_SCALE_FACTOR = 0.125
 
 FACE_DETECTION_LIKELIHOOD_THRESHOLD = 0.9
 FACE_DETECTION_SCALE = 1.0
 # Potentially use a more accurate tracker than the one in the multichrome_face_tracker node,
 # and/or run on every frame, at the expense of more computation time.
-CV_TRACKER_TYPE = 'TM_CCORR_NORMED'
+CV_COARSE_TRACKER_TYPE = 'CSRT'
+CV_FINE_TRACKER_TYPE = 'TM_CCORR_NORMED'
 
 NUM_PLOT_X = NUM_SUBREGIONS_X
 NUM_PLOT_Y = NUM_SUBREGIONS_Y
@@ -308,12 +309,12 @@ class HeartRate(object):
         # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
         # the multichrome_face_tracker node and/or track on every frame at the expense of more
         # computation time.
-        red_tracker = ROITracker(CV_TRACKER_TYPE)
-        nir_tracker = ROITracker(CV_TRACKER_TYPE)
-        narrow_nir_tracker = ROITracker(CV_TRACKER_TYPE)
-        red_last_loc = np.array([0, 0])
-        nir_last_loc = np.array([0, 0])
-        narrow_nir_last_loc = np.array([0, 0])
+        red_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
+        nir_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
+        narrow_nir_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
+        red_fine = ROITracker(CV_FINE_TRACKER_TYPE)
+        nir_fine = ROITracker(CV_FINE_TRACKER_TYPE)
+        narrow_nir_fine = ROITracker(CV_FINE_TRACKER_TYPE)
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
         for red, nir, narrow_nir, red_off, nir_off, narrow_nir_off, t in zip(red_data,
@@ -323,17 +324,17 @@ class HeartRate(object):
                                                                              nir_offset,
                                                                              narrow_nir_offset,
                                                                              t_data):
-            for chan, off, last_loc, tracker, cc, txt in zip((red, nir, narrow_nir),
-                                                             (red_off,
-                                                              nir_off,
-                                                              narrow_nir_off),
-                                                             (red_last_loc,
-                                                              nir_last_loc,
-                                                              narrow_nir_last_loc),
-                                                             (red_tracker,
-                                                              nir_tracker,
-                                                              narrow_nir_tracker),
-                                                             CHAN_IDX, CHAN_TXT):
+            for chan, off, coarse, fine, cc, txt in zip((red, nir, narrow_nir),
+                                                        (red_off,
+                                                         nir_off,
+                                                         narrow_nir_off),
+                                                        (red_coarse,
+                                                         nir_coarse,
+                                                         narrow_nir_coarse),
+                                                        (red_fine,
+                                                         nir_fine,
+                                                         narrow_nir_fine),
+                                                        CHAN_IDX, CHAN_TXT):
                 (rows, cols) = chan.shape
                 r = int(rows * DETECT_TRACK_SCALE_FACTOR)
                 c = int(cols * DETECT_TRACK_SCALE_FACTOR)
@@ -365,20 +366,36 @@ class HeartRate(object):
                     bboxes[0][1] += SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hface
                     bboxes[0][2] += SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
                     bboxes[0][3] = bboxes[0][1] + SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hface
-                    last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
                     try:
-                        tracker.start_track(resize, bboxes[0])
+                        coarse.start_track(resize, bboxes[0])
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
                             self.name, txt, ti, tf, bboxes[0], e))
                         return
                 else:
-                    expected_in_region = last_loc - off * DETECT_TRACK_SCALE_FACTOR
-                    tracker.update(resize, expected_in_region)
-                    bboxes = np.array([tracker.bbox])
-                    last_loc[:] = bboxes[0][0:2] + off * DETECT_TRACK_SCALE_FACTOR
+                    coarse.update(resize)
+                    bboxes = np.array([coarse.bbox])
 
-                xmin, ymin, xmax, ymax = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
+                resized_bbox = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
+                xmin, ymin, xmax, ymax = resized_bbox
+
+                if ii == 0:
+                    try:
+                        fine.start_track(chan, resized_bbox)
+                    except Exception as e:
+                        rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
+                            self.name, txt, ti, tf, resized_bbox, e))
+                        return
+                else:
+                    # Refine tracked location.
+                    # TODO - base this on region size or something smarter than hardcoding.
+                    slop = 10 # Pixel amount that bounds the slop in the coarse tracker.
+                    full_size_crop_plus_slop = chan[ymin-slop:ymax+slop, xmin-slop:xmax+slop]
+                    fine.update(full_size_crop_plus_slop)
+                    xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
+                    xmin += xmin_s - slop; ymin += ymin_s - slop
+                    xmax += xmin_s - slop; ymax += ymin_s - slop
+
                 if xmin < 0: xmin = 0
                 if ymin < 0: ymin = 0
                 if xmax >= cols: xmax = cols-1
@@ -399,6 +416,8 @@ class HeartRate(object):
                         # Draw vertical lines (constant y coordinate).
                         for yline in range(ymin, ymax, yd):
                             cv2.line(cv_image, (xmin, yline), (xmax, yline), (255,255,255), 3)
+                        if ii != 0:
+                            cv2.rectangle(cv_image, (xmin-slop, ymin-slop), (xmax+slop, ymax+slop), (255,255,255), 2)
                         cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), cv_image)
                     except Exception as e:
                         print(e)
