@@ -12,6 +12,7 @@
   <group if="$(arg launch_mode_manager)">
     <node name="mode_manager" pkg="drspot" type="mode_manager"
           output="screen" respawn="true">
+      <remap from="thermal_stream_enable" to="$(arg thermal_ns)/thermal_stream_enable" />
     </node>
   </group>
 

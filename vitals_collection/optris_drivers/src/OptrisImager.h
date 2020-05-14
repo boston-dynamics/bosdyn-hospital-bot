@@ -11,6 +11,7 @@
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "std_srvs/Empty.h"
+#include "std_srvs/SetBool.h"
 #include "optris_drivers/AutoFlag.h"
 #include "optris_drivers/TemperatureRange.h"
 #include "optris_drivers/Temperature.h"
@@ -104,6 +105,11 @@ public:
   /**
    * ROS service callback
    */
+  bool onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res);
+
+  /**
+   * ROS service callback
+   */
   bool onSetTemperatureRange(TemperatureRange::Request &req, TemperatureRange::Response &res);
 
 private:
@@ -153,6 +159,10 @@ private:
   ros::ServiceServer _sForce;
 
   ros::ServiceServer _sTemp;
+
+  ros::ServiceServer _sEnable;
+
+  bool _enabled;
 };
 
 } //namespace
