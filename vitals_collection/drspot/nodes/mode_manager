@@ -29,13 +29,15 @@ logging.basicConfig(level=logging.DEBUG)
 logging.getLogger('transitions').setLevel(logging.INFO)
 
 import rospy
-from std_msgs.msg import Float32, Empty
+from std_msgs.msg import Float32, Empty, Bool
 from std_srvs.srv import SetBool
 
 MULTICHROME_TRACKER_ENABLE_TOPIC = 'multichrome_face_tracker_enable'
 IR_TRACKER_ENABLE_TOPIC = 'ir_face_tracker_enable'
 THERMAL_ENABLE_TOPIC = 'thermal_stream_enable'
 MULTICHROME_ENABLE_TOPIC = 'camera_array_stream_enable'
+
+IR_TRACKER_STATUS_TOPIC = 'ir_tracking_status'
 
 RESP_RATE_TOPIC = 'full_resp_rate'
 HEART_RATE_TOPIC = 'full_heart_rate'
@@ -51,6 +53,7 @@ timeouts = { 'compute_with_ir': (30.0, 'completeComputeWithIR'),
 }
 
 states = ['setup',
+          'wait_for_ir_face',
           {'name': 'compute_with_ir',
            'timeout': timeouts['compute_with_ir'][0],
            'on_timeout': timeouts['compute_with_ir'][1]},
@@ -69,6 +72,10 @@ transitions = [
     },
     { 'trigger': 'completeSetup',
       'source': 'setup',
+      'dest': 'wait_for_ir_face'
+    },
+    { 'trigger': 'completeWaitForIRFace',
+      'source': 'wait_for_ir_face',
       'dest': 'compute_with_ir'
     },
     { 'trigger': 'completeComputeWithIR',
@@ -81,11 +88,11 @@ transitions = [
     },
     { 'trigger': 'abortAccumulateMultichrome',
       'source': 'accumulate_multichrome',
-      'dest': 'compute_with_ir'
+      'dest': 'wait_for_ir_face'
     },
     { 'trigger': 'completeComputeWithMultichrome',
       'source': 'compute_with_multichrome',
-      'dest': 'compute_with_ir'
+      'dest': 'wait_for_ir_face'
     }
 ]
 
@@ -117,9 +124,16 @@ class ModeManager(Machine):
             if self.state == 'compute_with_multichrome':
                 self.completeComputeWithMultichrome()
 
-    def on_enter_compute_with_ir(self):
+    def on_enter_wait_for_ir_face(self):
         self.thermal_enable_srv(True)
         self.ir_tracker_enable_srv(True)
+
+    def ir_tracker_status_callback(self, data):
+        if data.data:
+            with self.lock:
+                if self.state == 'wait_for_ir_face':
+                    self.completeWaitForIRFace()
+
     def on_exit_compute_with_ir(self):
         self.thermal_enable_srv(False)
         self.ir_tracker_enable_srv(False)
@@ -168,6 +182,10 @@ class ModeManager(Machine):
                                               queue_size=1)
         self.spo2_sub = rospy.Subscriber(SPO2_TOPIC, Float32, self.spo2_callback,
                                          queue_size=1)
+        self.ir_tracker_status_sub = rospy.Subscriber(IR_TRACKER_STATUS_TOPIC,
+                                                      Bool,
+                                                      self.ir_tracker_status_callback,
+                                                      queue_size=1)
         self.hr_spo2_start_compute_sub = rospy.Subscriber(HR_SPO2_START_COMPUTE_TOPIC,
                                                           Empty,
                                                           self.hr_spo2_start_compute_callback,
