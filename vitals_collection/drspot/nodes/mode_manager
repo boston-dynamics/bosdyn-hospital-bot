@@ -42,6 +42,7 @@ HEART_RATE_TOPIC = 'full_heart_rate'
 SKIN_TEMP_TOPIC = 'full_skin_temp'
 SPO2_TOPIC = 'full_spo2'
 HR_SPO2_START_COMPUTE_TOPIC = 'start_compute_heart_rate_spo2'
+HR_SPO2_ABORT_COMPUTE_TOPIC = 'abort_compute_heart_rate_spo2'
 
 timeouts = { 'compute_with_ir': (30.0, 'completeComputeWithIR'),
              'accumulate_multichrome': (20.0, 'abortAccumulateMultichrome'),
@@ -137,6 +138,14 @@ class ModeManager(Machine):
             if self.state == 'accumulate_multichrome':
                 self.completeAccumulateMultichrome()
 
+    def hr_spo2_abort_compute_callback(self, data):
+        with self.lock:
+            if self.state == 'compute_with_multichrome':
+                self.completeComputeWithMultichrome()
+            elif self.state == 'accumulate_multichrome':
+                # In case we missed the transition to compute_with_multichrome.
+                self.abortAccumulateMultichrome()
+
     def __init__(self, name):
         self.name = name
 
@@ -156,6 +165,10 @@ class ModeManager(Machine):
         self.hr_spo2_start_compute_sub = rospy.Subscriber(HR_SPO2_START_COMPUTE_TOPIC,
                                                           Empty,
                                                           self.hr_spo2_start_compute_callback,
+                                                          queue_size=1)
+        self.hr_spo2_abort_compute_sub = rospy.Subscriber(HR_SPO2_ABORT_COMPUTE_TOPIC,
+                                                          Empty,
+                                                          self.hr_spo2_abort_compute_callback,
                                                           queue_size=1)
 
         self.multichrome_tracker_enable_srv = rospy.ServiceProxy(MULTICHROME_TRACKER_ENABLE_TOPIC,

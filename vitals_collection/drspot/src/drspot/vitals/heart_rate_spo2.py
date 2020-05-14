@@ -54,6 +54,7 @@ HEART_RATE_MSMT_TOPIC = 'full_heart_rate'
 SPO2_MSMT_TOPIC = 'full_spo2'
 
 START_COMPUTE_TOPIC = 'start_compute_heart_rate_spo2'
+ABORT_COMPUTE_TOPIC = 'abort_compute_heart_rate_spo2'
 
 # Carotid
 # SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.2
@@ -287,11 +288,13 @@ class HeartRate(object):
         if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
             rospy.loginfo_throttle(1, '{}: not enough samples {} in {}:{} with delta {:.4f}'.format(
                                    self.name, msmt_n, ti, tf, delta))
+            self.abort_compute_pub.publish(Empty())
             return
 
         if delta > MAX_DELTA_T:
             rospy.logwarn_throttle(1, '{}: Bad delta {} sec in {}:{}'.format(
                 self.name, delta, ti, tf))
+            self.abort_compute_pub.publish(Empty())
             return
 
         if DEBUG_MKDIR:
@@ -359,6 +362,7 @@ class HeartRate(object):
                     if len(bboxes) != 1:
                         rospy.logwarn_throttle(1, '{} {}: {} faces detected in {}:{}; erroring'.format(
                             self.name, txt, len(bboxes), ti, tf))
+                        self.abort_compute_pub.publish(Empty())
                         return
                     wface = bboxes[0][2] - bboxes[0][0]
                     hface = bboxes[0][3] - bboxes[0][1]
@@ -371,6 +375,7 @@ class HeartRate(object):
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
                             self.name, txt, ti, tf, bboxes[0], e))
+                        self.abort_compute_pub.publish(Empty())
                         return
                 else:
                     coarse.update(resize)
@@ -385,16 +390,22 @@ class HeartRate(object):
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
                             self.name, txt, ti, tf, resized_bbox, e))
+                        self.abort_compute_pub.publish(Empty())
                         return
                 else:
                     # Refine tracked location.
                     # TODO - base this on region size or something smarter than hardcoding.
                     slop = 10 # Pixel amount that bounds the slop in the coarse tracker.
                     full_size_crop_plus_slop = chan[ymin-slop:ymax+slop, xmin-slop:xmax+slop]
-                    fine.update(full_size_crop_plus_slop)
-                    xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
-                    xmin += xmin_s - slop; ymin += ymin_s - slop
-                    xmax += xmin_s - slop; ymax += ymin_s - slop
+                    try:
+                        fine.update(full_size_crop_plus_slop)
+                    except Exception as e:
+                        rospy.logwarn_throttle(1, '{} {}: failed/skipping fine update in {}:{} idx {}; {} = {}'.format(
+                            self.name, txt, ti, tf, ii, resized_bbox, e))
+                    else:
+                        xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
+                        xmin += xmin_s - slop; ymin += ymin_s - slop
+                        xmax += xmin_s - slop; ymax += ymin_s - slop
 
                 if xmin < 0: xmin = 0
                 if ymin < 0: ymin = 0
@@ -431,6 +442,7 @@ class HeartRate(object):
                     rospy.logwarn_throttle(1, ('{} {}: failed spatial average in '
                                            + '{}:{} idx {}; {} {} {} {} {} {} {} {} = {}').format(
                         self.name, txt, ti, tf, ii, crop.shape, chan.shape, xd, yd, xmin, ymin, xmax, ymax, e))
+                    self.abort_compute_pub.publish(Empty())
                     return
             # End loop over colors.
             ii += 1
@@ -630,6 +642,10 @@ class HeartRate(object):
         self.bridge = CvBridge()
 
         self.start_compute_pub = rospy.Publisher(START_COMPUTE_TOPIC,
+                                                 Empty,
+                                                 queue_size=1)
+
+        self.abort_compute_pub = rospy.Publisher(ABORT_COMPUTE_TOPIC,
                                                  Empty,
                                                  queue_size=1)
 
