@@ -938,6 +938,10 @@ void acquisition::Capture::run_soft_trig() {
     try{
         while( ros::ok() ) {
 
+            if (!enabled_) {
+                ros_rate.sleep();
+            }
+
             double t = ros::Time::now().toSec();
 
             if (LIVE_) {
