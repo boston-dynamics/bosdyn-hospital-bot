@@ -125,6 +125,13 @@ PBV_UPDATE = np.array([-0.021, 0.0013, -0.0003])
 
 PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
 
+def to_uint8_scale(img):
+    gmin = np.amin(img); grange = np.amax(img) - gmin
+    if grange > 1e-3:
+        img = (img - gmin) / grange * 255.0
+    img = img.astype(np.uint8)
+    return img
+
 def grad(im) :
     # Calculate the x and y gradients using Sobel operator
     grad_x = cv2.Sobel(im,cv2.CV_32F,1,0,ksize=3)
@@ -132,19 +139,7 @@ def grad(im) :
 
     # Combine the two gradients
     grad = cv2.addWeighted(np.absolute(grad_x), 0.5, np.absolute(grad_y), 0.5, 0)
-    return grad
-
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = signal.butter(order, [low, high], btype='band')
-    return b, a
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5, axis=-1):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = signal.lfilter(b, a, data, axis=axis)
-    return y
+    return to_uint8_scale(grad)
 
 class HeartRate(object):
     def synced_callback(self, red_image_data, nir_image_data, narrow_nir_image_data,
@@ -318,6 +313,7 @@ class HeartRate(object):
         red_fine = ROITracker(CV_FINE_TRACKER_TYPE)
         nir_fine = ROITracker(CV_FINE_TRACKER_TYPE)
         narrow_nir_fine = ROITracker(CV_FINE_TRACKER_TYPE)
+        grad_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
         for red, nir, narrow_nir, red_off, nir_off, narrow_nir_off, t in zip(red_data,
@@ -342,23 +338,24 @@ class HeartRate(object):
                 r = int(rows * DETECT_TRACK_SCALE_FACTOR)
                 c = int(cols * DETECT_TRACK_SCALE_FACTOR)
                 resize = cv2.resize(chan, (c, r), interpolation=cv2.INTER_AREA)
-                if ii == 0:
+                if ii == 0 and cc == 0:
                     chan3 = cv2.cvtColor(resize, cv2.COLOR_GRAY2RGB)
                     bboxes, landmarks = detector.detect(chan3,
                                                         threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
                                                         scale=FACE_DETECTION_SCALE)
                     if DEBUG_SAVE_IMAGES:
+                        copy = resize.copy()
                         # All overlays have colors below in case we use an RGB image in the future.
                         for box in bboxes.astype(int):
                             x, y, x2, y2 = box[0:4]
                             # Draw a rectangle for each face bounding box.
-                            cv2.rectangle(resize, (x, y), (x2, y2), (255,255,255), 2)
+                            cv2.rectangle(copy, (x, y), (x2, y2), (255,255,255), 2)
                         for face in landmarks.astype(int):
                             for point in face:
                                 x, y = point
                                 # Draw a circle at each landmark.
-                                cv2.circle(resize, (x, y), 5, (255,255,255), 1)
-                        cv2.imwrite(output_dir + txt + '_debug_det.png', resize)
+                                cv2.circle(copy, (x, y), 5, (255,255,255), 1)
+                        cv2.imwrite(output_dir + txt + '_debug_det.png', copy)
                     if len(bboxes) != 1:
                         rospy.logwarn_throttle(1, '{} {}: {} faces detected in {}:{}; erroring'.format(
                             self.name, txt, len(bboxes), ti, tf))
@@ -370,6 +367,26 @@ class HeartRate(object):
                     bboxes[0][1] += SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN * hface
                     bboxes[0][2] += SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH * wface
                     bboxes[0][3] = bboxes[0][1] + SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT * hface
+                    gim = grad(resize)
+                    try:
+                        grad_coarse.start_track(gim, bboxes[0])
+                    except Exception as e:
+                        rospy.logwarn_throttle(1, '{} {}: failed gradient matcher init in {}:{}; {} = {}'.format(
+                            self.name, txt, ti, tf, bboxes[0], e))
+                        self.abort_compute_pub.publish(Empty())
+                        return
+                else:
+                    if ii == 0:
+                        gim = grad(resize)
+                        grad_coarse.update(gim)
+                        bboxes = np.array([grad_coarse.bbox])
+                    else:
+                        coarse.update(resize)
+                        bboxes = np.array([coarse.bbox])
+
+                if ii == 0:
+                    if DEBUG_SAVE_IMAGES:
+                        cv2.imwrite(output_dir + txt + '_grad.png', gim)
                     try:
                         coarse.start_track(resize, bboxes[0])
                     except Exception as e:
@@ -377,14 +394,11 @@ class HeartRate(object):
                             self.name, txt, ti, tf, bboxes[0], e))
                         self.abort_compute_pub.publish(Empty())
                         return
-                else:
-                    coarse.update(resize)
-                    bboxes = np.array([coarse.bbox])
 
                 resized_bbox = tuple((bboxes[0][0:4] / DETECT_TRACK_SCALE_FACTOR).astype(int))
                 xmin, ymin, xmax, ymax = resized_bbox
 
-                if ii == 0:
+                if ii == 0 and cc == 0:
                     try:
                         fine.start_track(chan, resized_bbox)
                     except Exception as e:
@@ -395,15 +409,30 @@ class HeartRate(object):
                 else:
                     # Refine tracked location.
                     # TODO - base this on region size or something smarter than hardcoding.
-                    slop = 10 # Pixel amount that bounds the slop in the coarse tracker.
+                    # Pixel amount that bounds the slop in the coarse tracker.
+                    if ii == 0:
+                        slop = 50
+                    else:
+                        slop = 20
                     full_size_crop_plus_slop = chan[ymin-slop:ymax+slop, xmin-slop:xmax+slop]
                     try:
-                        fine.update(full_size_crop_plus_slop)
+                        if ii == 0:
+                            red_fine.update(full_size_crop_plus_slop)
+                            if DEBUG_SAVE_IMAGES:
+                                cv2.imwrite(output_dir + txt + '_match_red_fine.png', to_uint8_scale(red_fine.update_metadata))
+                        else:
+                            fine.update(full_size_crop_plus_slop)
+                            if DEBUG_SAVE_IMAGES:
+                                cv2.imwrite(output_img_dir + txt + '_match_prev_fine_{:05d}.png'.format(ii), to_uint8_scale(fine.update_metadata))
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed/skipping fine update in {}:{} idx {}; {} = {}'.format(
                             self.name, txt, ti, tf, ii, resized_bbox, e))
                     else:
-                        xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
+                        if ii == 0:
+                            xmin_s, ymin_s, xmax_s, ymax_s = red_fine.bbox
+                        else:
+                            xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
+
                         xmin += xmin_s - slop; ymin += ymin_s - slop
                         xmax += xmin_s - slop; ymax += ymin_s - slop
 
@@ -433,7 +462,7 @@ class HeartRate(object):
                         # Draw vertical lines (constant y coordinate).
                         for yline in range(ymin, ymax, yd):
                             cv2.line(cv_image, (xmin, yline), (xmax, yline), (255,255,255), 3)
-                        if ii != 0:
+                        if not (ii == 0 and cc == 0):
                             cv2.rectangle(cv_image, (xmin-slop, ymin-slop), (xmax+slop, ymax+slop), (255,255,255), 2)
                         cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), cv_image)
                     except Exception as e:
