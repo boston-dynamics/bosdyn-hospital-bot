@@ -20,8 +20,11 @@
   <arg name="time"              default="false"	doc="Show time/FPS on output"/>
   <arg name="to_ros"            default="true"	doc="Flag whether images should be published to ROS" />
   <arg name="utstamps"          default="false"	doc="Flag whether each image should have Unique timestamps vs the master cams time stamp for all" />
+
   <arg name="max_rate_save"     default="false"	doc="Flag for max rate mode which is when the master triggerst the slaves and saves images at maximum rate possible" />
   <arg name="config_file"       default="$(find spinnaker_sdk_camera_driver)/params/test_params.yaml" doc="File specifying the parameters of the camera_array"/>
+
+  <arg name="trigger_slave_from_master" doc="Trigger slave cameras off of master" />
 
   <!-- load the acquisition node -->
   <node pkg="spinnaker_sdk_camera_driver" type="acquisition_node" name="acquisition_node" output="$(arg output)" args="" respawn="true" respawn_delay="10">
@@ -47,7 +50,8 @@
     <param name="utstamps"          value="$(arg utstamps)" />
     <param name="to_ros"            value="$(arg to_ros)"/>
     <param name="max_rate_save"     value="$(arg max_rate_save)"/>
+    <param name="trigger_slave_from_master" value="$(arg trigger_slave_from_master)"/>
 
-  </node>    
- 
+  </node>
+
 </launch>

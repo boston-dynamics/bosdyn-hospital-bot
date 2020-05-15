@@ -63,6 +63,7 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
+    trigger_slave_from_master_ = false;
     exposure_time_ = 1000;
     gain_ = 0.0; // default as 0 = no gain
     soft_framerate_ = 20; //default soft framrate
@@ -146,6 +147,7 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     }
 
     // default values for the parameters are set here. Should be removed eventually!!
+    trigger_slave_from_master_ = false;
     exposure_time_ = 1000;
     gain_ = 0.0; // default as 0 = no gain
     soft_framerate_ = 20; //default soft framrate
@@ -454,6 +456,14 @@ void acquisition::Capture::read_parameters() {
         else ROS_INFO("  'exposure_time'=%0.f, Setting autoexposure",exposure_time_);
     } else ROS_WARN("  'exposure_time' Parameter not set, using default behavior: Automatic Exposure ");
 
+    if (nh_pvt_.getParam("trigger_slave_from_master", trigger_slave_from_master_)){
+        if (trigger_slave_from_master_) {
+            ROS_INFO("Trigger slave from master");
+        } else {
+            ROS_INFO("Free-run the slave cameras");
+        }
+    } else ROS_WARN("  'trigger_slave_from_master' Parameter not set, using default behavior: free-running slave cameras");
+
     if (nh_pvt_.getParam("gain", gain_)){
         if (gain_ >=0.0) ROS_INFO("  Gain set to: %.1f",gain_);
         else ROS_INFO("  'gain'=%0.f, Setting autogain",gain_);
@@ -656,42 +666,38 @@ void acquisition::Capture::init_cameras(bool soft = false) {
 
                 // cams[i].setIntValue("DecimationHorizontal", decimation_);
                 // cams[i].setIntValue("DecimationVertical", decimation_);
-		//cams[i].setBoolValue("AcquisitionFrameRateEnable", true);
+                //cams[i].setBoolValue("AcquisitionFrameRateEnable", true);
                 //cams[i].setFloatValue("AcquisitionFrameRate", 35.0);
 
                 if (color_)
                     cams[i].setEnumValue("PixelFormat", "BGR8");
-                    else
-                        cams[i].setEnumValue("PixelFormat", "Mono8");
-                cams[i].setEnumValue("AcquisitionMode", "Continuous");
-		cams[i].setEnumValue("TriggerMode", "Off");
-                
-                // set only master to be software triggered
-                if (cams[i].is_master()) { 
-                    if (MAX_RATE_SAVE_){
-                      cams[i].setEnumValue("LineSelector", "Line2");
-                      cams[i].setEnumValue("LineMode", "Output");
-                      cams[i].setBoolValue("AcquisitionFrameRateEnable", false);
-                      //cams[i].setFloatValue("AcquisitionFrameRate", 170);
-                    }else{
-                      /*cams[i].setEnumValue("TriggerMode", "On");
-                      cams[i].setEnumValue("LineSelector", "Line2");
-                      cams[i].setEnumValue("LineMode", "Output");
-                      cams[i].setEnumValue("TriggerSource", "Software");*/
-                    }
-                    //cams[i].setEnumValue("LineSource", "ExposureActive");
+                else
+                    cams[i].setEnumValue("PixelFormat", "Mono8");
 
-
+                if (!trigger_slave_from_master_) {
+                    cams[i].setEnumValue("AcquisitionMode", "Continuous");
+                    cams[i].setEnumValue("TriggerMode", "Off");
                 } else {
-		  /*cams[i].setEnumValue("TriggerMode", "On");
-                    cams[i].setEnumValue("LineSelector", "Line3");
-                    cams[i].setEnumValue("TriggerSource", "Line3");
-                    cams[i].setEnumValue("TriggerSelector", "FrameStart");
-                    cams[i].setEnumValue("LineMode", "Input");
-                    
-//                    cams[i].setFloatValue("TriggerDelay", 40.0);
-                    cams[i].setEnumValue("TriggerOverlap", "ReadOut");//"Off"
-                    cams[i].setEnumValue("TriggerActivation", "RisingEdge");*/
+                    // set only master to be software triggered
+                    if (cams[i].is_master()) {
+                        cams[i].setEnumValue("AcquisitionMode", "Continuous");
+                        cams[i].setEnumValue("TriggerMode", "Off");
+
+                        cams[i].setEnumValue("LineSelector", "Line2");
+                        cams[i].setEnumValue("LineMode", "Output");
+                        cams[i].setEnumValue("LineSource", "ExposureActive");
+
+                    } else {
+                        cams[i].setEnumValue("TriggerMode", "On");
+                        cams[i].setEnumValue("TriggerSource", "Line3");
+                        cams[i].setEnumValue("TriggerSelector", "FrameStart");
+                        //cams[i].setEnumValue("LineSelector", "Line3");
+                        //cams[i].setEnumValue("LineMode", "Input");
+                        cams[i].setEnumValue("TriggerOverlap", "ReadOut");
+
+                        /*cams[i].setFloatValue("TriggerDelay", 40.0);
+                        cams[i].setEnumValue("TriggerActivation", "RisingEdge");*/
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@
   <arg name="use_thermal_reference" default="true" />
   <arg name="launch_mode_manager" default="true" />
 
+  <arg name="trigger_slave_from_master" default="false" />
   <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
 
   <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
@@ -24,6 +25,7 @@
         <arg name="config_file" default="/etc/ros/params/spinnaker_sdk_camera_driver_params.yaml" />
         <arg name="exposure_time" default="27800" />
         <arg name="gain" default="0.0" />
+        <arg name="trigger_slave_from_master" value="$(arg trigger_slave_from_master)" />
       </include>
     </group>
   </group>
