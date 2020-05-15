@@ -407,6 +407,12 @@ class HeartRate(object):
                         xmin += xmin_s - slop; ymin += ymin_s - slop
                         xmax += xmin_s - slop; ymax += ymin_s - slop
 
+                        try:
+                            fine.start_track(chan, [xmin, ymin, xmax, ymax])
+                        except Exception as e:
+                            rospy.logwarn_throttle(1, '{} {}: failed track reinit in {}:{}; {} = {}'.format(
+                                self.name, txt, ti, tf, resized_bbox, e))
+
                 if xmin < 0: xmin = 0
                 if ymin < 0: ymin = 0
                 if xmax >= cols: xmax = cols-1
