@@ -19,7 +19,7 @@
   <arg name="soft_framerate"    default="20"	doc="When hybrid software triggering is used, this controls the FPS, 0=as fast as possible"/>
   <arg name="time"              default="false"	doc="Show time/FPS on output"/>
   <arg name="to_ros"            default="true"	doc="Flag whether images should be published to ROS" />
-  <arg name="utstamps"          default="false"	doc="Flag whether each image should have Unique timestamps vs the master cams time stamp for all" />
+  <arg name="utstamps"          doc="Flag whether each image should have Unique timestamps vs the master cams time stamp for all" />
 
   <arg name="max_rate_save"     default="false"	doc="Flag for max rate mode which is when the master triggerst the slaves and saves images at maximum rate possible" />
   <arg name="config_file"       default="$(find spinnaker_sdk_camera_driver)/params/test_params.yaml" doc="File specifying the parameters of the camera_array"/>

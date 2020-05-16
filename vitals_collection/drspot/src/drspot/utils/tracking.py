@@ -25,6 +25,8 @@ class ROITracker(object):
         self.ok = False
         self.bbox = np.array([0, 0, 0, 0])
 
+        self.update_metadata = None
+
         self.tracker_type = tracker_type
 
         if tracker_type in CV2_SUPPORTED_TRACKERS:
@@ -79,6 +81,7 @@ class ROITracker(object):
                 else:
                     # Maximum value is best, so subtract distance from expected location.
                     res -= dist_sq_with_min
+            self.update_metadata = res
             valn, valx, locn, locx = cv2.minMaxLoc(res)
             if self.tracker_type in ['TM_SQDIFF', 'TM_SQDIFF_NORMED']:
                 loc = locn # Minimum value is best.
