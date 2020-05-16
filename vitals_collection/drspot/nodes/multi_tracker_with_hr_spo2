@@ -69,10 +69,10 @@ if __name__ == '__main__':
                                                           queue_size=IMG_QUEUE_SIZE,
                                                           buff_size=IMG_BUF_SIZE)
 
-    approx_image_sync = message_filters.ApproximateTimeSynchronizer([fdt.image_sub,
-                                                                     nir_cct.image_sub,
-                                                                     narrow_nir_cct.image_sub],
-                                                                    200, 0.1)
+    approx_image_sync = message_filters.TimeSynchronizer([fdt.image_sub,
+                                                          nir_cct.image_sub,
+                                                          narrow_nir_cct.image_sub],
+                                                         200)
 
     def synced_callback_and_republish(red, nir, narrow_nir):
         fdt.image_callback(red)

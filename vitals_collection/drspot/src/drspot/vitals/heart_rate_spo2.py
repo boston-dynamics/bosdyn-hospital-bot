@@ -67,8 +67,8 @@ ABORT_COMPUTE_TOPIC = 'abort_compute_heart_rate_spo2'
 SUBROI_EXTRA_HALF_WIDTH_FRAC_OF_FACE_WIDTH = 0.1
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT_DOWN = 0.0
 SUBROI_HEIGHT_FRAC_OF_FACE_HEIGHT = 0.25
-NUM_SUBREGIONS_X = 3
-NUM_SUBREGIONS_Y = 2
+NUM_SUBREGIONS_X = 10
+NUM_SUBREGIONS_Y = 3
 
 HELPER_TIMER_PERIOD_SEC = 1
 FULL_MSMT_PERIOD_SEC = 10
@@ -116,12 +116,12 @@ RUN_CONTINUOUS = False
 
 # IMX264 monochrome with BN660, BP880, BN810
 ## halogen illumination
-#PBV_STATIC = np.array([ 0.68,  1.0,    0.56])
-#PBV_UPDATE = np.array([-0.014, 0.0024, -0.0003])
+PBV_STATIC = np.array([ 0.68,  1.0,    0.56])
+PBV_UPDATE = np.array([-0.014, 0.0024, -0.0003])
 
 ## sunlight illumination
-PBV_STATIC = np.array([ 1.0,   0.56,    0.42])
-PBV_UPDATE = np.array([-0.021, 0.0013, -0.0003])
+#PBV_STATIC = np.array([ 1.0,   0.56,    0.42])
+#PBV_UPDATE = np.array([-0.021, 0.0013, -0.0003])
 
 PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
 
@@ -270,9 +270,9 @@ class HeartRate(object):
                                            red_data, nir_data, narrow_nir_data,
                                            red_offset, nir_offset, narrow_nir_offset,
                                            t_data, delta))
+                if not RUN_CONTINUOUS:
+                    self.msmt_thread = t
                 t.start()
-            if not RUN_CONTINUOUS and do_msmt:
-                self.msmt_thread = t
 
     def msmt_callback(self, event, ti, tf,
                       red_data, nir_data, narrow_nir_data,
@@ -412,9 +412,16 @@ class HeartRate(object):
                     # Pixel amount that bounds the slop in the coarse tracker.
                     if ii == 0:
                         slop = 50
+                        tmpl_rows = red_fine.template.shape[0]
+                        tmpl_cols = red_fine.template.shape[1]
                     else:
-                        slop = 20
-                    full_size_crop_plus_slop = chan[ymin-slop:ymax+slop, xmin-slop:xmax+slop]
+                        slop = 30
+                        tmpl_rows = fine.template.shape[0]
+                        tmpl_cols = fine.template.shape[1]
+                    # Compensate for the tracked region sloppily changing size.
+                    adj_xmax = xmin + tmpl_cols
+                    adj_ymax = ymin + tmpl_rows
+                    full_size_crop_plus_slop = chan[ymin-slop:adj_ymax+slop, xmin-slop:adj_xmax+slop]
                     try:
                         if ii == 0:
                             red_fine.update(full_size_crop_plus_slop)
@@ -427,6 +434,9 @@ class HeartRate(object):
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed/skipping fine update in {}:{} idx {}; {} = {}'.format(
                             self.name, txt, ti, tf, ii, resized_bbox, e))
+                        if ii == 0:
+                            self.abort_compute_pub.publish(Empty())
+                            return
                     else:
                         if ii == 0:
                             xmin_s, ymin_s, xmax_s, ymax_s = red_fine.bbox
@@ -434,9 +444,11 @@ class HeartRate(object):
                             xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
 
                         xmin += xmin_s - slop; ymin += ymin_s - slop
-                        xmax += xmin_s - slop; ymax += ymin_s - slop
+                        xmax = adj_xmax + xmin_s - slop
+                        ymax = adj_ymax + ymin_s - slop
 
                         try:
+                            # TODO - update fine template size if coarse tracked region has really changed size over time?
                             fine.start_track(chan, [xmin, ymin, xmax, ymax])
                         except Exception as e:
                             rospy.logwarn_throttle(1, '{} {}: failed track reinit in {}:{}; {} = {}'.format(
@@ -462,9 +474,12 @@ class HeartRate(object):
                         # Draw vertical lines (constant y coordinate).
                         for yline in range(ymin, ymax, yd):
                             cv2.line(cv_image, (xmin, yline), (xmax, yline), (255,255,255), 3)
+                        # Recover values from before refinement.
+                        xmin, ymin, xmax, ymax = resized_bbox
                         if not (ii == 0 and cc == 0):
                             cv2.rectangle(cv_image, (xmin-slop, ymin-slop), (xmax+slop, ymax+slop), (255,255,255), 2)
                         cv2.imwrite(output_img_dir + txt + '_{:05d}.png'.format(ii), cv_image)
+                        cv2.imwrite(output_img_dir + txt + '_crop_{:05d}.png'.format(ii), crop)
                     except Exception as e:
                         print(e)
                         pass
