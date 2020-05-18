@@ -72,7 +72,8 @@ NUM_SUBREGIONS_Y = 3
 
 HELPER_TIMER_PERIOD_SEC = 1
 FULL_MSMT_PERIOD_SEC = 10
-OK_FRAC_MSMT = 0.7
+MAX_DELTA_DIFF_FRAC_OF_DELTA = 1.0
+NUM_DELTA_DIFF_FRAC_OF_DELTA = 3
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 # Buffer about 3 seconds of cropped frames.
 IMG_QUEUE_SIZE = 3 * 35
@@ -239,11 +240,9 @@ class HeartRate(object):
                 self.clear_msmt_state()
                 return
 
-            delta = self.delta['red']
-
             ti = self.ti
             tf = self.tf
-            t_data = list(self.t_buffer)
+            t_data = np.array(self.t_buffer)
             red_data = list(self.red_msmt_buffer)
             nir_data = list(self.nir_msmt_buffer)
             narrow_nir_data = list(self.narrow_nir_msmt_buffer)
@@ -257,6 +256,7 @@ class HeartRate(object):
 
         if do_it:
             msmt_n = len(red_data)
+            delta = (tf - ti) / msmt_n
             rospy.loginfo('{}: starting computation; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
                 self.name, msmt_n, ti, tf, delta))
             # Spawn a thread to do the measurement.
@@ -280,9 +280,11 @@ class HeartRate(object):
                       t_data, delta):
         msmt_n = len(red_data)
 
-        if delta is None or delta < 1e-3 or msmt_n == 0 or msmt_n < OK_FRAC_MSMT * FULL_MSMT_PERIOD_SEC / delta:
-            rospy.loginfo_throttle(1, '{}: not enough samples {} in {}:{} with delta {:.4f}'.format(
-                                   self.name, msmt_n, ti, tf, delta))
+        delta_compare = np.abs(np.diff(t_data) - delta)
+        bad_sample_idx = (delta_compare >= MAX_DELTA_DIFF_FRAC_OF_DELTA * delta)
+        if bad_sample_idx.sum() > NUM_DELTA_DIFF_FRAC_OF_DELTA:
+            rospy.loginfo_throttle(1, '{}: invalid sample set; {} in {}:{} with delta {:.4f}; bad delta on samples {}'.format(
+                                   self.name, msmt_n, ti, tf, delta, np.where(bad_sample_idx)))
             self.abort_compute_pub.publish(Empty())
             return
 
@@ -292,12 +294,22 @@ class HeartRate(object):
             self.abort_compute_pub.publish(Empty())
             return
 
+        global DEBUG_SAVE_IMAGES
+        global DEBUG_SAVE_DATA
+        global DEBUG_MKDIR
         if DEBUG_MKDIR:
-            output_dir = LOG_DIR + os.path.sep + str(int(ti)) + os.path.sep
-            os.mkdir(output_dir)
-            if DEBUG_SAVE_IMAGES:
-                output_img_dir = output_dir + 'img' + os.path.sep
-                os.mkdir(output_img_dir)
+            statvfs = os.statvfs(LOG_DIR)
+            # Number of free bytes available to non-priveleged users.
+            if statvfs.f_frsize * statvfs.f_bavail < 1000 * 1000 * 1000:
+                DEBUG_MKDIR = False
+                DEBUG_SAVE_IMAGES = False
+                DEBUG_SAVE_DATA = False
+            else:
+                output_dir = LOG_DIR + os.path.sep + str(int(ti)) + os.path.sep
+                os.mkdir(output_dir)
+                if DEBUG_SAVE_IMAGES:
+                    output_img_dir = output_dir + 'img' + os.path.sep
+                    os.mkdir(output_img_dir)
 
         self.start_compute_pub.publish(Empty())
 
@@ -501,7 +513,8 @@ class HeartRate(object):
         for rr in range(patch_avg.shape[1]):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'raw_{:03d}.csv'.format(rr),
-                           patch_avg[:, rr, :].reshape((-1,CC)),
+                           np.hstack((t_data.reshape((-1, 1)) - t_data[0],
+                                      patch_avg[:, rr, :].reshape((-1,CC)))),
                            delimiter=',', fmt='%.3e')
         patch_avg /= np.mean(patch_avg, axis=0)
         patch_avg -= 1.0
@@ -548,10 +561,12 @@ class HeartRate(object):
 
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'normalized_{:03d}.csv'.format(rr),
-                           patch_avg[:, rr, :].reshape((-1,CC)),
+                           np.hstack((t_data.reshape((-1, 1)) - t_data[0],
+                                      patch_avg[:, rr, :].reshape((-1,CC)))),
                            delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'pulse_{:03d}.csv'.format(rr),
-                           patch_pulse[:, rr, :].reshape((-1, patch_pulse.shape[2])),
+                           np.hstack((t_data.reshape((-1, 1)) - t_data[0],
+                                      patch_pulse[:, rr, :].reshape((-1, patch_pulse.shape[2])))),
                            delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'freq_{:03d}.csv'.format(rr),
                            np.hstack((freq.reshape((-1, 1)) * 60.0,
@@ -622,7 +637,9 @@ class HeartRate(object):
         snr_per_spo2 = np.zeros((len(PBV_TO_CHECK)))
         pulse_per_spo2 = np.sum(patch_pulse, axis=1, keepdims=False) / len(use_region_idx)
         if DEBUG_SAVE_DATA:
-            np.savetxt(output_dir + 'avg_pulse.csv', pulse_per_spo2,
+            np.savetxt(output_dir + 'avg_pulse.csv',
+                       np.hstack((t_data.reshape((-1, 1)) - t_data[0],
+                                  pulse_per_spo2)),
                        delimiter=',', fmt='%.3e')
         for ss in range(len(PBV_TO_CHECK)):
             sp = np.fft.fft(pulse_per_spo2[:, ss])

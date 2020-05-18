@@ -79,7 +79,8 @@ acquisition::Capture::Capture(): it_(nh_), nh_pvt_ ("~") {
     nframes_ = -1;
     FIXED_NUM_FRAMES_ = false;
     MAX_RATE_SAVE_ = false;
-    skip_num_ = 20; 
+    rate_div_ = 1;
+    rate_cut_ = 0;
     init_delay_ = 1; 
     master_fps_ = 20.0;
     binning_ = 1;
@@ -163,7 +164,8 @@ acquisition::Capture::Capture(ros::NodeHandle nodehandl, ros::NodeHandle private
     nframes_ = -1;
     FIXED_NUM_FRAMES_ = false;
     MAX_RATE_SAVE_ = false;
-    skip_num_ = 20;
+    rate_div_ = 1;
+    rate_cut_ = 0;
     init_delay_ = 1;
     master_fps_ = 20.0;
     binning_ = 1;
@@ -257,7 +259,7 @@ void acquisition::Capture::load_cameras() {
         
                 cams.push_back(cam);
                 
-                camera_image_pubs.push_back(it_.advertiseCamera("camera_array/"+cam_names_[j]+"/image_raw", 35));
+                camera_image_pubs.push_back(it_.advertiseCamera("camera_array/"+cam_names_[j]+"/image_raw", 70));
                 //camera_info_pubs.push_back(nh_.advertise<sensor_msgs::CameraInfo>("camera_array/"+cam_names_[j]+"/camera_info", 1));
 
                 img_msgs.push_back(sensor_msgs::ImagePtr());
@@ -426,13 +428,13 @@ void acquisition::Capture::read_parameters() {
         ROS_INFO("  Displaying timing details: %s",TIME_BENCHMARK_?"true":"false");
         else ROS_WARN("  'time' Parameter not set, using default behavior time=%s",TIME_BENCHMARK_?"true":"false");
 
-    if (nh_pvt_.getParam("skip", skip_num_)){
-        if (skip_num_ >0) ROS_INFO("  No. of images to skip set to: %d",skip_num_);
+    if (nh_pvt_.getParam("rate_div", rate_div_)){
+        if (rate_div_ > 0) ROS_INFO("  No. of images to rate_div set to: %d",rate_div_);
         else {
-            skip_num_=20;
-            ROS_WARN("  Provided 'skip' is not valid, using default behavior, skip=%d",skip_num_);
+            rate_div_=1;
+            ROS_WARN("  Provided 'rate_div' is not valid, using default behavior, rate_div=%d",rate_div_);
         }
-    } else ROS_WARN("  'skip' Parameter not set, using default behavior: skip=%d",skip_num_);
+    } else ROS_WARN("  'rate_div' Parameter not set, using default behavior: rate_div=%d",rate_div_);
 
     if (nh_pvt_.getParam("delay", init_delay_)){
         if (init_delay_>=0) ROS_INFO("  Init sleep delays set to : %0.2f sec",init_delay_);
@@ -1035,7 +1037,11 @@ void acquisition::Capture::run_soft_trig() {
                 }
             }
             
-            if (EXPORT_TO_ROS_) export_to_ROS();
+	    rate_cut_++;
+	    if (rate_cut_ >= rate_div_) {
+	      if (EXPORT_TO_ROS_) export_to_ROS();
+	      rate_cut_ = 0;
+	    }
             //cams[MASTER_CAM_].targetGreyValueTest();
             // ros publishing messages
             acquisition_pub.publish(mesg);

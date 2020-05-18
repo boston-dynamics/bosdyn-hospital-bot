@@ -102,7 +102,8 @@ namespace acquisition {
 
         int nframes_;
         float init_delay_;
-        int skip_num_;
+        int rate_div_;
+	int rate_cut_;
         float master_fps_;
         int binning_;
         bool color_;

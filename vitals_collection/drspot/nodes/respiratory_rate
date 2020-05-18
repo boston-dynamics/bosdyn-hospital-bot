@@ -41,10 +41,11 @@ TRACKING_STATUS_TOPIC = 'ir_tracking_status'
 HELPER_TIMER_PERIOD_SEC = 1
 REPEAT_MSMT_PERIOD_SEC = 10
 FULL_MSMT_PERIOD_SEC = 20
+MAX_DELTA_DIFF_FRAC_OF_DELTA = 1.0
+NUM_DELTA_DIFF_FRAC_OF_DELTA = 3
 NOMINAL_RATE_HZ = 27
 NOMINAL_REPEAT_SAMPLES = REPEAT_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
 NOMINAL_FULL_SAMPLES = FULL_MSMT_PERIOD_SEC * NOMINAL_RATE_HZ
-OK_FRAC_MSMT = 0.7
 MAX_DROPOUT_BEFORE_RESET_SEC = 0.5
 
 # Minimum of 6 breaths per minute.
@@ -141,12 +142,20 @@ class RespiratoryRate(object):
         self.debug_msmt_pub.publish(msg)
 
         with self.lock:
+            if (self.repeat_msmt_n >= self.repeat_t_msmt_buffer.size):
+                self.repeat_t_msmt_buffer.resize((2 * self.repeat_t_msmt_buffer.size))
+            self.repeat_t_msmt_buffer[self.repeat_msmt_n] = t
+
             if (self.repeat_msmt_n >= self.repeat_msmt_buffer.size):
                 self.repeat_msmt_buffer.resize((2 * self.repeat_msmt_buffer.size))
             self.repeat_msmt_buffer[self.repeat_msmt_n] = val
             if self.repeat_msmt_n == 0: self.r_ti = t
             self.repeat_msmt_n += 1
             self.r_tf = t
+
+            if (self.full_msmt_n >= self.full_t_msmt_buffer.size):
+                self.full_t_msmt_buffer.resize((2 * self.full_t_msmt_buffer.size))
+            self.full_t_msmt_buffer[self.full_msmt_n] = t
 
             if (self.full_msmt_n >= self.full_msmt_buffer.size):
                 self.full_msmt_buffer.resize((2 * self.full_msmt_buffer.size))
@@ -186,30 +195,32 @@ class RespiratoryRate(object):
                 self.clear_msmt_state()
                 return
 
-            delta = self.delta
-
             r_ti = self.r_ti
             r_tf = self.r_tf
             r_msmt_n = self.repeat_msmt_n
             r_data = np.copy(self.repeat_msmt_buffer[0:self.repeat_msmt_n])
+            r_t_data = np.copy(self.repeat_t_msmt_buffer[0:self.repeat_msmt_n])
             r_do_it = r_ti is not None and r_tf is not None and r_tf - r_ti >= REPEAT_MSMT_PERIOD_SEC
             if r_do_it:
+                r_delta = (r_tf - r_ti) / r_msmt_n
                 self.repeat_msmt_n = 0
             f_ti = self.f_ti
             f_tf = self.f_tf
             f_msmt_n = self.full_msmt_n
             f_data = np.copy(self.full_msmt_buffer[0:self.full_msmt_n])
+            f_t_data = np.copy(self.full_t_msmt_buffer[0:self.full_msmt_n])
             f_do_it = f_ti is not None and f_tf is not None and f_tf - f_ti >= FULL_MSMT_PERIOD_SEC
             if f_do_it:
+                f_delta = (f_tf - f_ti) / f_msmt_n
                 self.full_msmt_n = 0
         # End locked region.
 
         if r_do_it:
-            self.msmt_callback(event, r_ti, r_tf, r_msmt_n, r_data, delta, repeated=True)
+            self.msmt_callback(event, r_ti, r_tf, r_msmt_n, r_data, r_t_data, r_delta, repeated=True)
         if f_do_it:
-            self.msmt_callback(event, f_ti, f_tf, f_msmt_n, f_data, delta, repeated=False)
+            self.msmt_callback(event, f_ti, f_tf, f_msmt_n, f_data, f_t_data, f_delta, repeated=False)
 
-    def msmt_callback(self, event, ti, tf, msmt_n, data, delta, repeated=True):
+    def msmt_callback(self, event, ti, tf, msmt_n, data, t_data, delta, repeated=True):
         if repeated:
             txt = 'repeat'
             period = REPEAT_MSMT_PERIOD_SEC
@@ -227,8 +238,12 @@ class RespiratoryRate(object):
                 data_ax = self.full_data_ax
                 amp_ax = self.full_amp_ax
 
-        if delta is None or delta < 1e-3 or msmt_n < OK_FRAC_MSMT * period / delta:
-            rospy.loginfo_throttle(1, '{} {}: not enough samples {}'.format(self.name, txt, msmt_n))
+
+        delta_compare = np.abs(np.diff(t_data) - delta)
+        bad_sample_idx = (delta_compare >= MAX_DELTA_DIFF_FRAC_OF_DELTA * delta)
+        if bad_sample_idx.sum() > NUM_DELTA_DIFF_FRAC_OF_DELTA:
+            rospy.loginfo_throttle(1, '{} {}: invalid sample set; {} in {}:{} with delta {:.4f}; bad delta on samples {}'.format(
+                                   self.name, txt, msmt_n, ti, tf, delta, np.where(bad_sample_idx)))
             return
 
         msg = Float32MultiArray()
@@ -288,6 +303,8 @@ class RespiratoryRate(object):
         self.lock = threading.Lock()
 
         # Measurement buffers
+        self.repeat_t_msmt_buffer = np.zeros(NOMINAL_REPEAT_SAMPLES)
+        self.full_t_msmt_buffer = np.zeros(NOMINAL_FULL_SAMPLES)
         self.repeat_msmt_buffer = np.zeros(NOMINAL_REPEAT_SAMPLES)
         self.full_msmt_buffer = np.zeros(NOMINAL_FULL_SAMPLES)
 

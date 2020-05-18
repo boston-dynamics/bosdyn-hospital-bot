@@ -69,10 +69,12 @@ if __name__ == '__main__':
                                                           queue_size=IMG_QUEUE_SIZE,
                                                           buff_size=IMG_BUF_SIZE)
 
-    approx_image_sync = message_filters.TimeSynchronizer([fdt.image_sub,
-                                                          nir_cct.image_sub,
-                                                          narrow_nir_cct.image_sub],
-                                                         200)
+    exact_time_sync = rospy.get_param('exact_time_sync', False)
+    image_subs = [fdt.image_sub, nir_cct.image_sub, narrow_nir_cct.image_sub]
+    if exact_time_sync:
+        image_sync = message_filters.TimeSynchronizer(image_subs, 200)
+    else:
+        image_sync = message_filters.ApproximateTimeSynchronizer(image_subs, 200, 0.1)
 
     def synced_callback_and_republish(red, nir, narrow_nir):
         fdt.image_callback(red)
@@ -87,7 +89,7 @@ if __name__ == '__main__':
         if all([p is not None for p in payload]):
             hr.synced_callback(*payload)
 
-    approx_image_sync.registerCallback(synced_callback_and_republish)
+    image_sync.registerCallback(synced_callback_and_republish)
 
     def handle_enable(req):
         rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),

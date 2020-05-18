@@ -30,6 +30,7 @@
         <arg name="gain" value="$(arg multichrome_gain" />
         <arg name="trigger_slave_from_master" value="$(arg trigger_slave_from_master)" />
 	<arg name="utstamps" value="$(eval not trigger_slave_from_master)" />
+	<arg name="rate_div" value="2" />
       </include>
     </group>
   </group>
@@ -42,6 +43,7 @@
     <group if="$(arg launch_heart_rate_spo2)">
       <node name="multi_tracker_with_hr_spo2" pkg="drspot" type="multi_tracker_with_hr_spo2"
             output="screen" respawn="true">
+	<param name="exact_time_sync" value="$(arg trigger_slave_from_master)" />
       </node>
     </group>
 
