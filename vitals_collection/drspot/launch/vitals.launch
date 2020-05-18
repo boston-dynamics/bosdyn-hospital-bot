@@ -7,6 +7,10 @@
   <arg name="use_thermal_reference" default="true" />
   <arg name="launch_mode_manager" default="true" />
 
+  <arg name="multichrome_exposure_time" default="27800" />
+  <arg name="multichrome_gain" default="0.0" />
+
+  <arg name="trigger_slave_from_master" default="false" />
   <arg name="multichrome_provider" default="$(optenv DRSPOT_MULTICHROME_PROVIDER spinnaker_sdk_camera_driver)" />
 
   <arg name="thermal_ns" default="$(optenv DRSPOT_THERMAL_NS optris)" />
@@ -22,8 +26,11 @@
     <group if="$(arg launch_drivers)">
       <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
         <arg name="config_file" default="/etc/ros/params/spinnaker_sdk_camera_driver_params.yaml" />
-        <arg name="exposure_time" default="27800" />
-        <arg name="gain" default="0.0" />
+        <arg name="exposure_time" value="$(arg multichrome_exposure_time)" />
+        <arg name="gain" value="$(arg multichrome_gain" />
+        <arg name="trigger_slave_from_master" value="$(arg trigger_slave_from_master)" />
+	<arg name="utstamps" value="$(eval not trigger_slave_from_master)" />
+	<arg name="rate_div" value="2" />
       </include>
     </group>
   </group>
@@ -36,6 +43,7 @@
     <group if="$(arg launch_heart_rate_spo2)">
       <node name="multi_tracker_with_hr_spo2" pkg="drspot" type="multi_tracker_with_hr_spo2"
             output="screen" respawn="true">
+	<param name="exact_time_sync" value="$(arg trigger_slave_from_master)" />
       </node>
     </group>
 

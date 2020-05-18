@@ -72,7 +72,7 @@ namespace acquisition {
         bool onEnable(std_srvs::SetBool::Request& req, std_srvs::SetBool::Response& res);
         ros::ServiceServer Enable_;
         bool enabled_;
-	mutex enabled_mutex_;
+        mutex enabled_mutex_;
 
         float mem_usage();
     
@@ -102,19 +102,21 @@ namespace acquisition {
 
         int nframes_;
         float init_delay_;
-        int skip_num_;
+        int rate_div_;
+	int rate_cut_;
         float master_fps_;
         int binning_;
         bool color_;
         string dump_img_;
         string ext_;
         float exposure_time_;
+        bool trigger_slave_from_master_;
         float gain_;
         double target_grey_value_;
         // int decimation_;
 
         int soft_framerate_; // Software (ROS) frame rate
-        
+
         int MASTER_CAM_;
         int CAM_; // active cam during live
 

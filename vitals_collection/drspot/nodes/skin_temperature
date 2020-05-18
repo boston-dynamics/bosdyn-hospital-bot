@@ -29,6 +29,7 @@ from cv_bridge import CvBridge
 
 THERMAL_REF_TOPIC = 'thermal_reference_temp'
 IMAGE_TOPIC = 'temperature_image'
+FRAME_MSMT_RAW_TOPIC_SUFFIX = '_raw_frame_msmt'
 FRAME_MSMT_TOPIC_SUFFIX = '_frame_msmt'
 FULL_TOPIC = 'full_skin_temp'
 REPEAT_TOPIC = 'repeated_skin_temp'
@@ -156,6 +157,11 @@ class SkinTemperature(object):
                 return
 
         val = np.amax(cv_image[ymin:ymax, xmin:xmax])
+        msg = Float32()
+
+        msg.data = val
+        self.debug_msmt_raw_pub.publish(msg)
+
         ref_val = None
         if self.use_thermal_ref:
             ref_val = np.mean(cv_image[tr_ymin:tr_ymax, tr_xmin:tr_xmax])
@@ -168,7 +174,6 @@ class SkinTemperature(object):
                 self.clear_msmt_state()
                 return
 
-        msg = Float32()
         msg.data = val
         self.debug_msmt_pub.publish(msg)
 
@@ -307,6 +312,9 @@ class SkinTemperature(object):
         self.debug_msmt_pub = rospy.Publisher(self.name + FRAME_MSMT_TOPIC_SUFFIX,
                                               Float32,
                                               queue_size=10)
+        self.debug_msmt_raw_pub = rospy.Publisher(self.name + FRAME_MSMT_RAW_TOPIC_SUFFIX,
+                                                  Float32,
+                                                  queue_size=10)
 
         self.full_msmt_pub = rospy.Publisher(FULL_TOPIC, Float32, queue_size=10)
         self.repeat_msmt_pub = rospy.Publisher(REPEAT_TOPIC, Float32,
