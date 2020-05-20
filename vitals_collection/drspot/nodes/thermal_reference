@@ -152,6 +152,7 @@ class ThermalReference(object):
         self.sp = serial.Serial(port=port, baudrate=baud, timeout=2)
         self.sp.flushInput()
         self.sp.flushOutput()
+        self.Q1(0)
         time.sleep(3)
         print('TCLab connected via Arduino on port ' + port)
 
@@ -455,6 +456,7 @@ class ThermalReference(object):
                 if DEBUG_TXT:
                     save_txt(tm[0:i],Q1[0:i],T1[0:i],[Tsp1 for i in range(i)])
                 plt.savefig('test_PID.png')
+            rospy.loginfo('Exiting thermal reference due to exception {}'.format(e))
 
 
 if __name__ == '__main__':
