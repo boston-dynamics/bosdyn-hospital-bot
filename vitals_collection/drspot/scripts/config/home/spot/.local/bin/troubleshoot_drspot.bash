@@ -116,6 +116,7 @@ exec_and_log "ip addr"
 exec_and_log "ifconfig"
 exec_and_log "ip route"
 exec_and_log "lsusb"
+exec_and_log "ls /dev/tty*"
 exec_and_log "/usr/bin/ir_find_serial"
 exec_and_log "cat /sys/class/thermal/thermal_zone*/temp"
 exec_and_log "cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq"
@@ -134,6 +135,7 @@ unset SIGNAL
 # Other debug files
 exec_and_log "/home/spot/.local/bin/save_rosgraph.py ${outfolder}/rosgraph.dot"
 exec_and_log "cp /var/log/*.log ${outfolder}/"
+exec_and_log "cp -r /home/spot/.ros/log/latest ${outfolder}/ros_log_latest"
 timeout 20 dmesg > ${outfolder}/dmesg.log
 
 # Last step - can't use the files anymore
