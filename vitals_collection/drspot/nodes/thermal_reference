@@ -399,6 +399,10 @@ class ThermalReference(object):
                     error_fopdt.append(0)
                     error_sp.append(0)
 
+                # overheating protection above 50 degrees C
+                if T1[i] > 50:
+                    Q1[i] = 0
+
                 # Write output (0-100)
                 self.Q1(Q1[i])
 
