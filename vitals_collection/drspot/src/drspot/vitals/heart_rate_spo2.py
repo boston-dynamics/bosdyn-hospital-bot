@@ -39,16 +39,6 @@ from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
 
-# Inputs.
-RED_IMAGE_TOPIC = 'mono_red_cropped'
-RED_REGION_IN_IMAGE_TOPIC = 'mono_red_region'
-NIR_IMAGE_TOPIC = 'mono_nir_cropped'
-NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
-NARROW_NIR_IMAGE_TOPIC = 'mono_narrow_nir_cropped'
-NARROW_NIR_REGION_IN_IMAGE_TOPIC = 'mono_narrow_nir_region'
-
-TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
-
 # Outputs.
 HEART_RATE_MSMT_TOPIC = 'full_heart_rate'
 SPO2_MSMT_TOPIC = 'full_spo2'
@@ -109,20 +99,7 @@ MAX_HZ = 2 * MAX_HEART_HZ
 
 QUALITY_PRUNE_FACTOR = 1.0
 
-CHAN_IDX = (0, 1, 2)
-CHAN_TXT = ('red', 'nir', 'narrow_nir')
-CC = len(CHAN_IDX)
-
 RUN_CONTINUOUS = False
-
-# IMX264 monochrome with BN660, BP880, BN810
-## halogen illumination
-PBV_STATIC = np.array([ 0.68,  1.0,    0.56])
-PBV_UPDATE = np.array([-0.014, 0.0024, -0.0003])
-
-## sunlight illumination
-#PBV_STATIC = np.array([ 1.0,   0.56,    0.42])
-#PBV_UPDATE = np.array([-0.021, 0.0013, -0.0003])
 
 PBV_TO_CHECK = [100, 95, 90, 85, 80, 75, 70]
 
@@ -143,8 +120,7 @@ def grad(im) :
     return to_uint8_scale(grad)
 
 class HeartRate(object):
-    def synced_callback(self, red_image_data, nir_image_data, narrow_nir_image_data,
-                        red_region, nir_region, narrow_nir_region):
+    def synced_callback(self, *args_image_data):
         if RATE_CUT:
             if self.RATE_CUT is None: self.RATE_CUT = 0
             self.RATE_CUT += 1
@@ -153,11 +129,9 @@ class HeartRate(object):
             else:
                 return
         with self.lock:
-            chans = zip((red_image_data, nir_image_data, narrow_nir_image_data),
-                        (red_region, nir_region, narrow_nir_region),
-                        CHAN_TXT)
+            chans = zip(args_image_data, self.chans['txt'])
 
-            for image_data, region, txt in chans:
+            for image_data, txt in chans:
                 t = image_data.header.stamp.to_sec()
 
                 if self.tlast[txt] is None:
@@ -185,15 +159,6 @@ class HeartRate(object):
                     self.tlast[txt] = t
                     return
 
-                # Detect region message header mismatch with image header.
-                region_t = region.header.stamp.to_sec()
-                if abs(t - region_t) > T_EPS:
-                    self.clear_msmt_state()
-                    self.tlast[txt] = t
-                    rospy.logwarn_throttle(1, '{} {}: Region out of sync with image {:0.6f} vs {:0.6f}'.format(
-                        self.name, txt, region_t, t))
-                    return
-
                 if self.delta[txt] is None:
                     self.delta[txt] = t - self.tlast[txt]
                     return
@@ -202,27 +167,15 @@ class HeartRate(object):
                 self.tlast[txt] = t
         # End locked region.
 
-        red_image = self.bridge.imgmsg_to_cv2(red_image_data,
-                                              desired_encoding='passthrough')
-        nir_image = self.bridge.imgmsg_to_cv2(nir_image_data,
-                                              desired_encoding='passthrough')
-        narrow_nir_image = self.bridge.imgmsg_to_cv2(narrow_nir_image_data,
-                                               desired_encoding='passthrough')
+        images = [self.bridge.imgmsg_to_cv2(image_data, desired_encoding='passthrough') for image_data in args_image_data]
 
-        t = red_image_data.header.stamp.to_sec()
+        t = args_image_data[0].header.stamp.to_sec()
         with self.lock:
             if self.start_msmt: self.ti = t
             self.start_msmt = False
             self.t_buffer.append(t)
-            self.red_msmt_buffer.append(red_image)
-            self.nir_msmt_buffer.append(nir_image)
-            self.narrow_nir_msmt_buffer.append(narrow_nir_image)
-            self.red_offset_buffer.append(np.array([red_region.polygon.points[0].x,
-                                                    red_region.polygon.points[0].y]))
-            self.nir_offset_buffer.append(np.array([nir_region.polygon.points[0].x,
-                                                    nir_region.polygon.points[0].y]))
-            self.narrow_nir_offset_buffer.append(np.array([narrow_nir_region.polygon.points[0].x,
-                                                           narrow_nir_region.polygon.points[0].y]))
+            for cc in range(len(images)):
+                self.msmt_buffer[cc].append(images[cc])
             self.tf = t
         # End locked region.
 
@@ -243,19 +196,14 @@ class HeartRate(object):
             ti = self.ti
             tf = self.tf
             t_data = np.array(self.t_buffer)
-            red_data = list(self.red_msmt_buffer)
-            nir_data = list(self.nir_msmt_buffer)
-            narrow_nir_data = list(self.narrow_nir_msmt_buffer)
-            red_offset = list(self.red_offset_buffer)
-            nir_offset = list(self.nir_offset_buffer)
-            narrow_nir_offset = list(self.narrow_nir_offset_buffer)
+            buffer_copy = [list(buf) for buf in self.msmt_buffer]
             do_it = ti is not None and tf is not None and tf - ti >= FULL_MSMT_PERIOD_SEC
             if do_it:
                 self.clear_buffers()
         # End locked region.
 
         if do_it:
-            msmt_n = len(red_data)
+            msmt_n = len(buffer_copy[0])
             delta = (tf - ti) / msmt_n
             rospy.loginfo('{}: starting computation; nsamp: {}; ti: {:.1f}; tf: {:.1f}; delta: {:.4f}'.format(
                 self.name, msmt_n, ti, tf, delta))
@@ -266,19 +214,14 @@ class HeartRate(object):
                 do_msmt = self.msmt_thread is None or not self.msmt_thread.is_alive()
             if do_msmt:
                 t = threading.Thread(target=self.msmt_callback, name='full_' + self.name,
-                                     args=(event, ti, tf,
-                                           red_data, nir_data, narrow_nir_data,
-                                           red_offset, nir_offset, narrow_nir_offset,
+                                     args=(event, ti, tf, buffer_copy,
                                            t_data, delta))
                 if not RUN_CONTINUOUS:
                     self.msmt_thread = t
                 t.start()
 
-    def msmt_callback(self, event, ti, tf,
-                      red_data, nir_data, narrow_nir_data,
-                      red_offset, nir_offset, narrow_nir_offset,
-                      t_data, delta):
-        msmt_n = len(red_data)
+    def msmt_callback(self, event, ti, tf, image_buffers, t_data, delta):
+        msmt_n = len(image_buffers[0])
 
         delta_compare = np.abs(np.diff(t_data) - delta)
         bad_sample_idx = (delta_compare >= MAX_DELTA_DIFF_FRAC_OF_DELTA * delta)
@@ -313,45 +256,29 @@ class HeartRate(object):
 
         self.start_compute_pub.publish(Empty())
 
-        ri = 0 # ROI index over time.
         patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, 3))
         ii = 0 # Index into synchronized channels.
         # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
         # the multichrome_face_tracker node and/or track on every frame at the expense of more
         # computation time.
-        red_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
-        nir_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
-        narrow_nir_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
-        red_fine = ROITracker(CV_FINE_TRACKER_TYPE)
-        nir_fine = ROITracker(CV_FINE_TRACKER_TYPE)
-        narrow_nir_fine = ROITracker(CV_FINE_TRACKER_TYPE)
+        all_coarse = [ROITracker(CV_COARSE_TRACKER_TYPE) for cc in range(self.num_chans)]
+        all_fine = [ROITracker(CV_FINE_TRACKER_TYPE) for cc in range(self.num_chans)]
         grad_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
-        for red, nir, narrow_nir, red_off, nir_off, narrow_nir_off, t in zip(red_data,
-                                                                             nir_data,
-                                                                             narrow_nir_data,
-                                                                             red_offset,
-                                                                             nir_offset,
-                                                                             narrow_nir_offset,
-                                                                             t_data):
-            for chan, off, coarse, fine, cc, txt in zip((red, nir, narrow_nir),
-                                                        (red_off,
-                                                         nir_off,
-                                                         narrow_nir_off),
-                                                        (red_coarse,
-                                                         nir_coarse,
-                                                         narrow_nir_coarse),
-                                                        (red_fine,
-                                                         nir_fine,
-                                                         narrow_nir_fine),
-                                                        CHAN_IDX, CHAN_TXT):
+        for images in zip(image_buffers):
+            for chan, coarse, fine, cc, txt in zip(images, all_coarse, all_fine,
+                                                   range(self.num_chans),
+                                                   self.chans['txt']):
                 (rows, cols) = chan.shape
                 r = int(rows * DETECT_TRACK_SCALE_FACTOR)
                 c = int(cols * DETECT_TRACK_SCALE_FACTOR)
                 resize = cv2.resize(chan, (c, r), interpolation=cv2.INTER_AREA)
                 if ii == 0 and cc == 0:
-                    chan3 = cv2.cvtColor(resize, cv2.COLOR_GRAY2RGB)
+                    if len(resize.shape) == 2:
+                        chan3 = cv2.cvtColor(resize, cv2.COLOR_GRAY2RGB)
+                    else:
+                        chan3 = resize
                     bboxes, landmarks = detector.detect(chan3,
                                                         threshold=FACE_DETECTION_LIKELIHOOD_THRESHOLD,
                                                         scale=FACE_DETECTION_SCALE)
@@ -412,7 +339,7 @@ class HeartRate(object):
 
                 if ii == 0 and cc == 0:
                     try:
-                        fine.start_track(chan, resized_bbox)
+                        all_fine[0].start_track(chan, resized_bbox)
                     except Exception as e:
                         rospy.logwarn_throttle(1, '{} {}: failed track init in {}:{}; {} = {}'.format(
                             self.name, txt, ti, tf, resized_bbox, e))
@@ -424,8 +351,8 @@ class HeartRate(object):
                     # Pixel amount that bounds the slop in the coarse tracker.
                     if ii == 0:
                         slop = 50
-                        tmpl_rows = red_fine.template.shape[0]
-                        tmpl_cols = red_fine.template.shape[1]
+                        tmpl_rows = all_fine[0].template.shape[0]
+                        tmpl_cols = all_fine[0].template.shape[1]
                     else:
                         slop = 30
                         tmpl_rows = fine.template.shape[0]
@@ -436,9 +363,9 @@ class HeartRate(object):
                     full_size_crop_plus_slop = chan[ymin-slop:adj_ymax+slop, xmin-slop:adj_xmax+slop]
                     try:
                         if ii == 0:
-                            red_fine.update(full_size_crop_plus_slop)
+                            all_fine[0].update(full_size_crop_plus_slop)
                             if DEBUG_SAVE_IMAGES:
-                                cv2.imwrite(output_dir + txt + '_match_red_fine.png', to_uint8_scale(red_fine.update_metadata))
+                                cv2.imwrite(output_dir + txt + '_match_fine0.png', to_uint8_scale(all_fine[0].update_metadata))
                         else:
                             fine.update(full_size_crop_plus_slop)
                             if DEBUG_SAVE_IMAGES:
@@ -451,7 +378,7 @@ class HeartRate(object):
                             return
                     else:
                         if ii == 0:
-                            xmin_s, ymin_s, xmax_s, ymax_s = red_fine.bbox
+                            xmin_s, ymin_s, xmax_s, ymax_s = all_fine[0].bbox
                         else:
                             xmin_s, ymin_s, xmax_s, ymax_s = fine.bbox
 
@@ -514,7 +441,7 @@ class HeartRate(object):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'raw_{:03d}.csv'.format(rr),
                            np.hstack((t_data.reshape((-1, 1)) - t_data[0],
-                                      patch_avg[:, rr, :].reshape((-1,CC)))),
+                                      patch_avg[:, rr, :].reshape((-1,self.num_chans)))),
                            delimiter=',', fmt='%.3e')
         patch_avg /= np.mean(patch_avg, axis=0)
         patch_avg -= 1.0
@@ -546,7 +473,8 @@ class HeartRate(object):
                            delimiter=',', fmt='%.3e')
             for ss in range(len(PBV_TO_CHECK)):
                 spo2 = PBV_TO_CHECK[ss]
-                w_pbv = np.matmul(PBV_STATIC + (100.0 - spo2) * PBV_UPDATE,
+                w_pbv = np.matmul(self.chans['pbv_static']
+                                  + (100.0 - spo2) * self.chans['pbv_update'],
                                   q_inv)
                 w_pbv /= np.linalg.norm(w_pbv)
                 patch_pulse[:, rr, ss] = np.matmul(w_pbv, c_n)
@@ -562,7 +490,7 @@ class HeartRate(object):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'normalized_{:03d}.csv'.format(rr),
                            np.hstack((t_data.reshape((-1, 1)) - t_data[0],
-                                      patch_avg[:, rr, :].reshape((-1,CC)))),
+                                      patch_avg[:, rr, :].reshape((-1,self.num_chans)))),
                            delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'pulse_{:03d}.csv'.format(rr),
                            np.hstack((t_data.reshape((-1, 1)) - t_data[0],
@@ -667,12 +595,7 @@ class HeartRate(object):
     def clear_buffers(self):
         # Measurement buffers
         self.t_buffer = []
-        self.red_msmt_buffer = []
-        self.nir_msmt_buffer = []
-        self.narrow_nir_msmt_buffer = []
-        self.red_offset_buffer = []
-        self.nir_offset_buffer = []
-        self.narrow_nir_offset_buffer = []
+        self.msmt_buffer = [[] for cc in range(self.num_chans)]
 
         self.start_msmt = True
 
@@ -685,12 +608,19 @@ class HeartRate(object):
         self.ti = None
         self.tf = None
 
-        self.tlast = dict(red=None, nir=None, narrow_nir=None)
-        self.delta = dict(red=None, nir=None, narrow_nir=None)
+        self.tlast = dict()
+        self.delta = dict()
+        for txt in self.chans['txt']:
+            self.tlast[txt] = None
+            self.delta[txt] = None
 
         self.clear_buffers()
 
-    def __init__(self, name):
+    def __init__(self, name, tracking_status_topic,
+                 chan_txt, pbv_static, pbv_update):
+        self.chans = dict(txt=chan_txt, pbv_static=np.array(pbv_static), pbv_update=np.array(pbv_update))
+        self.num_chans = len(chan_txt)
+
         if RATE_CUT:
             self.RATE_CUT = None
 
@@ -723,7 +653,7 @@ class HeartRate(object):
                                              Float32,
                                              queue_size=10)
 
-        self.tracking_status_sub = rospy.Subscriber(TRACKING_STATUS_TOPIC, Bool,
+        self.tracking_status_sub = rospy.Subscriber(tracking_status_topic, Bool,
                                                     self.tracking_status_callback, queue_size=1)
 
         self.msmt_helper_timer = rospy.Timer(rospy.Duration(HELPER_TIMER_PERIOD_SEC),

@@ -25,17 +25,20 @@ from drspot.utils.transport import CachingPublisher as Publisher
 
 from drspot.vitals.heart_rate_spo2 import HeartRate
 from drspot.vitals.multichrome_face_tracker import FaceDetectorTracker, CalibratedCameraTrack
-from drspot.vitals.multichrome_face_tracker import ENABLE_TOPIC
-from drspot.vitals.multichrome_face_tracker import RED_IMAGE_TOPIC, RED_TRACKING_STATUS_TOPIC, RED_CROPPED_IMAGE_TOPIC, RED_REGION_IN_IMAGE_TOPIC
-from drspot.vitals.multichrome_face_tracker import NIR_IMAGE_TOPIC, NIR_TRACKING_STATUS_TOPIC, NIR_CROPPED_IMAGE_TOPIC, NIR_REGION_IN_IMAGE_TOPIC, NIR_OFFSET_FRAC_OF_FACE_HEIGHT
-from drspot.vitals.multichrome_face_tracker import NARROW_NIR_IMAGE_TOPIC, NARROW_NIR_TRACKING_STATUS_TOPIC, NARROW_NIR_CROPPED_IMAGE_TOPIC, NARROW_NIR_REGION_IN_IMAGE_TOPIC, NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT, NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT
+from drspot.config.multichrome_config import ENABLE_TOPIC
+from drspot.config.multichrome_config import RED_IMAGE_TOPIC, RED_TRACKING_STATUS_TOPIC, RED_CROPPED_IMAGE_TOPIC, RED_REGION_IN_IMAGE_TOPIC
+from drspot.config.multichrome_config import NIR_IMAGE_TOPIC, NIR_TRACKING_STATUS_TOPIC, NIR_CROPPED_IMAGE_TOPIC, NIR_REGION_IN_IMAGE_TOPIC, NIR_OFFSET_FRAC_OF_FACE_HEIGHT
+from drspot.config.multichrome_config import NARROW_NIR_IMAGE_TOPIC, NARROW_NIR_TRACKING_STATUS_TOPIC, NARROW_NIR_CROPPED_IMAGE_TOPIC, NARROW_NIR_REGION_IN_IMAGE_TOPIC, NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT, NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT
+
+from drspot.config.multichrome_config import CHAN_TXT, PBV_STATIC, PBV_UPDATE
 
 # Use the bigger buffer and queue sizes from multichrome_face_tracker, not heart_rate_spo2
-from drspot.vitals.multichrome_face_tracker import IMG_QUEUE_SIZE, IMG_BUF_SIZE
+from drspot.config.multichrome_config import IMG_QUEUE_SIZE, IMG_BUF_SIZE
 
 if __name__ == '__main__':
     rospy.init_node('multi_tracker_with_hr_spo2')
-    hr = HeartRate(rospy.get_name())
+    hr = HeartRate(rospy.get_name(), RED_TRACKING_STATUS_TOPIC,
+                   CHAN_TXT, PBV_STATIC, PBV_UPDATE)
     fdt = FaceDetectorTracker('red_' + rospy.get_name(),
                               RED_TRACKING_STATUS_TOPIC,
                               Publisher(RED_CROPPED_IMAGE_TOPIC,
@@ -82,10 +85,7 @@ if __name__ == '__main__':
         narrow_nir_cct.image_callback(narrow_nir)
         payload = [fdt.cropped_image_pub.get_payload(),
                    nir_cct.cropped_image_pub.get_payload(),
-                   narrow_nir_cct.cropped_image_pub.get_payload(),
-                   fdt.region_pub.get_payload(),
-                   nir_cct.region_pub.get_payload(),
-                   narrow_nir_cct.region_pub.get_payload()]
+                   narrow_nir_cct.cropped_image_pub.get_payload()]
         if all([p is not None for p in payload]):
             hr.synced_callback(*payload)
 

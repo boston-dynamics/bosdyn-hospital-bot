@@ -22,41 +22,34 @@ from geometry_msgs.msg import PolygonStamped
 from drspot.vitals.heart_rate_spo2 import HeartRate
 from drspot.vitals.heart_rate_spo2 import IMG_QUEUE_SIZE, IMG_BUF_SIZE
 
-from drspot.vitals.heart_rate_spo2 import RED_IMAGE_TOPIC, RED_REGION_IN_IMAGE_TOPIC
-from drspot.vitals.heart_rate_spo2 import NIR_IMAGE_TOPIC, NIR_REGION_IN_IMAGE_TOPIC
-from drspot.vitals.heart_rate_spo2 import NARROW_NIR_IMAGE_TOPIC, NARROW_NIR_REGION_IN_IMAGE_TOPIC
+from drspot.config.multichrome_config import RED_TRACKING_STATUS_TOPIC
+
+from drspot.config.multichrome_config import RED_CROPPED_IMAGE_TOPIC
+from drspot.config.multichrome_config import NIR_CROPPED_IMAGE_TOPIC
+from drspot.config.multichrome_config import NARROW_NIR_CROPPED_IMAGE_TOPIC
+
+from drspot.config.multichrome_config import CHAN_TXT, PBV_STATIC, PBV_UPDATE
 
 if __name__ == '__main__':
     rospy.init_node('heart_rate_spo2')
-    hr = HeartRate(rospy.get_name())
+    hr = HeartRate(rospy.get_name(), RED_TRACKING_STATUS_TOPIC,
+                   CHAN_TXT, PBV_STATIC, PBV_UPDATE)
 
-    hr.red_image_sub = message_filters.Subscriber(RED_IMAGE_TOPIC, Image,
+    hr.red_image_sub = message_filters.Subscriber(RED_CROPPED_IMAGE_TOPIC, Image,
                                                   queue_size=IMG_QUEUE_SIZE,
                                                   buff_size=IMG_BUF_SIZE)
-    hr.red_region_sub = message_filters.Subscriber(RED_REGION_IN_IMAGE_TOPIC,
-                                                   PolygonStamped,
-                                                   queue_size=IMG_QUEUE_SIZE)
 
-    hr.nir_image_sub = message_filters.Subscriber(NIR_IMAGE_TOPIC, Image,
+    hr.nir_image_sub = message_filters.Subscriber(NIR_CROPPED_IMAGE_TOPIC, Image,
                                                   queue_size=IMG_QUEUE_SIZE,
                                                   buff_size=IMG_BUF_SIZE)
-    hr.nir_region_sub = message_filters.Subscriber(NIR_REGION_IN_IMAGE_TOPIC,
-                                                   PolygonStamped,
-                                                   queue_size=IMG_QUEUE_SIZE)
 
-    hr.narrow_nir_image_sub = message_filters.Subscriber(NARROW_NIR_IMAGE_TOPIC, Image,
+    hr.narrow_nir_image_sub = message_filters.Subscriber(NARROW_NIR_CROPPED_IMAGE_TOPIC, Image,
                                                          queue_size=IMG_QUEUE_SIZE,
                                                          buff_size=IMG_BUF_SIZE)
-    hr.narrow_nir_region_sub = message_filters.Subscriber(NARROW_NIR_REGION_IN_IMAGE_TOPIC,
-                                                          PolygonStamped,
-                                                          queue_size=IMG_QUEUE_SIZE)
 
     hr.approx_image_sync = message_filters.ApproximateTimeSynchronizer([hr.red_image_sub,
                                                                         hr.nir_image_sub,
-                                                                        hr.narrow_nir_image_sub,
-                                                                        hr.red_region_sub,
-                                                                        hr.nir_region_sub,
-                                                                        hr.narrow_nir_region_sub],
+                                                                        hr.narrow_nir_image_sub],
                                                                        200, 0.1)
     hr.approx_image_sync.registerCallback(hr.synced_callback)
 
