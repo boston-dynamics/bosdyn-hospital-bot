@@ -1,4 +1,4 @@
 from . import rqt
 from . import utils
 
-__all__ = ['rqt', 'utils', 'vitals']
+__all__ = ['config', 'rqt', 'utils', 'vitals']

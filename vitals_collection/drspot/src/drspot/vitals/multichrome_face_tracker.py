@@ -27,31 +27,9 @@ from cv_bridge import CvBridge
 
 from drspot.utils.tracking import ROITracker
 
-ENABLE_TOPIC = 'multichrome_face_tracker_enable'
-
-SCALED_RED_IMAGE_TOPIC = 'debug_mono_red_tracking_rescale'
-DEBUG_RED_IMAGE_TOPIC = 'debug_mono_red_tracking'
-
-RED_IMAGE_TOPIC = 'camera_array/mono_red/image_raw'
-RED_TRACKING_STATUS_TOPIC = 'mono_red_tracking_status'
-RED_CROPPED_IMAGE_TOPIC = 'mono_red_cropped'
-RED_REGION_IN_IMAGE_TOPIC = 'mono_red_region'
-
-RED_FACE_IN_REGION_TOPIC = 'mono_red_roi'
-
-NIR_IMAGE_TOPIC = 'camera_array/mono_nir/image_raw'
-NIR_TRACKING_STATUS_TOPIC = 'mono_nir_tracking_status'
-NIR_CROPPED_IMAGE_TOPIC = 'mono_nir_cropped'
-NIR_REGION_IN_IMAGE_TOPIC = 'mono_nir_region'
-
-NARROW_NIR_IMAGE_TOPIC = 'camera_array/mono_narrow_nir/image_raw'
-NARROW_NIR_TRACKING_STATUS_TOPIC = 'mono_narrow_nir_tracking_status'
-NARROW_NIR_CROPPED_IMAGE_TOPIC = 'mono_narrow_nir_cropped'
-NARROW_NIR_REGION_IN_IMAGE_TOPIC = 'mono_narrow_nir_region'
-
-# Buffer about 1 second of full-size frames.
-IMG_QUEUE_SIZE = 35
-IMG_BUF_SIZE = IMG_QUEUE_SIZE * 2448 * 2048
+FACE_IN_REGION_TOPIC = 'debug_mono_face_in_region'
+SCALED_IMAGE_TOPIC = 'debug_mono_tracking_rescale'
+DEBUG_IMAGE_TOPIC = 'debug_mono_tracking'
 
 MAX_DROPOUT_BEFORE_RESET_SEC = 1.0
 MAX_TIME_SINCE_DETECTION_SEC = 2.5
@@ -77,13 +55,6 @@ ROI_HEIGHT_FRAC_OF_FACE_DOWN = 0.1
 # Overbound the region
 ROI_HALF_HEIGHT_FRAC_OF_FACE = 1.3
 ROI_HALF_WIDTH_FRAC_OF_FACE = 1.25
-
-# The face height is better related to scene depth than the width is.
-# Therefore, we use it as a proxy for the depth-dependent ROI offset
-# we need to apply because the camera centers are offset.
-NIR_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
-NARROW_NIR_X_OFFSET_FRAC_OF_FACE_HEIGHT = -0.35
-NARROW_NIR_Y_OFFSET_FRAC_OF_FACE_HEIGHT = -0.6
 
 class FaceDetectorTracker(object):
     def image_callback(self, data):
@@ -124,7 +95,7 @@ class FaceDetectorTracker(object):
         self.tlast = t
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
-        (rows, cols) = cv_image.shape
+        (rows, cols) = cv_image.shape[0:2]
 
         # Use our member function to make sure behavior is consistent.
         roi_unscaled = self.get_roi()
@@ -174,7 +145,7 @@ class FaceDetectorTracker(object):
         det_msg = Bool()
         det_msg.data = False
 
-        (rows, cols) = cv_image.shape
+        (rows, cols) = cv_image.shape[0:2]
         r = int(rows * DETECT_TRACK_SCALE_FACTOR)
         c = int(cols * DETECT_TRACK_SCALE_FACTOR)
         cv_image = cv2.resize(cv_image, (c, r), interpolation=cv2.INTER_AREA)
@@ -193,7 +164,10 @@ class FaceDetectorTracker(object):
         msg.header = header
         self.scaled_image_pub.publish(msg)
 
-        chan3image = cv2.cvtColor(cv_image, cv2.COLOR_GRAY2RGB)
+        if len(cv_image.shape) == 2:
+            chan3image = cv2.cvtColor(cv_image, cv2.COLOR_GRAY2RGB)
+        else:
+            chan3image = cv_image
 
         # If tracking is OK, track. Else, detect and configure tracker.
         bboxes = np.array([])
@@ -314,12 +288,12 @@ class FaceDetectorTracker(object):
         self.tracking_status_pub = rospy.Publisher(tracking_status_topic,
                                                    Bool, queue_size=10)
 
-        self.face_in_region_pub = rospy.Publisher(RED_FACE_IN_REGION_TOPIC,
+        self.face_in_region_pub = rospy.Publisher(FACE_IN_REGION_TOPIC,
                                                   PolygonStamped,
                                                   queue_size=10)
 
-        self.debug_image_pub = rospy.Publisher(DEBUG_RED_IMAGE_TOPIC, Image, queue_size=10)
-        self.scaled_image_pub = rospy.Publisher(SCALED_RED_IMAGE_TOPIC, Image, queue_size=10)
+        self.debug_image_pub = rospy.Publisher(DEBUG_IMAGE_TOPIC, Image, queue_size=10)
+        self.scaled_image_pub = rospy.Publisher(SCALED_IMAGE_TOPIC, Image, queue_size=10)
 
 class CalibratedCameraTrack(object):
     def image_callback(self, data):
@@ -360,7 +334,7 @@ class CalibratedCameraTrack(object):
         self.tlast = t
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
-        (rows, cols) = cv_image.shape
+        (rows, cols) = cv_image.shape[0:2]
 
         if self.rot180:
             cv_image = cv2.rotate(cv_image, cv2.ROTATE_180)
