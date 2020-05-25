@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import rospy
-import message_filters
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PolygonStamped
 from std_srvs.srv import SetBool, SetBoolResponse
@@ -24,7 +23,7 @@ from std_msgs.msg import Bool
 from drspot.utils.transport import CachingPublisher as Publisher
 
 from drspot.vitals.heart_rate_spo2 import HeartRate
-from drspot.vitals.multichrome_face_tracker import FaceDetectorTracker, CalibratedCameraTrack
+from drspot.vitals.multichrome_face_tracker import FaceDetectorTracker
 
 from drspot.config.rgb_config import ENABLE_TOPIC
 from drspot.config.rgb_config import RGB_IMAGE_TOPIC, RGB_TRACKING_STATUS_TOPIC, RGB_CROPPED_IMAGE_TOPIC, RGB_REGION_IN_IMAGE_TOPIC
@@ -44,24 +43,17 @@ if __name__ == '__main__':
                                         Image, queue_size=10),
                               Publisher(RGB_REGION_IN_IMAGE_TOPIC,
                                         PolygonStamped, queue_size=10))
-    fdt.image_sub = message_filters.Subscriber(RGB_IMAGE_TOPIC, Image,
-                                               queue_size=IMG_QUEUE_SIZE,
-                                               buff_size=IMG_BUF_SIZE)
 
-    exact_time_sync = rospy.get_param('exact_time_sync', False)
-    image_subs = [fdt.image_sub]
-    if exact_time_sync:
-        image_sync = message_filters.TimeSynchronizer(image_subs, 200)
-    else:
-        image_sync = message_filters.ApproximateTimeSynchronizer(image_subs, 200, 0.1)
-
-    def synced_callback_and_republish(rgb):
+    def callback_and_republish(rgb):
         fdt.image_callback(rgb)
         payload = [fdt.cropped_image_pub.get_payload()]
         if all([p is not None for p in payload]):
             hr.synced_callback(*payload)
 
-    image_sync.registerCallback(synced_callback_and_republish)
+    fdt.image_sub = rospy.Subscriber(RGB_IMAGE_TOPIC, Image,
+                                     callback_and_republish,
+                                     queue_size=IMG_QUEUE_SIZE,
+                                     buff_size=IMG_BUF_SIZE)
 
     def handle_enable(req):
         rospy.loginfo('Setting {} enabled to {}'.format(rospy.get_name(),

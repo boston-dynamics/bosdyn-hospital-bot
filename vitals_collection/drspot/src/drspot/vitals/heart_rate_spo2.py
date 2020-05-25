@@ -256,8 +256,10 @@ class HeartRate(object):
 
         self.start_compute_pub.publish(Empty())
 
-        patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, sum(self.chans['num_chans'])))
-        ii = 0 # Index into synchronized channels.
+        # Number of individual color channels across all image channels.
+        # For one RGB camera, this is 3. For three monochrome cameras, this is 3.
+        chan_num_chans = sum(self.chans['num_chans'])
+        patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, chan_num_chans))
         # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
         # the multichrome_face_tracker node and/or track on every frame at the expense of more
         # computation time.
@@ -266,9 +268,11 @@ class HeartRate(object):
         grad_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
-        chan_sub_idx = 0
-        for images in zip(image_buffers):
-            for chan, coarse, fine, cc, txt in zip(images, all_coarse, all_fine,
+        # Index into synchronized channels.
+        for ii in range(msmt_n):
+            channels = [image_buffers[cc][ii] for cc in range(self.num_chans)]
+            chan_sub_idx = 0
+            for chan, coarse, fine, cc, txt in zip(channels, all_coarse, all_fine,
                                                    range(self.num_chans),
                                                    self.chans['txt']):
                 (rows, cols) = chan.shape[0:2]
@@ -451,7 +455,7 @@ class HeartRate(object):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'raw_{:03d}.csv'.format(rr),
                            np.hstack((t_data.reshape((-1, 1)) - t_data[0],
-                                      patch_avg[:, rr, :].reshape((-1,self.num_chans)))),
+                                      patch_avg[:, rr, :].reshape((-1, chan_num_chans)))),
                            delimiter=',', fmt='%.3e')
         patch_avg /= np.mean(patch_avg, axis=0)
         patch_avg -= 1.0
@@ -500,7 +504,7 @@ class HeartRate(object):
             if DEBUG_SAVE_DATA:
                 np.savetxt(output_dir + 'normalized_{:03d}.csv'.format(rr),
                            np.hstack((t_data.reshape((-1, 1)) - t_data[0],
-                                      patch_avg[:, rr, :].reshape((-1,self.num_chans)))),
+                                      patch_avg[:, rr, :].reshape((-1, chan_num_chans)))),
                            delimiter=',', fmt='%.3e')
                 np.savetxt(output_dir + 'pulse_{:03d}.csv'.format(rr),
                            np.hstack((t_data.reshape((-1, 1)) - t_data[0],
