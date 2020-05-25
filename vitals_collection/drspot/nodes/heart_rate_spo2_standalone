@@ -33,7 +33,7 @@ from drspot.config.multichrome_config import CHAN_TXT, PBV_STATIC, PBV_UPDATE
 if __name__ == '__main__':
     rospy.init_node('heart_rate_spo2')
     hr = HeartRate(rospy.get_name(), RED_TRACKING_STATUS_TOPIC,
-                   CHAN_TXT, PBV_STATIC, PBV_UPDATE)
+                   CHAN_TXT, [1]*len(CHAN_TXT), PBV_STATIC, PBV_UPDATE)
 
     hr.red_image_sub = message_filters.Subscriber(RED_CROPPED_IMAGE_TOPIC, Image,
                                                   queue_size=IMG_QUEUE_SIZE,

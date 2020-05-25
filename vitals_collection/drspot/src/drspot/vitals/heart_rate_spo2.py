@@ -256,7 +256,7 @@ class HeartRate(object):
 
         self.start_compute_pub.publish(Empty())
 
-        patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, 3))
+        patch_avg = np.zeros((msmt_n, NUM_SUBREGIONS_X * NUM_SUBREGIONS_Y, sum(self.chans['num_chans'])))
         ii = 0 # Index into synchronized channels.
         # Initialize a tracker on the sub-roi. Use a more accurate tracker than the one in
         # the multichrome_face_tracker node and/or track on every frame at the expense of more
@@ -266,11 +266,12 @@ class HeartRate(object):
         grad_coarse = ROITracker(CV_COARSE_TRACKER_TYPE)
         detector = insightface.model_zoo.get_model('retinaface_r50_v1')
         detector.prepare(ctx_id=-1, nms=0.4)
+        chan_sub_idx = 0
         for images in zip(image_buffers):
             for chan, coarse, fine, cc, txt in zip(images, all_coarse, all_fine,
                                                    range(self.num_chans),
                                                    self.chans['txt']):
-                (rows, cols) = chan.shape
+                (rows, cols) = chan.shape[0:2]
                 r = int(rows * DETECT_TRACK_SCALE_FACTOR)
                 c = int(cols * DETECT_TRACK_SCALE_FACTOR)
                 resize = cv2.resize(chan, (c, r), interpolation=cv2.INTER_AREA)
@@ -425,12 +426,21 @@ class HeartRate(object):
 
                 # Spatial average over each subregion at this point in time.
                 try:
-                    patch_avg[ii, :, cc] = np.mean(crop.reshape((xd, yd, -1)),
-                                                   axis=(0,1))
+                    # Monochrome channel.
+                    if self.chans['num_chans'][cc] == 1:
+                        patch_avg[ii, :, chan_sub_idx] = np.mean(crop.reshape((xd, yd, -1)),
+                                                                 axis=(0,1))
+                        chan_sub_idx += 1
+                    else:
+                        for jj in range(self.chans['num_chans'][cc]):
+                            patch_avg[ii, :, chan_sub_idx] = np.mean(crop[:,:,jj].reshape((xd, yd, -1)),
+                                                                     axis=(0,1))
+                            chan_sub_idx += 1
                 except Exception as e:
-                    rospy.logwarn_throttle(1, ('{} {}: failed spatial average in '
+                    rospy.logwarn_throttle(1, ('{} {}: chan {} failed spatial average in '
                                            + '{}:{} idx {}; {} {} {} {} {} {} {} {} = {}').format(
-                        self.name, txt, ti, tf, ii, crop.shape, chan.shape, xd, yd, xmin, ymin, xmax, ymax, e))
+                                               self.name, txt, chan_sub_idx, ti, tf, ii,
+                                               crop.shape, chan.shape, xd, yd, xmin, ymin, xmax, ymax, e))
                     self.abort_compute_pub.publish(Empty())
                     return
             # End loop over colors.
@@ -617,8 +627,8 @@ class HeartRate(object):
         self.clear_buffers()
 
     def __init__(self, name, tracking_status_topic,
-                 chan_txt, pbv_static, pbv_update):
-        self.chans = dict(txt=chan_txt, pbv_static=np.array(pbv_static), pbv_update=np.array(pbv_update))
+                 chan_txt, chan_num_chans, pbv_static, pbv_update):
+        self.chans = dict(txt=chan_txt, num_chans=chan_num_chans, pbv_static=np.array(pbv_static), pbv_update=np.array(pbv_update))
         self.num_chans = len(chan_txt)
 
         if RATE_CUT:

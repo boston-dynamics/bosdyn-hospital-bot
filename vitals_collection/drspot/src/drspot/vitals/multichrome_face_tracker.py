@@ -95,7 +95,7 @@ class FaceDetectorTracker(object):
         self.tlast = t
 
         cv_image = self.bridge.imgmsg_to_cv2(data, desired_encoding='passthrough')
-        (rows, cols) = cv_image.shape
+        (rows, cols) = cv_image.shape[0:2]
 
         # Use our member function to make sure behavior is consistent.
         roi_unscaled = self.get_roi()
