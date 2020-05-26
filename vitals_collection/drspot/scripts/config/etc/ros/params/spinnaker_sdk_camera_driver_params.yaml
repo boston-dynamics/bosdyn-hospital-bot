@@ -7,3 +7,9 @@ cam_aliases:
 - mono_810
 - mono_880
 master_cam: 19403948
+
+# cam_ids:
+# - 19160367
+# cam_aliases:
+# - rgb
+# master_cam: 19160367

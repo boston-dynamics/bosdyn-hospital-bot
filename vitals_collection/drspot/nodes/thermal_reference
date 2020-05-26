@@ -150,8 +150,11 @@ class ThermalReference(object):
         port = self.findPort()
         print('Opening connection')
         self.sp = serial.Serial(port=port, baudrate=baud, timeout=2)
+        self.arduino_connected = True
         self.sp.flushInput()
         self.sp.flushOutput()
+        self.Q1(0)
+
         time.sleep(3)
         print('TCLab connected via Arduino on port ' + port)
 
@@ -263,7 +266,10 @@ class ThermalReference(object):
         try:
             self.sp.write(cmd_str.encode())
             self.sp.flush()
-        except Exception:
+        except Exception as e:
+            self.sp.close()
+            self.arduino_connected = False
+            rospy.logerr('Thermal ref node could not reach Arduino, please check your connection')
             return None
         return self.sp.readline().decode('UTF-8').replace("\r\n", "")
 
@@ -272,7 +278,10 @@ class ThermalReference(object):
         try:
             self.sp.write(cmd_str.encode())
             self.sp.flush()
-        except:
+        except Exception as e:
+            self.sp.close()
+            self.arduino_connected = False
+            rospy.logerr('Thermal ref node could not reach Arduino, please check your connection')
             return None
         return self.sp.readline().decode('UTF-8').replace("\r\n", "")
 
@@ -337,7 +346,7 @@ class ThermalReference(object):
 
         try:
             i = 0
-            while self.sensor.isOnline() and not rospy.is_shutdown():
+            while self.sensor.isOnline() and not rospy.is_shutdown() and self.arduino_connected:
                 # set initial state
                 if i == 0:
                     tm.append(0)
@@ -398,6 +407,10 @@ class ThermalReference(object):
                     error_fopdt.append(0)
                     error_sp.append(0)
 
+                # overheating protection above 50 degrees C
+                if T1[i] > 50:
+                    Q1[i] = 0
+
                 # Write output (0-100)
                 self.Q1(Q1[i])
 
@@ -455,6 +468,7 @@ class ThermalReference(object):
                 if DEBUG_TXT:
                     save_txt(tm[0:i],Q1[0:i],T1[0:i],[Tsp1 for i in range(i)])
                 plt.savefig('test_PID.png')
+            rospy.loginfo('Exiting thermal reference due to exception {}'.format(e))
 
 
 if __name__ == '__main__':
